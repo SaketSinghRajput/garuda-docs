@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Project Garuda — Atomic Architecture</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg: #0a0c10;
+  --surface: #0f1117;
+  --surface2: #151820;
+  --border: #1e2530;
+  --border2: #252d3a;
+
+  --edge-accent: #00d4aa;
+  --edge-bg: rgba(0,212,170,0.05);
+  --edge-border: rgba(0,212,170,0.2);
+
+  --ble-accent: #f59e0b;
+  --ble-bg: rgba(245,158,11,0.05);
+  --ble-border: rgba(245,158,11,0.2);
+
+  --fog-accent: #6366f1;
+  --fog-bg: rgba(99,102,241,0.05);
+  --fog-border: rgba(99,102,241,0.2);
+
+  --cloud-accent: #38bdf8;
+  --cloud-bg: rgba(56,189,248,0.05);
+  --cloud-border: rgba(56,189,248,0.2);
+
+  --ui-accent: #e879f9;
+  --ui-bg: rgba(232,121,249,0.05);
+  --ui-border: rgba(232,121,249,0.2);
+
+  --ai-accent: #fb923c;
+  --flow-arrow: #334155;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --text3: #475569;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'IBM Plex Sans', sans-serif;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  padding: 40px 20px 60px;
+  min-width: 1200px;
+}
+
+/* ── HEADER ── */
+.header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+.header-badge {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--edge-accent);
+  border: 1px solid var(--edge-border);
+  padding: 4px 14px;
+  border-radius: 2px;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+}
+.header h1 {
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  color: #fff;
+  margin-bottom: 6px;
+}
+.header p {
+  font-size: 13px;
+  color: var(--text2);
+  font-family: var(--mono);
+}
+
+/* ── LEGEND ── */
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-family: var(--mono);
+  color: var(--text2);
+}
+.legend-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+}
+
+/* ── LAYER WRAPPER ── */
+.layer {
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 14px;
+  position: relative;
+}
+.layer-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.layer-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.15;
+}
+
+/* EDGE */
+.layer-edge { background: var(--edge-bg); border: 1px solid var(--edge-border); }
+.layer-edge .layer-label { color: var(--edge-accent); }
+
+/* BLE */
+.layer-ble { background: var(--ble-bg); border: 1px solid var(--ble-border); }
+.layer-ble .layer-label { color: var(--ble-accent); }
+
+/* FOG */
+.layer-fog { background: var(--fog-bg); border: 1px solid var(--fog-border); }
+.layer-fog .layer-label { color: var(--fog-accent); }
+
+/* CLOUD */
+.layer-cloud { background: var(--cloud-bg); border: 1px solid var(--cloud-border); }
+.layer-cloud .layer-label { color: var(--cloud-accent); }
+
+/* UI */
+.layer-ui { background: var(--ui-bg); border: 1px solid var(--ui-border); }
+.layer-ui .layer-label { color: var(--ui-accent); }
+
+/* ── MODULE ROWS ── */
+.row { display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-start; }
+.row-centered { align-items: center; }
+
+/* ── MODULE BOX ── */
+.mod {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 12px 14px;
+  flex: 1;
+  min-width: 0;
+}
+.mod-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.mod-title .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.atoms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.atom {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  white-space: nowrap;
+}
+.atom.highlight {
+  background: rgba(255,255,255,0.07);
+  border-color: var(--border2);
+  color: var(--text);
+}
+
+/* Output badge */
+.output-badge {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 9px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  margin-top: 7px;
+  letter-spacing: 0.5px;
+}
+
+/* ── FLOW ARROWS ── */
+.flow-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin: 6px 0;
+  padding: 0 10px;
+}
+.flow-arrow {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 0;
+}
+.flow-arrow .line {
+  flex: 1;
+  height: 1px;
+  background: var(--flow-arrow);
+}
+.flow-arrow .label {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text3);
+  padding: 0 8px;
+  white-space: nowrap;
+}
+.flow-arrow .tip {
+  width: 0; height: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 7px solid var(--flow-arrow);
+}
+
+/* Vertical arrow */
+.v-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 4px auto;
+  gap: 2px;
+}
+.v-arrow .vline { width: 1px; height: 20px; background: var(--flow-arrow); }
+.v-arrow .vtip {
+  width: 0; height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 7px solid var(--flow-arrow);
+}
+.v-arrow .vlabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text3);
+  margin-top: 2px;
+}
+
+/* Layer connector */
+.layer-connector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0;
+  gap: 16px;
+}
+.connector-box {
+  background: var(--surface);
+  border: 1px dashed var(--border2);
+  border-radius: 6px;
+  padding: 6px 16px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text3);
+  text-align: center;
+}
+.connector-arrows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+.c-arr-up, .c-arr-dn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text3);
+}
+.arr-line { width: 60px; height: 1px; background: var(--border2); }
+.arr-tip-r { border-top:3px solid transparent; border-bottom:3px solid transparent; border-left:5px solid var(--border2); }
+.arr-tip-l { border-top:3px solid transparent; border-bottom:3px solid transparent; border-right:5px solid var(--border2); }
+
+/* Colored accents per layer */
+.edge .mod-title .dot { background: var(--edge-accent); }
+.ble-mod .mod-title .dot { background: var(--ble-accent); }
+.fog-mod .mod-title .dot { background: var(--fog-accent); }
+.cloud-mod .mod-title .dot { background: var(--cloud-accent); }
+.ui-mod .mod-title .dot { background: var(--ui-accent); }
+.ai-mod .mod-title .dot { background: var(--ai-accent); }
+
+/* Accent borders */
+.mod.accent-edge { border-color: rgba(0,212,170,0.35); }
+.mod.accent-ble  { border-color: rgba(245,158,11,0.35); }
+.mod.accent-fog  { border-color: rgba(99,102,241,0.35); }
+.mod.accent-cloud{ border-color: rgba(56,189,248,0.35); }
+.mod.accent-ui   { border-color: rgba(232,121,249,0.35); }
+.mod.accent-ai   { border-color: rgba(251,146,60,0.35); }
+
+/* Pipeline row */
+.pipeline {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  overflow-x: auto;
+}
+.pipeline-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+.pipeline-step .pbox {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 5px;
+  padding: 5px 12px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text);
+  text-align: center;
+  white-space: nowrap;
+}
+.pipeline-step .psub {
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--text3);
+  margin-top: 3px;
+  text-align: center;
+}
+.pipe-arrow {
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  flex-shrink: 0;
+}
+.pipe-arrow .pl { width: 18px; height: 1px; background: var(--edge-accent); opacity: 0.5; }
+.pipe-arrow .pt { border-top:3px solid transparent; border-bottom:3px solid transparent; border-left:5px solid var(--edge-accent); opacity:0.5; }
+
+/* Formula box */
+.formula-box {
+  background: rgba(251,146,60,0.06);
+  border: 1px solid rgba(251,146,60,0.2);
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ai-accent);
+  margin-top: 8px;
+}
+
+/* Perf table */
+.perf-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+.perf-chip {
+  font-family: var(--mono);
+  font-size: 9px;
+  padding: 3px 10px;
+  border-radius: 3px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text2);
+}
+.perf-chip span { color: var(--edge-accent); }
+
+/* Section divider */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border2), transparent);
+  margin: 6px 0 10px;
+}
+
+/* Print tip */
+.print-tip {
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text3);
+  margin-bottom: 24px;
+  padding: 8px;
+  border: 1px dashed var(--border);
+  border-radius: 4px;
+}
+
+/* small tag */
+.tag {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  display: inline-block;
+  margin-top: 4px;
+}
+.tag-rt { background: rgba(0,212,170,0.12); color: var(--edge-accent); border: 1px solid rgba(0,212,170,0.2); }
+.tag-batch { background: rgba(56,189,248,0.12); color: var(--cloud-accent); border: 1px solid rgba(56,189,248,0.2); }
+.tag-ml { background: rgba(251,146,60,0.12); color: var(--ai-accent); border: 1px solid rgba(251,146,60,0.2); }
+.tag-sec { background: rgba(232,121,249,0.12); color: var(--ui-accent); border: 1px solid rgba(232,121,249,0.2); }
+
+</style>
+</head>
+<body>
+
+<div class="print-tip">
+  To save as image: Chrome → Ctrl+Shift+P → "Capture full size screenshot"
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-badge">Atomic Architecture v1.0</div>
+  <h1>Project Garuda</h1>
+  <p>AI-Powered Intelligent Co-Driver &amp; Accident Prevention System — Complete System Architecture</p>
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--edge-accent)"></div>Edge / Vehicle AI</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--ble-accent)"></div>BLE Offline Comm</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--fog-accent)"></div>Fog Layer</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--cloud-accent)"></div>Cloud Layer</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--ui-accent)"></div>User Interface</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--ai-accent)"></div>AI / ML Models</div>
+</div>
+
+<!-- ═══════════════════════════════ REAL-TIME PIPELINE ═══ -->
+<div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:12px 16px; margin-bottom:14px;">
+  <div style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:1px;margin-bottom:10px;">REAL-TIME DATA PIPELINE  <span class="tag tag-rt">RT &lt;50ms</span></div>
+  <div class="pipeline">
+    <div class="pipeline-step"><div class="pbox" style="border-color:rgba(0,212,170,0.3);color:var(--edge-accent)">Sensors</div><div class="psub">50–100ms cycle</div></div>
+    <div class="pipe-arrow"><div class="pl"></div><div class="pt"></div></div>
+    <div class="pipeline-step"><div class="pbox">Preprocessing</div><div class="psub">Kalman · Jerk · Yaw</div></div>
+    <div class="pipe-arrow"><div class="pl"></div><div class="pt"></div></div>
+    <div class="pipeline-step"><div class="pbox">Fusion Engine</div><div class="psub">Multi-modal merge</div></div>
+    <div class="pipe-arrow"><div class="pl"></div><div class="pt"></div></div>
+    <div class="pipeline-step"><div class="pbox" style="border-color:rgba(251,146,60,0.3);color:var(--ai-accent)">AI Prediction</div><div class="psub">LSTM + RF + CNN</div></div>
+    <div class="pipe-arrow"><div class="pl"></div><div class="pt"></div></div>
+    <div class="pipeline-step"><div class="pbox">Decision Engine</div><div class="psub">Rule + AI hybrid</div></div>
+    <div class="pipe-arrow"><div class="pl"></div><div class="pt"></div></div>
+    <div class="pipeline-step"><div class="pbox">Co-Driver</div><div class="psub">Voice + haptic</div></div>
+    <div class="pipe-arrow"><div class="pl"></div><div class="pt"></div></div>
+    <div class="pipeline-step"><div class="pbox" style="border-color:rgba(232,121,249,0.3);color:var(--ui-accent)">Driver Alert</div><div class="psub">Dashboard + audio</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ EDGE LAYER ═══════════ -->
+<div class="layer layer-edge">
+  <div class="layer-label">Edge Layer — Onboard Vehicle Intelligence</div>
+
+  <!-- Row 1: Sensors -->
+  <div class="row">
+    <!-- Sensor Layer -->
+    <div class="mod accent-edge edge" style="flex:2">
+      <div class="mod-title"><span class="dot"></span>A. Sensor layer</div>
+      <div class="atoms">
+        <div class="atom highlight">Speed sensor</div>
+        <div class="atom highlight">Accelerometer</div>
+        <div class="atom highlight">Gyroscope</div>
+        <div class="atom highlight">Brake sensor</div>
+        <div class="atom highlight">Steering sensor</div>
+        <div class="atom highlight">GPS module</div>
+        <div class="atom highlight">Driver camera</div>
+        <div class="atom highlight">Road camera</div>
+        <div class="atom">Tyre pressure</div>
+        <div class="atom">Battery status</div>
+        <div class="atom">ABS / TCS signals</div>
+        <div class="atom">OBD-II interface</div>
+      </div>
+      <div class="tag tag-rt" style="margin-top:8px">50–100ms polling</div>
+    </div>
+
+    <!-- Driver Monitoring -->
+    <div class="mod accent-edge edge" style="flex:1.5">
+      <div class="mod-title"><span class="dot"></span>B. Driver monitoring</div>
+      <div class="atoms">
+        <div class="atom highlight">Eye tracking (EAR)</div>
+        <div class="atom highlight">Blink rate</div>
+        <div class="atom highlight">Head pose detect</div>
+        <div class="atom">Gaze direction</div>
+        <div class="atom">Distraction detect</div>
+        <div class="atom">Steering jitter</div>
+        <div class="atom">Micro-sleep detect</div>
+      </div>
+      <div class="output-badge" style="background:rgba(0,212,170,0.1);border:1px solid rgba(0,212,170,0.2);color:var(--edge-accent)">→ drowsiness_score: 0.0–1.0</div>
+    </div>
+
+    <!-- Edge Buffer -->
+    <div class="mod edge" style="flex:0.8">
+      <div class="mod-title"><span class="dot"></span>J. Edge buffer</div>
+      <div class="atoms">
+        <div class="atom">30–60 sec window</div>
+        <div class="atom">Ring buffer</div>
+        <div class="atom">Compressed store</div>
+        <div class="atom">Replay engine</div>
+        <div class="atom">Crash snapshot</div>
+      </div>
+      <div class="tag tag-rt" style="margin-top:8px">Circular RAM cache</div>
+    </div>
+  </div>
+
+  <!-- Pipeline arrow -->
+  <div class="v-arrow"><div class="vline"></div><div class="vtip"></div><div class="vlabel">raw sensor streams</div></div>
+
+  <!-- Row 2: Preprocessing + Fusion -->
+  <div class="row">
+    <!-- Preprocessing -->
+    <div class="mod accent-edge edge" style="flex:1">
+      <div class="mod-title"><span class="dot"></span>C. Preprocessing engine</div>
+      <div class="atoms">
+        <div class="atom highlight">Kalman filter</div>
+        <div class="atom highlight">Jerk extraction</div>
+        <div class="atom highlight">Yaw rate</div>
+        <div class="atom highlight">Braking intensity</div>
+        <div class="atom">Noise removal</div>
+        <div class="atom">Outlier rejection</div>
+        <div class="atom">Time-sync align</div>
+        <div class="atom">Feature normalization</div>
+        <div class="atom">Sliding window (1s)</div>
+      </div>
+    </div>
+
+    <!-- Fusion Engine -->
+    <div class="mod accent-ai ai-mod" style="flex:1.4">
+      <div class="mod-title"><span class="dot"></span>D. Multi-modal fusion engine</div>
+      <div class="atoms">
+        <div class="atom highlight">Vehicle vector</div>
+        <div class="atom highlight">Driver state vector</div>
+        <div class="atom highlight">Environment embed</div>
+        <div class="atom highlight">BLE signal merge</div>
+        <div class="atom">Temporal alignment</div>
+        <div class="atom">Confidence weighting</div>
+        <div class="atom">Attention mechanism</div>
+        <div class="atom">Missing data impute</div>
+      </div>
+      <div class="formula-box">Risk = f(vehicle, driver, env, traffic, history)</div>
+    </div>
+
+    <!-- Prediction Model -->
+    <div class="mod accent-ai ai-mod" style="flex:1.2">
+      <div class="mod-title"><span class="dot"></span>E. Accident prediction model</div>
+      <div class="atoms">
+        <div class="atom highlight" style="border-color:rgba(251,146,60,0.3)">LSTM (time-series)</div>
+        <div class="atom highlight" style="border-color:rgba(251,146,60,0.3)">Random Forest</div>
+        <div class="atom highlight" style="border-color:rgba(251,146,60,0.3)">XGBoost</div>
+        <div class="atom highlight" style="border-color:rgba(251,146,60,0.3)">CNN (vision)</div>
+        <div class="atom">Ensemble voter</div>
+        <div class="atom">Confidence thresh</div>
+        <div class="atom">Calibration layer</div>
+      </div>
+      <div class="output-badge" style="background:rgba(251,146,60,0.1);border:1px solid rgba(251,146,60,0.25);color:var(--ai-accent)">→ risk_score · risk_type · confidence</div>
+    </div>
+  </div>
+
+  <div class="v-arrow"><div class="vline"></div><div class="vtip"></div><div class="vlabel">fused features + risk output</div></div>
+
+  <!-- Row 3: Decision + Co-Driver + Path + Alert -->
+  <div class="row">
+    <!-- Decision Engine -->
+    <div class="mod accent-edge edge" style="flex:1">
+      <div class="mod-title"><span class="dot"></span>F. Decision engine</div>
+      <div class="atoms">
+        <div class="atom highlight">Rule-based layer</div>
+        <div class="atom highlight">AI hybrid logic</div>
+        <div class="atom">Priority queue</div>
+        <div class="atom">Crash risk (P1)</div>
+        <div class="atom">Drowsiness (P2)</div>
+        <div class="atom">Ext. threats (P3)</div>
+        <div class="atom">Conflict resolver</div>
+        <div class="atom">Threshold manager</div>
+      </div>
+      <div class="formula-box" style="font-size:9px">Action = min(risk + time + energy)</div>
+    </div>
+
+    <!-- Co-Driver -->
+    <div class="mod accent-edge edge" style="flex:1">
+      <div class="mod-title"><span class="dot"></span>G. AI co-driver module</div>
+      <div class="atoms">
+        <div class="atom highlight">NLP voice engine</div>
+        <div class="atom highlight">Context builder</div>
+        <div class="atom highlight">Suggestion gen.</div>
+        <div class="atom">Severity classifier</div>
+        <div class="atom">Tone adapter</div>
+        <div class="atom">Multi-lang TTS</div>
+        <div class="atom">Feedback logger</div>
+      </div>
+      <div class="output-badge" style="background:rgba(0,212,170,0.08);border:1px solid rgba(0,212,170,0.18);color:var(--edge-accent)">"Vehicle ahead braking" · slow_down</div>
+    </div>
+
+    <!-- Path Planning -->
+    <div class="mod accent-edge edge" style="flex:1">
+      <div class="mod-title"><span class="dot"></span>H. Safe path planning</div>
+      <div class="atoms">
+        <div class="atom highlight">Micro: brake ctrl</div>
+        <div class="atom highlight">Speed reduction</div>
+        <div class="atom highlight">Lane suggestion</div>
+        <div class="atom">Macro: route opt.</div>
+        <div class="atom">Risk zone map</div>
+        <div class="atom">A* / Dijkstra</div>
+        <div class="atom">Real-time replan</div>
+        <div class="atom">Rest stop finder</div>
+      </div>
+    </div>
+
+    <!-- Alert System -->
+    <div class="mod accent-ui ui-mod" style="flex:1">
+      <div class="mod-title"><span class="dot"></span>I. Alert system</div>
+      <div class="atoms">
+        <div class="atom highlight">Audio alert</div>
+        <div class="atom highlight">Visual dashboard</div>
+        <div class="atom highlight">Haptic feedback</div>
+        <div class="atom">Escalation levels</div>
+        <div class="atom">Alert suppression</div>
+        <div class="atom">Emergency siren</div>
+        <div class="atom">LED indicators</div>
+      </div>
+      <div class="tag tag-rt" style="margin-top:8px">&lt;100ms trigger</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ BLE LAYER ═══════════════════ -->
+<div class="layer layer-ble">
+  <div class="layer-label">BLE Offline Communication Layer — No Internet Required</div>
+  <div class="row row-centered">
+    <div class="mod accent-ble ble-mod" style="flex:1">
+      <div class="mod-title"><span class="dot"></span>BLE broadcast / receive</div>
+      <div class="atoms">
+        <div class="atom highlight">BLE 5.0 stack</div>
+        <div class="atom highlight">Mesh network</div>
+        <div class="atom highlight">Risk score TX</div>
+        <div class="atom highlight">Sudden brake alert</div>
+        <div class="atom">Accident notify</div>
+        <div class="atom">Blind spot warn</div>
+        <div class="atom">Packet signing</div>
+        <div class="atom">Relay logic</div>
+      </div>
+    </div>
+    <div class="mod accent-ble ble-mod" style="flex:1">
+      <div class="mod-title"><span class="dot"></span>Message protocol</div>
+      <div class="atoms">
+        <div class="atom highlight">UUID payload</div>
+        <div class="atom highlight">RSSI-based ranging</div>
+        <div class="atom">Seq. numbering</div>
+        <div class="atom">TTL (time-to-live)</div>
+        <div class="atom">Dedup filter</div>
+        <div class="atom">Priority flag</div>
+        <div class="atom">AES-128 encrypt</div>
+      </div>
+    </div>
+    <div class="mod accent-ble ble-mod" style="flex:1">
+      <div class="mod-title"><span class="dot"></span>V2V coordination</div>
+      <div class="atoms">
+        <div class="atom highlight">Fog / blind turn</div>
+        <div class="atom highlight">Emergency ahead</div>
+        <div class="atom">Proximity scoring</div>
+        <div class="atom">Trust scoring</div>
+        <div class="atom">Spoof detection</div>
+        <div class="atom">Multi-hop relay</div>
+        <div class="atom">Zone clustering</div>
+      </div>
+      <div class="tag tag-rt" style="margin-top:8px">&lt;200ms · ~100m range</div>
+    </div>
+    <div class="mod accent-ble ble-mod" style="flex:0.8">
+      <div class="mod-title"><span class="dot"></span>Payload schema</div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--text2);line-height:1.8;margin-top:4px">
+        <span style="color:var(--ble-accent)">risk_score</span>: 0.85<br>
+        <span style="color:var(--ble-accent)">type</span>: collision<br>
+        <span style="color:var(--ble-accent)">lat/lon</span>: GPS coords<br>
+        <span style="color:var(--ble-accent)">ts</span>: epoch ms<br>
+        <span style="color:var(--ble-accent)">ttl</span>: 3 hops<br>
+        <span style="color:var(--ble-accent)">sig</span>: AES-128
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ FOG LAYER ═══════════════════ -->
+<div class="layer layer-fog">
+  <div class="layer-label">Fog Layer — Local Infrastructure &amp; Cooperative Intelligence</div>
+  <div class="row">
+    <div class="mod accent-fog fog-mod" style="flex:1">
+      <div class="mod-title"><span class="dot"></span>Risk aggregation</div>
+      <div class="atoms">
+        <div class="atom highlight">Multi-vehicle merge</div>
+        <div class="atom highlight">Cluster risk map</div>
+        <div class="atom">Weighted avg</div>
+        <div class="atom">Outlier filter</div>
+        <div class="atom">Time-decay model</div>
+        <div class="atom">Zone heatmap</div>
+      </div>
+    </div>
+    <div class="mod accent-fog fog-mod" style="flex:1">
+      <div class="mod-title"><span class="dot"></span>Local hazard detect</div>
+      <div class="atoms">
+        <div class="atom highlight">Pothole cluster</div>
+        <div class="atom highlight">Accident zone</div>
+        <div class="atom">Weather event</div>
+        <div class="atom">Traffic jam detect</div>
+        <div class="atom">Emergency vehicle</div>
+        <div class="atom">Signal anomaly</div>
+      </div>
+    </div>
+    <div class="mod accent-fog fog-mod" style="flex:1">
+      <div class="mod-title"><span class="dot"></span>Cooperative broadcast</div>
+      <div class="atoms">
+        <div class="atom highlight">Zone alert push</div>
+        <div class="atom highlight">Reroute suggest</div>
+        <div class="atom">Broadcast priority</div>
+        <div class="atom">Coverage radius</div>
+        <div class="atom">RSU integration</div>
+        <div class="atom">5G / DSRC link</div>
+      </div>
+    </div>
+    <div class="mod accent-fog fog-mod" style="flex:1">
+      <div class="mod-title"><span class="dot"></span>Edge cache / DB</div>
+      <div class="atoms">
+        <div class="atom highlight">Local SQLite / Redis</div>
+        <div class="atom highlight">Map tile cache</div>
+        <div class="atom">Historical patterns</div>
+        <div class="atom">Sync queue</div>
+        <div class="atom">TTL eviction</div>
+        <div class="atom">Offline fallback</div>
+      </div>
+      <div class="tag tag-batch" style="margin-top:8px">batch sync → cloud</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ CLOUD LAYER ═══════════════════ -->
+<div class="layer layer-cloud">
+  <div class="layer-label">Cloud Layer — Global Intelligence &amp; Continuous Learning</div>
+
+  <!-- Row 1: Ingestion + Lake + Feature Eng -->
+  <div class="row">
+    <div class="mod accent-cloud cloud-mod" style="flex:1">
+      <div class="mod-title"><span class="dot"></span>A. Data ingestion</div>
+      <div class="atoms">
+        <div class="atom highlight">Kafka streams</div>
+        <div class="atom highlight">Google PubSub</div>
+        <div class="atom">Schema registry</div>
+        <div class="atom">Dead-letter queue</div>
+        <div class="atom">Rate limiter</div>
+        <div class="atom">Edge batch upload</div>
+        <div class="atom">Dedup + validate</div>
+      </div>
+      <div class="tag tag-rt" style="margin-top:8px">streaming + batch</div>
+    </div>
+    <div class="mod accent-cloud cloud-mod" style="flex:1">
+      <div class="mod-title"><span class="dot"></span>B. Data lake</div>
+      <div class="atoms">
+        <div class="atom highlight">Raw sensor store</div>
+        <div class="atom highlight">Processed events</div>
+        <div class="atom">Parquet / ORC</div>
+        <div class="atom">S3 / GCS bucket</div>
+        <div class="atom">Retention policy</div>
+        <div class="atom">Anonymisation</div>
+        <div class="atom">Partition by time</div>
+      </div>
+    </div>
+    <div class="mod accent-cloud cloud-mod" style="flex:1">
+      <div class="mod-title"><span class="dot"></span>C. Feature engineering</div>
+      <div class="atoms">
+        <div class="atom highlight">Spark pipeline</div>
+        <div class="atom highlight">Rolling stats</div>
+        <div class="atom">Lag features</div>
+        <div class="atom">Weather join</div>
+        <div class="atom">Road metadata</div>
+        <div class="atom">Feature store</div>
+        <div class="atom">Versioning</div>
+      </div>
+      <div class="tag tag-batch" style="margin-top:8px">scheduled + triggered</div>
+    </div>
+    <div class="mod accent-ai ai-mod" style="flex:1">
+      <div class="mod-title"><span class="dot"></span>D. Model training</div>
+      <div class="atoms">
+        <div class="atom highlight" style="border-color:rgba(251,146,60,0.3)">LSTM trainer</div>
+        <div class="atom highlight" style="border-color:rgba(251,146,60,0.3)">XGBoost trainer</div>
+        <div class="atom highlight" style="border-color:rgba(251,146,60,0.3)">Graph Neural Net</div>
+        <div class="atom">A/B eval harness</div>
+        <div class="atom">Cross-validation</div>
+        <div class="atom">MLflow tracking</div>
+        <div class="atom">GPU cluster</div>
+      </div>
+      <div class="tag tag-ml" style="margin-top:8px">continuous retraining</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Row 2: Deployment + Risk Engine + Emergency + Security -->
+  <div class="row">
+    <div class="mod accent-cloud cloud-mod" style="flex:1">
+      <div class="mod-title"><span class="dot"></span>E. Model deployment (OTA)</div>
+      <div class="atoms">
+        <div class="atom highlight">Model registry</div>
+        <div class="atom highlight">OTA push engine</div>
+        <div class="atom">Rollout strategy</div>
+        <div class="atom">Canary deploy</div>
+        <div class="atom">Rollback trigger</div>
+        <div class="atom">Delta compression</div>
+        <div class="atom">Sign + verify</div>
+      </div>
+    </div>
+    <div class="mod accent-cloud cloud-mod" style="flex:1">
+      <div class="mod-title"><span class="dot"></span>F. Global risk intelligence</div>
+      <div class="atoms">
+        <div class="atom highlight">Fleet heatmap</div>
+        <div class="atom highlight">Black spot detect</div>
+        <div class="atom">Time-of-day model</div>
+        <div class="atom">Weather correlation</div>
+        <div class="atom">Road type risk</div>
+        <div class="atom">Alert broadcast</div>
+        <div class="atom">Policy updates</div>
+      </div>
+    </div>
+    <div class="mod accent-cloud cloud-mod" style="flex:1">
+      <div class="mod-title"><span class="dot"></span>G. Emergency response</div>
+      <div class="atoms">
+        <div class="atom highlight">Crash detection</div>
+        <div class="atom highlight">GPS broadcast</div>
+        <div class="atom highlight">Emergency contacts</div>
+        <div class="atom">112 / 911 API</div>
+        <div class="atom">Ambulance routing</div>
+        <div class="atom">Incident report</div>
+        <div class="atom">Insurance notify</div>
+      </div>
+      <div class="tag tag-rt" style="margin-top:8px">&lt;3s response trigger</div>
+    </div>
+    <div class="mod accent-ui ui-mod" style="flex:1">
+      <div class="mod-title"><span class="dot"></span>Security &amp; privacy</div>
+      <div class="atoms">
+        <div class="atom highlight">E2E encryption</div>
+        <div class="atom highlight">Device auth (PKI)</div>
+        <div class="atom">TLS 1.3</div>
+        <div class="atom">GDPR compliance</div>
+        <div class="atom">Data anon pipeline</div>
+        <div class="atom">Audit log</div>
+        <div class="atom">Secure OTA sign</div>
+      </div>
+      <div class="tag tag-sec" style="margin-top:8px">zero-trust model</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ UI LAYER ═══════════════════ -->
+<div class="layer layer-ui">
+  <div class="layer-label">User Interface Layer</div>
+  <div class="row">
+    <div class="mod accent-ui ui-mod" style="flex:1.2">
+      <div class="mod-title"><span class="dot"></span>Driver dashboard</div>
+      <div class="atoms">
+        <div class="atom highlight">Risk meter (0–100%)</div>
+        <div class="atom highlight">Drowsiness indicator</div>
+        <div class="atom highlight">Alert feed</div>
+        <div class="atom highlight">Safe route map</div>
+        <div class="atom">Speed suggestion</div>
+        <div class="atom">BLE peer count</div>
+        <div class="atom">Connection status</div>
+        <div class="atom">Rest stop navigator</div>
+      </div>
+    </div>
+    <div class="mod accent-ui ui-mod" style="flex:1">
+      <div class="mod-title"><span class="dot"></span>Voice + HMI</div>
+      <div class="atoms">
+        <div class="atom highlight">TTS voice output</div>
+        <div class="atom highlight">Contextual prompts</div>
+        <div class="atom">Haptic patterns</div>
+        <div class="atom">Ambient LED ring</div>
+        <div class="atom">HUD projection</div>
+        <div class="atom">Gesture input</div>
+      </div>
+    </div>
+    <div class="mod accent-ui ui-mod" style="flex:1.2">
+      <div class="mod-title"><span class="dot"></span>Admin / fleet dashboard</div>
+      <div class="atoms">
+        <div class="atom highlight">Fleet risk heatmap</div>
+        <div class="atom highlight">Driver analytics</div>
+        <div class="atom highlight">Incident history</div>
+        <div class="atom">OTA status panel</div>
+        <div class="atom">Model performance</div>
+        <div class="atom">Alert audit log</div>
+        <div class="atom">Export reports</div>
+      </div>
+    </div>
+    <div class="mod accent-ui ui-mod" style="flex:1">
+      <div class="mod-title"><span class="dot"></span>Mobile companion</div>
+      <div class="atoms">
+        <div class="atom highlight">Trip summary</div>
+        <div class="atom highlight">Risk score history</div>
+        <div class="atom">Emergency contacts</div>
+        <div class="atom">Settings sync</div>
+        <div class="atom">Push alerts</div>
+        <div class="atom">Coaching tips</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ PERFORMANCE TABLE ═════════════ -->
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin-top:14px;">
+  <div style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:1px;margin-bottom:10px;">PERFORMANCE TARGETS</div>
+  <div class="perf-row">
+    <div class="perf-chip">Edge AI prediction <span>&lt;50ms</span></div>
+    <div class="perf-chip">Alert trigger <span>&lt;100ms</span></div>
+    <div class="perf-chip">BLE broadcast <span>&lt;200ms</span></div>
+    <div class="perf-chip">Drowsiness detect <span>&lt;80ms</span></div>
+    <div class="perf-chip">Emergency SOS <span>&lt;3s</span></div>
+    <div class="perf-chip">OTA model deploy <span>&lt;30s</span></div>
+    <div class="perf-chip">Cloud ingestion <span>&lt;1s</span></div>
+    <div class="perf-chip">Sensor polling <span>50–100ms</span></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div style="text-align:center;margin-top:28px;font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:1px;">
+  PROJECT GARUDA — ATOMIC ARCHITECTURE DIAGRAM — HACKATHON EDITION
+</div>
+
+</body>
+</html>

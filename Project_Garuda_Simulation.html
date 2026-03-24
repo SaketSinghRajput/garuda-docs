@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Project Garuda — Live Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --navy:#0D2B4E;
+  --orange:#E8581A;
+  --teal:#0A9E8A;
+  --green:#22C55E;
+  --red:#EF4444;
+  --amber:#F59E0B;
+  --white:#FFFFFF;
+  --dim:#94A3B8;
+  --bg:#060E1A;
+  --panel:#0A1628;
+  --card:#0F1E35;
+  --border:#1E3A5F;
+}
+body{
+  background:var(--bg);
+  color:var(--white);
+  font-family:'Barlow',sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── HEADER ─────────────────────────────────────── */
+.header{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(6,14,26,0.95);
+  border-bottom:1px solid var(--border);
+  padding:0 24px;
+  height:56px;
+  display:flex;align-items:center;justify-content:space-between;
+  backdrop-filter:blur(12px);
+}
+.logo{
+  font-family:'Rajdhani',sans-serif;
+  font-size:22px;font-weight:700;
+  letter-spacing:2px;
+  color:var(--white);
+}
+.logo span{color:var(--orange);}
+.status-bar{
+  display:flex;align-items:center;gap:20px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:11px;color:var(--dim);
+}
+.status-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 8px var(--green);
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+
+/* ── MAIN LAYOUT ─────────────────────────────────── */
+.main{
+  margin-top:56px;
+  display:grid;
+  grid-template-columns:380px 1fr 300px;
+  grid-template-rows:auto;
+  gap:0;
+  height:calc(100vh - 56px);
+}
+
+/* ── LEFT PANEL — controls ───────────────────────── */
+.left-panel{
+  background:var(--panel);
+  border-right:1px solid var(--border);
+  padding:20px 18px;
+  overflow-y:auto;
+  display:flex;flex-direction:column;gap:16px;
+}
+.panel-title{
+  font-family:'Rajdhani',sans-serif;
+  font-size:11px;font-weight:600;
+  letter-spacing:3px;text-transform:uppercase;
+  color:var(--orange);
+  margin-bottom:4px;
+}
+
+/* ── SCENARIO PICKER ────────────────────────────── */
+.scenario-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;
+}
+.scenario-btn{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:12px 10px;
+  cursor:pointer;
+  text-align:left;
+  transition:all 0.2s;
+  position:relative;
+  overflow:hidden;
+}
+.scenario-btn:hover{border-color:var(--orange);transform:translateY(-1px);}
+.scenario-btn.active{
+  border-color:var(--orange);
+  background:rgba(232,88,26,0.12);
+}
+.scenario-btn .icon{font-size:20px;margin-bottom:6px;display:block;}
+.scenario-btn .name{
+  font-family:'Rajdhani',sans-serif;
+  font-size:13px;font-weight:600;
+  color:var(--white);
+  display:block;
+}
+.scenario-btn .desc{font-size:10px;color:var(--dim);margin-top:2px;display:block;line-height:1.4;}
+.scenario-btn .severity{
+  position:absolute;top:8px;right:8px;
+  font-size:8px;font-weight:600;padding:2px 6px;border-radius:10px;
+  font-family:'Share Tech Mono',monospace;
+}
+.sev-high{background:rgba(239,68,68,0.2);color:var(--red);}
+.sev-med{background:rgba(245,158,11,0.2);color:var(--amber);}
+
+/* ── DRIVER CONTROLS ────────────────────────────── */
+.control-group{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:14px;
+}
+.ctrl-label{
+  font-size:11px;color:var(--dim);
+  font-family:'Share Tech Mono',monospace;
+  display:flex;justify-content:space-between;
+  margin-bottom:8px;
+}
+.ctrl-label span{color:var(--teal);font-weight:600;}
+input[type=range]{
+  width:100%;height:4px;
+  -webkit-appearance:none;
+  background:var(--border);
+  border-radius:2px;outline:none;
+  cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:16px;height:16px;
+  border-radius:50%;
+  background:var(--orange);
+  box-shadow:0 0 8px rgba(232,88,26,0.6);
+  cursor:pointer;
+}
+
+.toggle-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 0;
+  border-bottom:1px solid var(--border);
+}
+.toggle-row:last-child{border-bottom:none;}
+.toggle-label{font-size:12px;color:var(--dim);}
+.toggle{
+  position:relative;width:36px;height:20px;
+  cursor:pointer;
+}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-track{
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  background:var(--border);border-radius:10px;
+  transition:0.3s;
+}
+.toggle input:checked + .toggle-track{background:var(--teal);}
+.toggle-thumb{
+  position:absolute;top:3px;left:3px;
+  width:14px;height:14px;
+  background:white;border-radius:50%;
+  transition:0.3s;
+}
+.toggle input:checked ~ .toggle-thumb{left:19px;}
+
+/* ── CENTER — road simulation ────────────────────── */
+.center-panel{
+  position:relative;
+  overflow:hidden;
+  background:var(--bg);
+}
+
+/* Road canvas */
+#roadCanvas{
+  width:100%;height:100%;
+  display:block;
+}
+
+/* Garuda overlay HUD */
+.garuda-hud{
+  position:absolute;top:16px;left:50%;transform:translateX(-50%);
+  background:rgba(10,20,40,0.9);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:10px 20px;
+  display:flex;align-items:center;gap:16px;
+  backdrop-filter:blur(8px);
+  font-family:'Share Tech Mono',monospace;
+}
+.hud-speed{font-size:28px;font-weight:700;color:var(--white);}
+.hud-unit{font-size:11px;color:var(--dim);margin-left:2px;}
+.hud-divider{width:1px;height:30px;background:var(--border);}
+.hud-stat{text-align:center;}
+.hud-stat-val{font-size:16px;font-weight:600;}
+.hud-stat-lbl{font-size:9px;color:var(--dim);margin-top:1px;}
+
+/* Alert overlay */
+.alert-overlay{
+  position:absolute;
+  bottom:80px;left:50%;transform:translateX(-50%);
+  min-width:340px;
+  background:rgba(10,16,30,0.96);
+  border-radius:14px;
+  overflow:hidden;
+  opacity:0;
+  transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  transform:translateX(-50%) translateY(20px);
+  pointer-events:none;
+}
+.alert-overlay.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+  pointer-events:auto;
+}
+.alert-accent{height:4px;width:100%;}
+.alert-body{padding:16px 20px;}
+.alert-source{
+  font-size:10px;font-family:'Share Tech Mono',monospace;
+  color:var(--dim);margin-bottom:6px;
+  display:flex;align-items:center;gap:6px;
+}
+.alert-source-dot{width:6px;height:6px;border-radius:50%;}
+.alert-text{
+  font-family:'Rajdhani',sans-serif;
+  font-size:20px;font-weight:600;
+  color:var(--white);
+  line-height:1.3;
+}
+.alert-sub{
+  font-size:12px;color:var(--dim);
+  margin-top:6px;
+  font-family:'Barlow',sans-serif;
+}
+.alert-dismiss{
+  margin-top:10px;
+  font-size:11px;color:var(--dim);
+  font-family:'Share Tech Mono',monospace;
+  cursor:pointer;
+  text-align:right;
+}
+
+/* Risk meter */
+.risk-meter{
+  position:absolute;bottom:16px;left:50%;transform:translateX(-50%);
+  background:rgba(10,20,40,0.9);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:10px 20px;
+  display:flex;align-items:center;gap:16px;
+  backdrop-filter:blur(8px);
+}
+.risk-label{
+  font-size:10px;color:var(--dim);
+  font-family:'Share Tech Mono',monospace;
+}
+.risk-bar{
+  width:200px;height:8px;
+  background:var(--border);
+  border-radius:4px;
+  overflow:hidden;
+  position:relative;
+}
+.risk-fill{
+  height:100%;
+  border-radius:4px;
+  transition:width 0.5s ease, background 0.5s ease;
+}
+.risk-val{
+  font-family:'Share Tech Mono',monospace;
+  font-size:14px;font-weight:600;
+  min-width:32px;text-align:right;
+}
+
+/* BLE indicator */
+.ble-indicator{
+  position:absolute;top:16px;right:16px;
+  background:rgba(10,20,40,0.9);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:8px 12px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  color:var(--dim);
+  backdrop-filter:blur(8px);
+}
+.ble-active{color:var(--teal);}
+.ble-count{font-size:16px;font-weight:700;color:var(--teal);display:block;text-align:center;}
+
+/* ── RIGHT PANEL — data stream ───────────────────── */
+.right-panel{
+  background:var(--panel);
+  border-left:1px solid var(--border);
+  overflow-y:auto;
+  display:flex;flex-direction:column;
+}
+.data-header{
+  padding:16px 16px 12px;
+  border-bottom:1px solid var(--border);
+  font-family:'Rajdhani',sans-serif;
+  font-size:11px;font-weight:600;
+  letter-spacing:3px;
+  color:var(--orange);
+  text-transform:uppercase;
+}
+.event-log{
+  flex:1;
+  padding:12px;
+  display:flex;flex-direction:column;gap:6px;
+  overflow-y:auto;
+}
+.event-item{
+  background:var(--card);
+  border-radius:8px;
+  padding:10px 12px;
+  border-left:3px solid var(--border);
+  animation:slideIn 0.3s ease;
+}
+@keyframes slideIn{from{opacity:0;transform:translateX(10px);}to{opacity:1;transform:translateX(0);}}
+.event-item.risk{border-left-color:var(--red);}
+.event-item.warning{border-left-color:var(--amber);}
+.event-item.info{border-left-color:var(--teal);}
+.event-item.safe{border-left-color:var(--green);}
+.event-type{
+  font-size:9px;font-family:'Share Tech Mono',monospace;
+  color:var(--dim);margin-bottom:3px;
+  display:flex;justify-content:space-between;
+}
+.event-msg{font-size:12px;color:var(--white);line-height:1.4;}
+.event-data{font-size:10px;color:var(--dim);margin-top:3px;font-family:'Share Tech Mono',monospace;}
+
+/* Stats strip at bottom of right panel */
+.stats-strip{
+  padding:14px;
+  border-top:1px solid var(--border);
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;
+}
+.stat-box{
+  background:var(--card);
+  border-radius:8px;
+  padding:10px;
+  text-align:center;
+}
+.stat-box .val{
+  font-family:'Rajdhani',sans-serif;
+  font-size:22px;font-weight:700;
+}
+.stat-box .lbl{font-size:9px;color:var(--dim);margin-top:2px;}
+
+/* ── INTRO SCREEN ────────────────────────────────── */
+.intro-screen{
+  position:fixed;inset:0;z-index:200;
+  background:var(--bg);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;
+  padding:40px;
+  transition:opacity 0.6s ease;
+}
+.intro-screen.hidden{opacity:0;pointer-events:none;}
+.intro-logo{
+  font-family:'Rajdhani',sans-serif;
+  font-size:64px;font-weight:700;
+  letter-spacing:6px;
+  margin-bottom:8px;
+}
+.intro-logo span{color:var(--orange);}
+.intro-sub{
+  font-size:18px;color:var(--dim);
+  font-weight:300;margin-bottom:8px;
+  font-family:'Barlow',sans-serif;
+}
+.intro-tagline{
+  font-family:'Rajdhani',sans-serif;
+  font-size:26px;font-weight:600;
+  color:var(--teal);
+  margin-bottom:40px;
+  font-style:italic;
+}
+.intro-chips{
+  display:flex;gap:12px;flex-wrap:wrap;justify-content:center;
+  margin-bottom:48px;
+}
+.chip{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:8px 18px;
+  font-size:13px;
+  color:var(--dim);
+}
+.chip strong{color:var(--white);}
+.start-btn{
+  background:var(--orange);
+  color:white;
+  border:none;
+  border-radius:12px;
+  padding:18px 52px;
+  font-family:'Rajdhani',sans-serif;
+  font-size:20px;font-weight:700;
+  letter-spacing:2px;
+  cursor:pointer;
+  transition:all 0.2s;
+  box-shadow:0 0 40px rgba(232,88,26,0.4);
+}
+.start-btn:hover{
+  background:#ff6b2b;
+  transform:translateY(-2px);
+  box-shadow:0 0 60px rgba(232,88,26,0.6);
+}
+.intro-note{margin-top:20px;font-size:12px;color:var(--dim);}
+
+/* ── DRIVER FACE MONITOR ─────────────────────────── */
+.face-monitor{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:10px;
+  overflow:hidden;
+}
+.face-monitor-header{
+  background:rgba(10,30,55,0.8);
+  padding:8px 12px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.face-monitor-title{font-size:10px;font-family:'Share Tech Mono',monospace;color:var(--dim);}
+#faceCanvas{width:100%;height:120px;background:#050D1A;display:block;}
+.face-stats{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  padding:8px;gap:4px;
+}
+.face-stat{text-align:center;padding:6px 4px;background:rgba(10,30,55,0.5);border-radius:6px;}
+.face-stat .fv{font-size:14px;font-weight:600;font-family:'Rajdhani',sans-serif;}
+.face-stat .fl{font-size:8px;color:var(--dim);margin-top:2px;}
+
+/* ── SCROLLBAR ───────────────────────────────────── */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+
+/* ── SIMULATE BTN ────────────────────────────────── */
+.sim-btn{
+  background:var(--orange);
+  border:none;border-radius:8px;
+  padding:12px;width:100%;
+  font-family:'Rajdhani',sans-serif;
+  font-size:16px;font-weight:700;
+  letter-spacing:1px;color:white;
+  cursor:pointer;
+  transition:all 0.2s;
+}
+.sim-btn:hover{background:#ff6b2b;transform:translateY(-1px);}
+.sim-btn:disabled{background:var(--border);color:var(--dim);cursor:not-allowed;transform:none;}
+
+.reset-btn{
+  background:transparent;
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:10px;width:100%;
+  font-family:'Rajdhani',sans-serif;
+  font-size:14px;font-weight:600;
+  color:var(--dim);cursor:pointer;
+  transition:all 0.2s;
+}
+.reset-btn:hover{border-color:var(--dim);color:var(--white);}
+
+.garuda-voice-indicator{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:12px;
+  display:flex;align-items:center;gap:12px;
+}
+.voice-waves{display:flex;align-items:center;gap:2px;height:24px;}
+.wave-bar{
+  width:3px;background:var(--teal);border-radius:2px;
+  animation:wave 0.8s ease-in-out infinite;
+}
+.wave-bar:nth-child(1){animation-delay:0s;height:6px;}
+.wave-bar:nth-child(2){animation-delay:0.1s;height:14px;}
+.wave-bar:nth-child(3){animation-delay:0.2s;height:20px;}
+.wave-bar:nth-child(4){animation-delay:0.3s;height:16px;}
+.wave-bar:nth-child(5){animation-delay:0.4s;height:8px;}
+@keyframes wave{0%,100%{transform:scaleY(0.4);}50%{transform:scaleY(1);}}
+.wave-bar.inactive{animation:none;height:4px;background:var(--border);}
+.voice-text{font-size:12px;color:var(--dim);font-style:italic;line-height:1.4;}
+.voice-text.speaking{color:var(--teal);}
+</style>
+</head>
+<body>
+
+<!-- INTRO SCREEN -->
+<div class="intro-screen" id="introScreen">
+  <div class="intro-logo">PROJECT <span>GARUDA</span></div>
+  <div class="intro-sub">AI-Powered Intelligent Co-Driver System</div>
+  <div class="intro-tagline">"The AI Friend Every Driver Deserves"</div>
+  <div class="intro-chips">
+    <div class="chip"><strong>Real-time</strong> accident prediction</div>
+    <div class="chip"><strong>Drowsiness</strong> detection</div>
+    <div class="chip"><strong>Offline BLE</strong> V2V mesh</div>
+    <div class="chip"><strong>AI voice</strong> co-driver</div>
+    <div class="chip"><strong>&lt;100ms</strong> edge inference</div>
+  </div>
+  <button class="start-btn" onclick="startDemo()">LAUNCH SIMULATION</button>
+  <div class="intro-note">Interactive investor demonstration — choose a scenario and watch Garuda respond in real time</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">PROJECT <span>GARUDA</span></div>
+  <div class="status-bar">
+    <div class="status-dot"></div>
+    <span>EDGE AI ACTIVE</span>
+    <span id="timeDisplay">00:00</span>
+    <span>·</span>
+    <span>NH-48 MUMBAI–PUNE</span>
+  </div>
+  <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--dim);">
+    INVESTOR DEMO v1.0
+  </div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="main">
+
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+    <div>
+      <div class="panel-title">Select Scenario</div>
+      <div class="scenario-grid" id="scenarioGrid">
+        <button class="scenario-btn active" onclick="selectScenario(0)" id="sc0">
+          <span class="icon">😴</span>
+          <span class="name">Night Fatigue</span>
+          <span class="desc">Driver drowsy at 3am on NH-48</span>
+          <span class="severity sev-high">HIGH RISK</span>
+        </button>
+        <button class="scenario-btn" onclick="selectScenario(1)" id="sc1">
+          <span class="icon">🌫</span>
+          <span class="name">Dense Fog</span>
+          <span class="desc">Visibility drops on highway</span>
+          <span class="severity sev-high">HIGH RISK</span>
+        </button>
+        <button class="scenario-btn" onclick="selectScenario(2)" id="sc2">
+          <span class="icon">🚛</span>
+          <span class="name">BLE Alert</span>
+          <span class="desc">Truck ahead brakes hard</span>
+          <span class="severity sev-med">MEDIUM</span>
+        </button>
+        <button class="scenario-btn" onclick="selectScenario(3)" id="sc3">
+          <span class="icon">🐄</span>
+          <span class="name">Animal Crossing</span>
+          <span class="desc">Cattle on road detected</span>
+          <span class="severity sev-med">MEDIUM</span>
+        </button>
+        <button class="scenario-btn" onclick="selectScenario(4)" id="sc4">
+          <span class="icon">💥</span>
+          <span class="name">Emergency SOS</span>
+          <span class="desc">Sudden collision detected</span>
+          <span class="severity sev-high">CRITICAL</span>
+        </button>
+        <button class="scenario-btn" onclick="selectScenario(5)" id="sc5">
+          <span class="icon">✅</span>
+          <span class="name">Safe Driving</span>
+          <span class="desc">Clean run, Garuda monitors</span>
+          <span class="severity sev-med" style="background:rgba(34,197,94,0.2);color:#22C55E;">SAFE</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Driver controls -->
+    <div class="control-group">
+      <div class="panel-title" style="margin-bottom:12px;">Driver Parameters</div>
+      <div class="ctrl-label">Vehicle Speed <span id="speedVal">72 km/h</span></div>
+      <input type="range" id="speedSlider" min="0" max="120" value="72" oninput="updateSpeed(this.value)"/>
+      <div style="height:12px;"></div>
+      <div class="ctrl-label">Drowsiness Level (EAR) <span id="drowsyVal">Normal</span></div>
+      <input type="range" id="drowsySlider" min="0" max="100" value="20" oninput="updateDrowsy(this.value)"/>
+      <div style="height:12px;"></div>
+      <div class="ctrl-label">Following Distance <span id="distVal">45m</span></div>
+      <input type="range" id="distSlider" min="5" max="100" value="45" oninput="updateDist(this.value)"/>
+    </div>
+
+    <!-- Toggles -->
+    <div class="control-group">
+      <div class="panel-title" style="margin-bottom:10px;">System Settings</div>
+      <div class="toggle-row">
+        <span class="toggle-label">Garuda AI Active</span>
+        <label class="toggle">
+          <input type="checkbox" id="garudaToggle" checked onchange="toggleGaruda()"/>
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">BLE Mesh Network</span>
+        <label class="toggle">
+          <input type="checkbox" id="bleToggle" checked/>
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">Hindi Voice Alerts</span>
+        <label class="toggle">
+          <input type="checkbox" id="voiceToggle" checked/>
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">Night Mode (3am)</span>
+        <label class="toggle">
+          <input type="checkbox" id="nightToggle" onchange="toggleNight()"/>
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Driver face monitor -->
+    <div class="face-monitor">
+      <div class="face-monitor-header">
+        <span class="face-monitor-title">DRIVER CAMERA FEED</span>
+        <span style="font-size:9px;color:var(--green);font-family:'Share Tech Mono',monospace;">● LIVE</span>
+      </div>
+      <canvas id="faceCanvas" width="340" height="120"></canvas>
+      <div class="face-stats">
+        <div class="face-stat">
+          <div class="fv" id="earVal" style="color:var(--green);">0.32</div>
+          <div class="fl">EAR INDEX</div>
+        </div>
+        <div class="face-stat">
+          <div class="fv" id="blinkVal" style="color:var(--teal);">12/min</div>
+          <div class="fl">BLINK RATE</div>
+        </div>
+        <div class="face-stat">
+          <div class="fv" id="headVal" style="color:var(--white);">0°</div>
+          <div class="fl">HEAD TILT</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Garuda voice -->
+    <div class="garuda-voice-indicator" id="voiceIndicator">
+      <div class="voice-waves">
+        <div class="wave-bar inactive" id="w1"></div>
+        <div class="wave-bar inactive" id="w2"></div>
+        <div class="wave-bar inactive" id="w3"></div>
+        <div class="wave-bar inactive" id="w4"></div>
+        <div class="wave-bar inactive" id="w5"></div>
+      </div>
+      <div class="voice-text" id="voiceText">Garuda is monitoring your drive...</div>
+    </div>
+
+    <button class="sim-btn" id="simBtn" onclick="runSimulation()">▶  RUN SIMULATION</button>
+    <button class="reset-btn" onclick="resetSimulation()">↺  Reset</button>
+  </div>
+
+  <!-- CENTER — ROAD CANVAS -->
+  <div class="center-panel">
+    <canvas id="roadCanvas"></canvas>
+
+    <!-- HUD -->
+    <div class="garuda-hud">
+      <div>
+        <span class="hud-speed" id="hudSpeed">72</span>
+        <span class="hud-unit">km/h</span>
+      </div>
+      <div class="hud-divider"></div>
+      <div class="hud-stat">
+        <div class="hud-stat-val" id="hudRisk" style="color:var(--green);">LOW</div>
+        <div class="hud-stat-lbl">RISK LEVEL</div>
+      </div>
+      <div class="hud-divider"></div>
+      <div class="hud-stat">
+        <div class="hud-stat-val" id="hudDist" style="color:var(--teal);">45m</div>
+        <div class="hud-stat-lbl">FOLLOWING DIST</div>
+      </div>
+      <div class="hud-divider"></div>
+      <div class="hud-stat">
+        <div class="hud-stat-val" id="hudTime" style="color:var(--dim);">03:14</div>
+        <div class="hud-stat-lbl">LOCAL TIME</div>
+      </div>
+    </div>
+
+    <!-- Alert overlay -->
+    <div class="alert-overlay" id="alertOverlay">
+      <div class="alert-accent" id="alertAccent"></div>
+      <div class="alert-body">
+        <div class="alert-source">
+          <div class="alert-source-dot" id="alertDot"></div>
+          <span id="alertSource">GARUDA AI ENGINE</span>
+          <span style="margin-left:auto;" id="alertTime">03:14:22</span>
+        </div>
+        <div class="alert-text" id="alertText"></div>
+        <div class="alert-sub" id="alertSub"></div>
+        <div class="alert-dismiss" onclick="dismissAlert()">[ TAP TO DISMISS ]</div>
+      </div>
+    </div>
+
+    <!-- Risk meter -->
+    <div class="risk-meter">
+      <div class="risk-label">RISK SCORE</div>
+      <div class="risk-bar">
+        <div class="risk-fill" id="riskFill" style="width:15%;background:var(--green);"></div>
+      </div>
+      <div class="risk-val" id="riskVal" style="color:var(--green);">15</div>
+      <div class="risk-label">/ 100</div>
+    </div>
+
+    <!-- BLE indicator -->
+    <div class="ble-indicator">
+      <div style="font-size:9px;color:var(--dim);margin-bottom:2px;">BLE MESH</div>
+      <div class="ble-count" id="bleCount">3</div>
+      <div style="font-size:9px;" class="ble-active">vehicles nearby</div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL — DATA STREAM -->
+  <div class="right-panel">
+    <div class="data-header">AI Data Stream</div>
+    <div class="event-log" id="eventLog">
+      <div class="event-item info">
+        <div class="event-type"><span>SYSTEM</span><span>00:00</span></div>
+        <div class="event-msg">Garuda AI engine initialized</div>
+        <div class="event-data">MODE: EDGE_INFERENCE · LAT: &lt;100ms</div>
+      </div>
+      <div class="event-item safe">
+        <div class="event-type"><span>BLE_MESH</span><span>00:01</span></div>
+        <div class="event-msg">3 vehicles detected in proximity mesh</div>
+        <div class="event-data">RANGE: 300m · PROTOCOL: BLE 5.0</div>
+      </div>
+      <div class="event-item info">
+        <div class="event-type"><span>DRIVER_CAM</span><span>00:02</span></div>
+        <div class="event-msg">Face tracking active — EAR: 0.32 (Normal)</div>
+        <div class="event-data">BLINK_RATE: 12/min · HEAD_TILT: 0°</div>
+      </div>
+    </div>
+    <div class="stats-strip">
+      <div class="stat-box">
+        <div class="val" id="statAlerts" style="color:var(--orange);">0</div>
+        <div class="lbl">ALERTS ISSUED</div>
+      </div>
+      <div class="stat-box">
+        <div class="val" id="statDrowsy" style="color:var(--amber);">0</div>
+        <div class="lbl">DROWSY EVENTS</div>
+      </div>
+      <div class="stat-box">
+        <div class="val" id="statBle" style="color:var(--teal);">3</div>
+        <div class="lbl">BLE CONTACTS</div>
+      </div>
+      <div class="stat-box">
+        <div class="val" id="statSaved" style="color:var(--green);">0</div>
+        <div class="lbl">RISKS PREVENTED</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════
+let state = {
+  speed: 72, drowsy: 20, distance: 45,
+  riskScore: 15, scenario: 0,
+  garudaOn: true, bleOn: true, voiceOn: true, nightMode: false,
+  simRunning: false, alertCount: 0, drowsyCount: 0,
+  risksPrevented: 0, simTime: 0, elapsed: 0
+};
+
+let roadOffset = 0, roadObjects = [], bleVehicles = [];
+let animFrame, simTimeout;
+let faceT = 0;
+
+// ═══════════════════════════════════════════════════
+// SCENARIOS
+// ═══════════════════════════════════════════════════
+const SCENARIOS = [
+  {
+    name:"Night Fatigue",
+    steps:[
+      {t:1000, action:"setDrowsy", val:60, msg:"Driver yawning detected — EAR dropping", type:"warning"},
+      {t:2500, action:"setDrowsy", val:82, msg:"⚠ Critical drowsiness — EAR below threshold", type:"risk"},
+      {t:3000, action:"alert", text:"Bhaiya, aankh band ho rahi hai —\nRuko, chai pi lo!", sub:"Drowsiness detected · EAR: 0.18 · Rest stop 2.3 km ahead", color:"#F59E0B", source:"DROWSINESS DETECTOR"},
+      {t:5000, action:"setDrowsy", val:25, msg:"Driver responded — speed reduced", type:"safe"},
+      {t:5500, action:"prevented", msg:"Risk prevented: potential fatigue accident avoided"},
+    ]
+  },
+  {
+    name:"Dense Fog",
+    steps:[
+      {t:800,  action:"setFog",   val:true,  msg:"Visibility degrading — fog patch detected ahead", type:"warning"},
+      {t:1500, action:"setSpeed", val:85,    msg:"Vehicle speed too high for current visibility", type:"warning"},
+      {t:2200, action:"alert",    text:"Yaar, aage kaafi fog hai —\nSpeed 50 se kam rakhna!", sub:"Visibility: <50m · 4 vehicles slowed ahead (BLE mesh data) · Reduce speed now", color:"#94A3B8", source:"ROUTE INTELLIGENCE"},
+      {t:4000, action:"setSpeed", val:48,    msg:"Driver reduced speed — safe for conditions", type:"safe"},
+      {t:4500, action:"prevented", msg:"Risk prevented: fog collision avoided"},
+    ]
+  },
+  {
+    name:"BLE Alert",
+    steps:[
+      {t:600,  action:"bleAlert", msg:"BLE signal: truck 400m ahead braking hard", type:"warning"},
+      {t:1200, action:"setDist",  val:18,    msg:"Following distance critical — closing fast", type:"risk"},
+      {t:1800, action:"alert",    text:"Saamne truck brake maar raha hai —\nAbhi slow karo!", sub:"BLE mesh alert · Truck ID: GJ-7T-4421 · Distance: 18m · TTC: 2.1s", color:"#EF4444", source:"BLE V2V MESH (OFFLINE)"},
+      {t:3200, action:"setDist",  val:55,    msg:"Driver braked — safe distance restored", type:"safe"},
+      {t:3800, action:"prevented", msg:"Risk prevented: rear-end collision avoided"},
+    ]
+  },
+  {
+    name:"Animal Crossing",
+    steps:[
+      {t:700,  action:"setSpeed", val:78,    msg:"Object detection: large animal on roadway", type:"warning"},
+      {t:1400, action:"alert",    text:"Aage sadak pe gaay hai —\nGaadi rok lo!", sub:"Object: Cattle · Size: Large · Lane: Center · Distance: 35m · Collision risk HIGH", color:"#F59E0B", source:"FRONT CAMERA · YOLOV8-NANO"},
+      {t:2800, action:"setSpeed", val:22,    msg:"Driver braked hard — animal clearing road", type:"safe"},
+      {t:3500, action:"prevented", msg:"Risk prevented: animal strike avoided"},
+    ]
+  },
+  {
+    name:"Emergency SOS",
+    steps:[
+      {t:400,  action:"impact",   msg:"Sudden deceleration detected — possible impact", type:"risk"},
+      {t:800,  action:"alert",    text:"CRASH DETECTED\nSOS broadcast activated!", sub:"GPS: 18.9220°N, 72.8347°E · Speed: 0 km/h · Emergency services notified · Family contacts alerted", color:"#EF4444", source:"EMERGENCY RESPONSE ENGINE"},
+      {t:1200, action:"sos",      msg:"SOS broadcast: GPS location sent to 112 + emergency contacts", type:"risk"},
+      {t:2000, action:"addLog",   text:"Location transmitted to emergency services", type:"risk"},
+      {t:2800, action:"addLog",   text:"Family contact SMS sent: Ramesh bhai ka accident hua — location shared", type:"warning"},
+    ]
+  },
+  {
+    name:"Safe Driving",
+    steps:[
+      {t:800,  action:"addLog",   text:"Clean driving pattern — no anomalies detected", type:"safe"},
+      {t:1600, action:"addLog",   text:"EAR nominal: 0.31 · Speed: 68 km/h · Distance: 52m", type:"info"},
+      {t:2400, action:"speak",    text:"Bahut achhi drive chal rahi hai, Ramesh bhai! 45 km aur baaki hai.", type:"safe"},
+      {t:3200, action:"addLog",   text:"Route update: rest stop recommended in 30 min (fatigue prevention)", type:"info"},
+      {t:4000, action:"tripSafe", msg:"Trip safety score: 9.2/10 — Excellent driving!"},
+    ]
+  }
+];
+
+// ═══════════════════════════════════════════════════
+// CANVAS SETUP
+// ═══════════════════════════════════════════════════
+const canvas = document.getElementById('roadCanvas');
+const ctx = canvas.getContext('2d');
+const faceCanvas = document.getElementById('faceCanvas');
+const faceCtx = faceCanvas.getContext('2d');
+
+function resizeCanvas(){
+  const container = canvas.parentElement;
+  canvas.width = container.clientWidth;
+  canvas.height = container.clientHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+// ═══════════════════════════════════════════════════
+// ROAD RENDERING
+// ═══════════════════════════════════════════════════
+let fogLevel = 0, isCrash = false, crashShake = 0;
+
+function drawRoad(){
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  // Sky
+  const skyGrad = ctx.createLinearGradient(0,0,0,H*0.45);
+  if(state.nightMode || state.scenario === 0){
+    skyGrad.addColorStop(0,'#01050F');
+    skyGrad.addColorStop(1,'#050E1F');
+  } else {
+    skyGrad.addColorStop(0,'#1A3A6E');
+    skyGrad.addColorStop(1,'#2A5A9E');
+  }
+  ctx.fillStyle = skyGrad;
+  ctx.fillRect(0,0,W,H*0.45);
+
+  // Stars (night mode)
+  if(state.nightMode || state.scenario === 0){
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    for(let i=0;i<80;i++){
+      const sx = (i*173)%W, sy = (i*97)%(H*0.4);
+      ctx.beginPath();ctx.arc(sx,sy,0.8,0,Math.PI*2);ctx.fill();
+    }
+  }
+
+  // Horizon glow
+  const hGrad = ctx.createRadialGradient(W/2, H*0.44, 0, W/2, H*0.44, W*0.6);
+  hGrad.addColorStop(0,'rgba(232,88,26,0.15)');
+  hGrad.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle = hGrad;
+  ctx.fillRect(0,0,W,H);
+
+  // Road surface
+  const vp = {x:W/2, y:H*0.42};
+  const roadGrad = ctx.createLinearGradient(0,H*0.42,0,H);
+  roadGrad.addColorStop(0,'#1A1A2E');
+  roadGrad.addColorStop(0.5,'#0F0F1A');
+  roadGrad.addColorStop(1,'#050510');
+  ctx.fillStyle = roadGrad;
+  ctx.beginPath();
+  ctx.moveTo(vp.x-30,vp.y);
+  ctx.lineTo(W*0.02,H);
+  ctx.lineTo(W*0.98,H);
+  ctx.lineTo(vp.x+30,vp.y);
+  ctx.closePath();ctx.fill();
+
+  // Road edges
+  ctx.strokeStyle='rgba(200,180,100,0.5)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(vp.x-30,vp.y);ctx.lineTo(W*0.02,H);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(vp.x+30,vp.y);ctx.lineTo(W*0.98,H);ctx.stroke();
+
+  // Center dashes
+  const dashCount = 12;
+  for(let i=0;i<dashCount;i++){
+    const t = ((i/dashCount) + (roadOffset/500) % 1);
+    const prog = Math.pow(t, 1.8);
+    const y = vp.y + (H - vp.y) * prog;
+    const x = vp.x;
+    const dashW = 2 + prog * 8;
+    const dashH = 8 + prog * 40;
+    const alpha = Math.min(1, prog * 2);
+    ctx.fillStyle = `rgba(255,255,100,${alpha * 0.6})`;
+    ctx.fillRect(x - dashW/2, y - dashH/2, dashW, dashH);
+  }
+
+  // Road objects (trucks ahead, animals, etc.)
+  roadObjects.forEach(obj => {
+    const prog = obj.progress;
+    const y = vp.y + (H - vp.y) * Math.pow(prog, 1.8);
+    const x = vp.x + (obj.lane === 'left' ? -1 : 1) * (prog * W * 0.3);
+    const scale = 0.1 + prog * 1.2;
+    drawRoadObject(obj.type, x, y, scale, obj.color);
+  });
+
+  // Fog overlay
+  if(fogLevel > 0 || state.scenario === 1){
+    const fl = state.scenario === 1 && state.simRunning ? Math.min(fogLevel + 0.3, 0.75) : fogLevel;
+    const fogGrad = ctx.createLinearGradient(0,H*0.3,0,H);
+    fogGrad.addColorStop(0,`rgba(180,200,220,${fl})`);
+    fogGrad.addColorStop(1,`rgba(180,200,220,${fl * 0.3})`);
+    ctx.fillStyle = fogGrad;
+    ctx.fillRect(0,0,W,H);
+  }
+
+  // Headlights (night)
+  if(state.nightMode || state.scenario === 0 || state.scenario === 4){
+    const lgGrad = ctx.createRadialGradient(W/2-60,H*0.8,0,W/2-60,H*0.8,H*0.7);
+    lgGrad.addColorStop(0,'rgba(255,250,200,0.12)');
+    lgGrad.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle = lgGrad;ctx.fillRect(0,0,W,H);
+    const rgGrad = ctx.createRadialGradient(W/2+60,H*0.8,0,W/2+60,H*0.8,H*0.7);
+    rgGrad.addColorStop(0,'rgba(255,250,200,0.12)');
+    rgGrad.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle = rgGrad;ctx.fillRect(0,0,W,H);
+  }
+
+  // Crash effect
+  if(crashShake > 0){
+    ctx.fillStyle = `rgba(239,68,68,${crashShake * 0.3})`;
+    ctx.fillRect(0,0,W,H);
+    crashShake -= 0.05;
+  }
+
+  // BLE vehicle dots
+  if(state.bleOn){
+    bleVehicles.forEach(v => {
+      const vx = vp.x + v.offsetX * W * 0.3;
+      const prog2 = Math.max(0.1, Math.min(0.9, v.progress));
+      const vy = vp.y + (H - vp.y) * Math.pow(prog2, 1.8);
+      ctx.fillStyle = 'rgba(10,158,138,0.8)';
+      ctx.beginPath();ctx.arc(vx,vy,4+prog2*8,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle = 'rgba(10,158,138,0.4)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();ctx.arc(vx,vy,(4+prog2*8)*2,0,Math.PI*2);ctx.stroke();
+      ctx.fillStyle = 'rgba(10,158,138,0.9)';
+      ctx.font = `${8+prog2*4}px 'Share Tech Mono'`;
+      ctx.fillText('BLE', vx+8, vy-6);
+    });
+  }
+}
+
+function drawRoadObject(type, x, y, scale, color){
+  ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);
+  if(type === 'truck'){
+    ctx.fillStyle = color||'#4A5568';
+    ctx.fillRect(-20,-30,40,35);
+    ctx.fillStyle='#2D3748';
+    ctx.fillRect(-22,-5,44,12);
+    ctx.fillStyle='rgba(255,180,50,0.8)';
+    ctx.fillRect(-18,-34,8,6);
+    ctx.fillRect(10,-34,8,6);
+    ctx.fillStyle='rgba(255,50,50,0.8)';
+    ctx.fillRect(-20,5,10,5);
+    ctx.fillRect(10,5,10,5);
+  } else if(type === 'animal'){
+    ctx.fillStyle='#8B6914';
+    ctx.beginPath();ctx.ellipse(0,0,16,10,0,0,Math.PI*2);ctx.fill();
+    ctx.fillRect(-8,-18,16,20);
+    ctx.fillRect(-14,8,5,12);ctx.fillRect(-4,8,5,12);
+    ctx.fillRect(4,8,5,12);ctx.fillRect(12,8,5,12);
+    ctx.fillStyle='#6B4F10';
+    ctx.beginPath();ctx.ellipse(0,-24,8,6,0,0,Math.PI*2);ctx.fill();
+  }
+  ctx.restore();
+}
+
+// ═══════════════════════════════════════════════════
+// FACE CANVAS
+// ═══════════════════════════════════════════════════
+function drawFace(){
+  const W = faceCanvas.width = faceCanvas.offsetWidth;
+  const H = 120;
+  faceCtx.clearRect(0,0,W,H);
+  faceCtx.fillStyle = '#050D1A';
+  faceCtx.fillRect(0,0,W,H);
+
+  faceT += 0.04;
+  const drowsy = state.drowsy / 100;
+  const earVal = Math.max(0.12, 0.35 - drowsy * 0.25 + Math.sin(faceT*3)*0.02);
+  const headTilt = drowsy > 0.6 ? Math.sin(faceT*0.8)*15 : Math.sin(faceT*2)*2;
+
+  faceCtx.save();
+  faceCtx.translate(W/2, H/2 + 5);
+  faceCtx.rotate(headTilt * Math.PI/180);
+
+  // Scan lines overlay
+  faceCtx.strokeStyle = 'rgba(10,158,138,0.08)';
+  faceCtx.lineWidth = 1;
+  for(let i=0;i<H;i+=4){
+    faceCtx.beginPath();faceCtx.moveTo(-W/2,i-H/2);faceCtx.lineTo(W/2,i-H/2);faceCtx.stroke();
+  }
+
+  // Face outline
+  const faceColor = drowsy > 0.6 ? 'rgba(245,158,11,0.7)' : 'rgba(10,158,138,0.7)';
+  faceCtx.strokeStyle = faceColor;
+  faceCtx.lineWidth = 1.5;
+  faceCtx.beginPath();faceCtx.ellipse(0,0,30,38,0,0,Math.PI*2);faceCtx.stroke();
+
+  // Eyes
+  const eyeH = earVal * 18;
+  faceCtx.fillStyle = drowsy > 0.7 ? 'rgba(239,68,68,0.8)' : 'rgba(10,158,138,0.8)';
+
+  // Left eye
+  faceCtx.beginPath();faceCtx.ellipse(-12,-8,7,eyeH,0,0,Math.PI*2);faceCtx.fill();
+  // Right eye
+  faceCtx.beginPath();faceCtx.ellipse(12,-8,7,eyeH,0,0,Math.PI*2);faceCtx.fill();
+
+  // Nose bridge tracking points
+  faceCtx.fillStyle = 'rgba(10,158,138,0.5)';
+  [[-8,-2],[0,2],[8,-2],[-5,8],[5,8]].forEach(([px,py])=>{
+    faceCtx.beginPath();faceCtx.arc(px,py,1.5,0,Math.PI*2);faceCtx.fill();
+  });
+
+  // Mesh lines
+  faceCtx.strokeStyle = 'rgba(10,158,138,0.2)';
+  faceCtx.lineWidth = 0.5;
+  faceCtx.beginPath();faceCtx.moveTo(-30,0);faceCtx.lineTo(30,0);faceCtx.stroke();
+  faceCtx.beginPath();faceCtx.moveTo(0,-38);faceCtx.lineTo(0,38);faceCtx.stroke();
+
+  // Warning overlay
+  if(drowsy > 0.6){
+    faceCtx.strokeStyle = 'rgba(239,68,68,0.5)';
+    faceCtx.lineWidth = 2;
+    faceCtx.setLineDash([4,4]);
+    faceCtx.beginPath();faceCtx.ellipse(0,0,34,42,0,0,Math.PI*2);faceCtx.stroke();
+    faceCtx.setLineDash([]);
+  }
+
+  faceCtx.restore();
+
+  // EAR overlay text
+  faceCtx.fillStyle = faceColor;
+  faceCtx.font = "9px 'Share Tech Mono'";
+  faceCtx.fillText(`EAR: ${earVal.toFixed(2)}`, 8, H-8);
+
+  // Update face stats
+  document.getElementById('earVal').textContent = earVal.toFixed(2);
+  document.getElementById('earVal').style.color = earVal < 0.25 ? 'var(--red)' : earVal < 0.28 ? 'var(--amber)' : 'var(--green)';
+  const blinkRate = Math.round(12 - drowsy * 6 + Math.random()*2);
+  document.getElementById('blinkVal').textContent = blinkRate + '/min';
+  document.getElementById('headVal').textContent = Math.round(Math.abs(headTilt)) + '°';
+}
+
+// ═══════════════════════════════════════════════════
+// ANIMATION LOOP
+// ═══════════════════════════════════════════════════
+function animate(){
+  roadOffset += state.speed * 0.08;
+  roadObjects.forEach(o => {
+    o.progress += state.speed * 0.0005;
+    if(o.progress > 1.2) o.progress = 0;
+  });
+  bleVehicles.forEach(v => {
+    v.progress += 0.001;
+    if(v.progress > 1.0) v.progress = 0.1;
+  });
+  drawRoad();
+  drawFace();
+  updateRiskMeter();
+  animFrame = requestAnimationFrame(animate);
+}
+
+function updateRiskMeter(){
+  const risk = calculateRisk();
+  state.riskScore = risk;
+  const fill = document.getElementById('riskFill');
+  const val = document.getElementById('riskVal');
+  const hudRisk = document.getElementById('hudRisk');
+  fill.style.width = risk + '%';
+  val.textContent = risk;
+  val.style.color = riskColor(risk);
+  fill.style.background = riskColor(risk);
+  if(risk < 30){hudRisk.textContent='LOW';hudRisk.style.color='var(--green)';}
+  else if(risk < 60){hudRisk.textContent='MEDIUM';hudRisk.style.color='var(--amber)';}
+  else if(risk < 80){hudRisk.textContent='HIGH';hudRisk.style.color='var(--red)';}
+  else{hudRisk.textContent='CRITICAL';hudRisk.style.color='var(--red)';}
+  document.getElementById('hudSpeed').textContent = state.speed;
+  document.getElementById('hudDist').textContent = state.distance + 'm';
+}
+
+function calculateRisk(){
+  let r = 10;
+  r += (state.drowsy / 100) * 40;
+  r += Math.max(0, (state.speed - 80) / 40) * 25;
+  r += Math.max(0, (30 - state.distance) / 30) * 30;
+  if(state.scenario === 1) r += 15;
+  if(state.scenario === 4) r = 95;
+  return Math.min(100, Math.round(r));
+}
+
+function riskColor(r){
+  if(r<30) return 'var(--green)';
+  if(r<60) return 'var(--amber)';
+  return 'var(--red)';
+}
+
+// ═══════════════════════════════════════════════════
+// SIMULATION ENGINE
+// ═══════════════════════════════════════════════════
+function runSimulation(){
+  if(state.simRunning) return;
+  state.simRunning = true;
+  document.getElementById('simBtn').disabled = true;
+
+  const scenario = SCENARIOS[state.scenario];
+  addLog(`Simulating: ${scenario.name}`, 'info', 'GARUDA', 'SIM_START');
+
+  scenario.steps.forEach((step, i) => {
+    simTimeout = setTimeout(() => executeStep(step), step.t);
+  });
+
+  const totalTime = Math.max(...scenario.steps.map(s=>s.t)) + 1500;
+  setTimeout(() => {
+    state.simRunning = false;
+    document.getElementById('simBtn').disabled = false;
+  }, totalTime);
+}
+
+function executeStep(step){
+  if(!state.garudaOn && step.action !== 'impact') return;
+
+  switch(step.action){
+    case 'setDrowsy':
+      state.drowsy = step.val;
+      document.getElementById('drowsySlider').value = step.val;
+      updateDrowsy(step.val);
+      addLog(step.msg, step.type, 'DRIVER_CAM');
+      state.drowsyCount += step.val > 60 ? 1 : 0;
+      document.getElementById('statDrowsy').textContent = state.drowsyCount;
+      break;
+    case 'setSpeed':
+      state.speed = step.val;
+      document.getElementById('speedSlider').value = step.val;
+      updateSpeed(step.val);
+      addLog(step.msg, step.type, 'VEHICLE_SENSOR');
+      break;
+    case 'setDist':
+      state.distance = step.val;
+      document.getElementById('distSlider').value = step.val;
+      updateDist(step.val);
+      addLog(step.msg, step.type, 'RADAR');
+      break;
+    case 'setFog':
+      fogLevel = 0.6;
+      addLog(step.msg, step.type, 'ENVIRONMENT');
+      break;
+    case 'bleAlert':
+      addLog(step.msg, step.type, 'BLE_MESH');
+      document.getElementById('bleCount').textContent = '5';
+      document.getElementById('statBle').textContent = '5';
+      break;
+    case 'alert':
+      showAlert(step.text, step.sub, step.color, step.source);
+      addLog('🔊 Voice alert issued to driver', 'warning', 'AI_CODRIVER');
+      state.alertCount++;
+      document.getElementById('statAlerts').textContent = state.alertCount;
+      speakGaruda(step.text.replace('\n',' '));
+      break;
+    case 'speak':
+      speakGaruda(step.text);
+      addLog(step.text, step.type, 'AI_VOICE');
+      break;
+    case 'prevented':
+      state.risksPrevented++;
+      document.getElementById('statSaved').textContent = state.risksPrevented;
+      addLog('✓ ' + step.msg, 'safe', 'RISK_ENGINE');
+      break;
+    case 'impact':
+      crashShake = 1.0;
+      addLog(step.msg, step.type, 'IMPACT_SENSOR');
+      state.speed = 0;
+      document.getElementById('speedSlider').value = 0;
+      updateSpeed(0);
+      break;
+    case 'sos':
+      addLog(step.msg, step.type, 'SOS_ENGINE');
+      break;
+    case 'tripSafe':
+      addLog('🏆 ' + step.msg, 'safe', 'TRIP_SUMMARY');
+      showAlert("Bahut achhi drive rahi,\nRamesh bhai! Score: 9.2/10", "Safe trip completed · No incidents · Driver rest recommended in 45 min", "#22C55E", "TRIP COMPLETE");
+      break;
+    case 'addLog':
+      addLog(step.text, step.type, 'GARUDA');
+      break;
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// UI HELPERS
+// ═══════════════════════════════════════════════════
+function showAlert(text, sub, color, source){
+  const overlay = document.getElementById('alertOverlay');
+  document.getElementById('alertAccent').style.background = color;
+  document.getElementById('alertDot').style.background = color;
+  document.getElementById('alertSource').textContent = source;
+  document.getElementById('alertText').textContent = text;
+  document.getElementById('alertSub').textContent = sub;
+  document.getElementById('alertTime').textContent = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  overlay.classList.add('show');
+  setTimeout(()=>overlay.classList.remove('show'), 6000);
+}
+function dismissAlert(){
+  document.getElementById('alertOverlay').classList.remove('show');
+}
+
+let logTimer = 0;
+function addLog(msg, type, source, extra){
+  logTimer++;
+  const log = document.getElementById('eventLog');
+  const item = document.createElement('div');
+  item.className = `event-item ${type}`;
+  const ts = String(Math.floor(logTimer/60)).padStart(2,'0') + ':' + String(logTimer%60).padStart(2,'0');
+  item.innerHTML = `
+    <div class="event-type"><span>${source||'GARUDA'}</span><span>${ts}</span></div>
+    <div class="event-msg">${msg}</div>
+    ${extra?`<div class="event-data">${extra}</div>`:''}
+  `;
+  log.insertBefore(item, log.firstChild);
+  if(log.children.length > 20) log.removeChild(log.lastChild);
+}
+
+function speakGaruda(text){
+  const waves = [1,2,3,4,5].map(i=>document.getElementById('w'+i));
+  const voiceText = document.getElementById('voiceText');
+  waves.forEach(w=>w.classList.remove('inactive'));
+  voiceText.textContent = text;
+  voiceText.classList.add('speaking');
+  if(state.voiceOn && 'speechSynthesis' in window){
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'hi-IN';
+    utterance.rate = 0.9;
+    window.speechSynthesis.speak(utterance);
+  }
+  setTimeout(()=>{
+    waves.forEach(w=>w.classList.add('inactive'));
+    voiceText.textContent = 'Garuda is monitoring your drive...';
+    voiceText.classList.remove('speaking');
+  }, 4000);
+}
+
+// ═══════════════════════════════════════════════════
+// CONTROLS
+// ═══════════════════════════════════════════════════
+function updateSpeed(v){
+  state.speed = parseInt(v);
+  document.getElementById('speedVal').textContent = v + ' km/h';
+  document.getElementById('hudSpeed').textContent = v;
+  document.getElementById('hudDist').textContent = state.distance + 'm';
+}
+function updateDrowsy(v){
+  state.drowsy = parseInt(v);
+  const label = v < 30 ? 'Normal' : v < 60 ? 'Moderate' : v < 80 ? 'High' : 'Critical';
+  document.getElementById('drowsyVal').textContent = label;
+  document.getElementById('drowsyVal').style.color = v < 30 ? 'var(--teal)' : v < 60 ? 'var(--amber)' : 'var(--red)';
+}
+function updateDist(v){
+  state.distance = parseInt(v);
+  document.getElementById('distVal').textContent = v + 'm';
+  document.getElementById('hudDist').textContent = v + 'm';
+}
+function toggleGaruda(){
+  state.garudaOn = document.getElementById('garudaToggle').checked;
+  addLog(state.garudaOn ? 'Garuda AI re-activated' : '⚠ Garuda AI deactivated — driver unprotected!',
+         state.garudaOn ? 'safe' : 'risk', 'SYSTEM');
+}
+function toggleNight(){
+  state.nightMode = document.getElementById('nightToggle').checked;
+}
+function selectScenario(n){
+  state.scenario = n;
+  document.querySelectorAll('.scenario-btn').forEach((b,i)=>b.classList.toggle('active',i===n));
+  resetSimulation();
+  addLog(`Scenario loaded: ${SCENARIOS[n].name}`, 'info', 'SIMULATION');
+  if(n === 1) fogLevel = 0; else fogLevel = 0;
+  if(n === 0 || n === 4) document.getElementById('nightToggle').checked = true, state.nightMode = true;
+  else document.getElementById('nightToggle').checked = false, state.nightMode = false;
+}
+function resetSimulation(){
+  state.simRunning = false;
+  document.getElementById('simBtn').disabled = false;
+  document.getElementById('alertOverlay').classList.remove('show');
+  fogLevel = 0; crashShake = 0;
+  updateSpeed(72); updateDrowsy(20); updateDist(45);
+  document.getElementById('speedSlider').value = 72;
+  document.getElementById('drowsySlider').value = 20;
+  document.getElementById('distSlider').value = 45;
+}
+
+// ═══════════════════════════════════════════════════
+// INIT ROAD OBJECTS
+// ═══════════════════════════════════════════════════
+function initRoadObjects(){
+  roadObjects = [
+    {type:'truck', progress:0.45, lane:'left', color:'#2D3748'},
+    {type:'truck', progress:0.25, lane:'right', color:'#374151'},
+  ];
+  bleVehicles = [
+    {progress:0.3, offsetX:-0.4},
+    {progress:0.5, offsetX:0.5},
+    {progress:0.15, offsetX:-0.6},
+  ];
+}
+
+// ═══════════════════════════════════════════════════
+// TIME DISPLAY
+// ═══════════════════════════════════════════════════
+let startTime = Date.now();
+function updateTime(){
+  const elapsed = Math.floor((Date.now() - startTime)/1000);
+  const m = String(Math.floor(elapsed/60)).padStart(2,'0');
+  const s = String(elapsed%60).padStart(2,'0');
+  document.getElementById('timeDisplay').textContent = m + ':' + s;
+  document.getElementById('hudTime').textContent = '03:' + String(14 + Math.floor(elapsed/60)).padStart(2,'0');
+}
+setInterval(updateTime, 1000);
+
+// ═══════════════════════════════════════════════════
+// START DEMO
+// ═══════════════════════════════════════════════════
+function startDemo(){
+  document.getElementById('introScreen').classList.add('hidden');
+  initRoadObjects();
+  animate();
+  addLog('System initialized — NH-48 Mumbai-Pune corridor', 'info', 'GARUDA');
+  addLog('Edge AI ready — <100ms inference latency', 'info', 'AI_ENGINE');
+  addLog('BLE mesh active — 3 vehicles in proximity', 'safe', 'BLE_MESH');
+  setTimeout(()=>{
+    speakGaruda('Namaste! Main Garuda hoon, aapka AI co-driver. Aaj ki drive safe raho!');
+  }, 800);
+}
+</script>
+</body>
+</html>

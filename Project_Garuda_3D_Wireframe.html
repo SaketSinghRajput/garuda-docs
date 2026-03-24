@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Project Garuda — 3D Wireframe</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#050810; overflow:hidden; font-family:'Courier New',monospace; }
+canvas { display:block; }
+
+#hud {
+  position:absolute; top:0; left:0; right:0;
+  padding:16px 24px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  pointer-events:none;
+  z-index:10;
+}
+.hud-left h1 {
+  font-size:22px; font-weight:700; letter-spacing:2px;
+  color:#4af; text-shadow:0 0 20px #4af8;
+  line-height:1;
+}
+.hud-left h1 em { color:#0ff; font-style:normal; }
+.hud-left p {
+  font-size:10px; letter-spacing:3px; color:#446;
+  margin-top:4px; text-transform:uppercase;
+}
+.hud-right { text-align:right; }
+.hud-right .ctrl {
+  font-size:9px; color:#334; letter-spacing:1px; line-height:2;
+}
+
+#legend {
+  position:absolute; bottom:0; left:0; right:0;
+  padding:14px 24px;
+  display:flex;
+  justify-content:center;
+  gap:28px;
+  pointer-events:none;
+  z-index:10;
+  background:linear-gradient(transparent,rgba(5,8,16,0.9));
+}
+.leg { display:flex; align-items:center; gap:7px; font-size:10px; letter-spacing:1px; }
+.leg-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+
+#tooltip {
+  position:absolute;
+  display:none;
+  background:rgba(5,8,16,0.95);
+  border:1px solid #4af;
+  border-radius:4px;
+  padding:10px 14px;
+  pointer-events:none;
+  z-index:20;
+  min-width:180px;
+}
+.tt-name { font-size:11px; color:#4af; letter-spacing:2px; font-weight:700; margin-bottom:6px; }
+.tt-row { font-size:10px; color:#7a9; margin-bottom:2px; }
+.tt-row span { color:#ccc; }
+
+#loading {
+  position:absolute; inset:0;
+  background:#050810;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  z-index:100;
+  transition:opacity 0.8s;
+}
+.load-title { font-size:24px; color:#4af; letter-spacing:4px; margin-bottom:16px; }
+.load-bar-wrap { width:280px; height:2px; background:#111; }
+.load-bar { width:0; height:100%; background:#4af; transition:width 0.4s; }
+.load-sub { font-size:10px; color:#336; letter-spacing:2px; margin-top:10px; }
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="load-title">PROJECT GARUDA</div>
+  <div class="load-bar-wrap"><div class="load-bar" id="loadbar"></div></div>
+  <div class="load-sub">INITIALISING 3D WIREFRAME...</div>
+</div>
+
+<div id="hud">
+  <div class="hud-left">
+    <h1>PROJECT <em>GARUDA</em></h1>
+    <p>3D Wireframe · Hardware Installation</p>
+  </div>
+  <div class="hud-right">
+    <div class="ctrl">
+      DRAG — Rotate &nbsp;|&nbsp; SCROLL — Zoom<br>
+      RIGHT DRAG — Pan &nbsp;|&nbsp; HOVER — Inspect
+    </div>
+  </div>
+</div>
+
+<div id="legend">
+  <div class="leg"><div class="leg-dot" style="background:#00aaff"></div><span style="color:#446">AI Unit (Pi 4B)</span></div>
+  <div class="leg"><div class="leg-dot" style="background:#00ff88"></div><span style="color:#446">Cameras</span></div>
+  <div class="leg"><div class="leg-dot" style="background:#ffaa00"></div><span style="color:#446">GPS / OBD-II</span></div>
+  <div class="leg"><div class="leg-dot" style="background:#aa44ff"></div><span style="color:#446">IMU Sensor</span></div>
+  <div class="leg"><div class="leg-dot" style="background:#ff4444"></div><span style="color:#446">Alert System</span></div>
+  <div class="leg"><div class="leg-dot" style="background:#00ff44"></div><span style="color:#446">BLE Module</span></div>
+  <div class="leg"><div class="leg-dot" style="background:#ffff00"></div><span style="color:#446">Power Unit</span></div>
+</div>
+
+<div id="tooltip">
+  <div class="tt-name" id="tt-name"></div>
+  <div class="tt-row">Model: <span id="tt-model"></span></div>
+  <div class="tt-row">Interface: <span id="tt-iface"></span></div>
+  <div class="tt-row">Location: <span id="tt-loc"></span></div>
+  <div class="tt-row">Latency: <span id="tt-lat"></span></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ─── SCENE SETUP ───────────────────────────────────────────────────
+const W = window.innerWidth, H = window.innerHeight;
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x050810);
+scene.fog = new THREE.Fog(0x050810, 18, 40);
+
+const camera = new THREE.PerspectiveCamera(45, W/H, 0.1, 100);
+camera.position.set(6, 3.5, 9);
+
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(W, H);
+document.body.appendChild(renderer.domElement);
+
+// ─── ORBIT CONTROLS (manual) ───────────────────────────────────────
+let isDragging = false, isRight = false;
+let prevMouse = {x:0, y:0};
+let spherical = {theta: -0.4, phi: 1.1, r: 11};
+let panOffset = new THREE.Vector3();
+let target = new THREE.Vector3(0, 0.5, 0);
+
+function updateCamera() {
+  const x = spherical.r * Math.sin(spherical.phi) * Math.sin(spherical.theta);
+  const y = spherical.r * Math.cos(spherical.phi);
+  const z = spherical.r * Math.sin(spherical.phi) * Math.cos(spherical.theta);
+  camera.position.set(x + target.x + panOffset.x, y + target.y + panOffset.y, z + target.z + panOffset.z);
+  camera.lookAt(target.clone().add(panOffset));
+}
+
+renderer.domElement.addEventListener('mousedown', e => {
+  isDragging = true;
+  isRight = e.button === 2;
+  prevMouse = {x: e.clientX, y: e.clientY};
+});
+window.addEventListener('mouseup', () => isDragging = false);
+window.addEventListener('mousemove', e => {
+  if (!isDragging) return;
+  const dx = (e.clientX - prevMouse.x) * 0.008;
+  const dy = (e.clientY - prevMouse.y) * 0.008;
+  if (isRight) {
+    panOffset.x -= dx * 2; panOffset.y += dy * 2;
+  } else {
+    spherical.theta -= dx;
+    spherical.phi = Math.max(0.2, Math.min(Math.PI - 0.2, spherical.phi + dy));
+  }
+  prevMouse = {x: e.clientX, y: e.clientY};
+  updateCamera();
+});
+renderer.domElement.addEventListener('contextmenu', e => e.preventDefault());
+renderer.domElement.addEventListener('wheel', e => {
+  spherical.r = Math.max(3, Math.min(25, spherical.r + e.deltaY * 0.01));
+  updateCamera();
+});
+updateCamera();
+
+// ─── GRID ──────────────────────────────────────────────────────────
+const gridHelper = new THREE.GridHelper(20, 20, 0x111828, 0x0a1020);
+gridHelper.position.y = -1.3;
+scene.add(gridHelper);
+
+// ─── HELPERS ───────────────────────────────────────────────────────
+function wfBox(w, h, d, color, opacity=0.18) {
+  const g = new THREE.BoxGeometry(w, h, d);
+  const wf = new THREE.EdgesGeometry(g);
+  const mat = new THREE.LineBasicMaterial({color, transparent:true, opacity:1});
+  const lines = new THREE.LineSegments(wf, mat);
+  // solid fill (very transparent)
+  const solidMat = new THREE.MeshBasicMaterial({color, transparent:true, opacity, side:THREE.DoubleSide});
+  const solid = new THREE.Mesh(g, solidMat);
+  const grp = new THREE.Group();
+  grp.add(solid); grp.add(lines);
+  return grp;
+}
+
+function wfSphere(r, color, opacity=0.15) {
+  const g = new THREE.SphereGeometry(r, 12, 8);
+  const wf = new THREE.EdgesGeometry(g);
+  const mat = new THREE.LineBasicMaterial({color, transparent:true, opacity:0.7});
+  const lines = new THREE.LineSegments(wf, mat);
+  const solidMat = new THREE.MeshBasicMaterial({color, transparent:true, opacity, side:THREE.DoubleSide});
+  const solid = new THREE.Mesh(g, solidMat);
+  const grp = new THREE.Group();
+  grp.add(solid); grp.add(lines);
+  return grp;
+}
+
+function wfCylinder(rt, rb, h, color, opacity=0.15) {
+  const g = new THREE.CylinderGeometry(rt, rb, h, 16);
+  const wf = new THREE.EdgesGeometry(g);
+  const mat = new THREE.LineBasicMaterial({color, transparent:true, opacity:0.8});
+  const lines = new THREE.LineSegments(wf, mat);
+  const solidMat = new THREE.MeshBasicMaterial({color, transparent:true, opacity, side:THREE.DoubleSide});
+  const solid = new THREE.Mesh(g, solidMat);
+  const grp = new THREE.Group(); grp.add(solid); grp.add(lines);
+  return grp;
+}
+
+function wire(p1, p2, color, dashed=false, opacity=1) {
+  const pts = [new THREE.Vector3(...p1), new THREE.Vector3(...p2)];
+  const g = new THREE.BufferGeometry().setFromPoints(pts);
+  const mat = new THREE.LineBasicMaterial({color, transparent:true, opacity});
+  return new THREE.Line(g, mat);
+}
+
+function wirePath(points, color, opacity=0.8) {
+  const pts = points.map(p => new THREE.Vector3(...p));
+  const g = new THREE.BufferGeometry().setFromPoints(pts);
+  const mat = new THREE.LineBasicMaterial({color, transparent:true, opacity});
+  return new THREE.Line(g, mat);
+}
+
+function label3D(text, color=0xffffff) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 256; canvas.height = 64;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = 'rgba(5,8,16,0.0)';
+  ctx.fillRect(0,0,256,64);
+  ctx.fillStyle = '#' + color.toString(16).padStart(6,'0');
+  ctx.font = 'bold 18px Courier New';
+  ctx.textAlign = 'center';
+  ctx.fillText(text, 128, 38);
+  const tex = new THREE.CanvasTexture(canvas);
+  const mat = new THREE.SpriteMaterial({map:tex, transparent:true});
+  const sprite = new THREE.Sprite(mat);
+  sprite.scale.set(1.6, 0.4, 1);
+  return sprite;
+}
+
+// ─── CAR BODY WIREFRAME ────────────────────────────────────────────
+const carGroup = new THREE.Group();
+
+// Main body lower chassis
+const chassis = wfBox(4.8, 0.35, 2.1, 0x334466, 0.08);
+chassis.position.set(0, -0.55, 0);
+carGroup.add(chassis);
+
+// Lower body sides
+const bodyL = wfBox(4.6, 0.8, 0.08, 0x2a3a55, 0.06);
+bodyL.position.set(0, -0.2, -1.05);
+carGroup.add(bodyL);
+const bodyR = wfBox(4.6, 0.8, 0.08, 0x2a3a55, 0.06);
+bodyR.position.set(0, -0.2, 1.05);
+carGroup.add(bodyR);
+
+// Hood (front)
+const hood = wfBox(1.6, 0.08, 2.0, 0x2a3a55, 0.07);
+hood.position.set(-1.8, 0.2, 0);
+carGroup.add(hood);
+
+// Trunk (rear)
+const trunk = wfBox(1.0, 0.08, 2.0, 0x2a3a55, 0.07);
+trunk.position.set(1.9, 0.2, 0);
+carGroup.add(trunk);
+
+// Roof
+const roof = wfBox(2.2, 0.06, 1.85, 0x3a4a66, 0.08);
+roof.position.set(0.2, 1.18, 0);
+carGroup.add(roof);
+
+// A-pillars (front)
+function addPillar(x, z, rx, ry, rz) {
+  const p = wfBox(0.07, 1.1, 0.07, 0x334466, 0.15);
+  p.position.set(x, 0.6, z);
+  p.rotation.set(rx, ry, rz);
+  carGroup.add(p);
+}
+addPillar(-0.95, -0.9, -0.22, 0, 0);
+addPillar(-0.95,  0.9, 0.22, 0, 0);
+// B-pillars
+addPillar(0.35, -0.95, 0, 0, 0);
+addPillar(0.35,  0.95, 0, 0, 0);
+// C-pillars (rear)
+addPillar(1.35, -0.88, 0.2, 0, 0);
+addPillar(1.35,  0.88, -0.2, 0, 0);
+
+// Windshield frame
+const wsPoints = [
+  [-1.3, 0.2, -0.9], [-0.8, 1.15, -0.85],
+  [-0.8, 1.15, 0.85], [-1.3, 0.2, 0.9], [-1.3, 0.2, -0.9]
+];
+const wsGeo = new THREE.BufferGeometry().setFromPoints(wsPoints.map(p => new THREE.Vector3(...p)));
+const wsMat = new THREE.LineBasicMaterial({color: 0x1a3a6a, transparent:true, opacity:0.5});
+carGroup.add(new THREE.Line(wsGeo, wsMat));
+
+// Windshield fill (translucent)
+const wsShape = new THREE.Shape();
+wsShape.moveTo(-0.9, 0.2); wsShape.lineTo(-0.85, 1.15); wsShape.lineTo(0.85, 1.15); wsShape.lineTo(0.9, 0.2);
+const wsGeoFill = new THREE.ShapeGeometry(wsShape);
+const wsFillMesh = new THREE.Mesh(wsGeoFill, new THREE.MeshBasicMaterial({color:0x1a3a7a,transparent:true,opacity:0.08,side:THREE.DoubleSide}));
+wsFillMesh.rotation.y = -Math.PI/2;
+wsFillMesh.position.x = -1.1;
+carGroup.add(wsFillMesh);
+
+// Side windows outlines
+function sideWindow(x, y, z, w, h) {
+  const pts = [
+    [x-w/2,y-h/2,z],[x+w/2,y-h/2,z],[x+w/2,y+h/2,z],[x-w/2,y+h/2,z],[x-w/2,y-h/2,z]
+  ].map(p=>new THREE.Vector3(...p));
+  const g = new THREE.BufferGeometry().setFromPoints(pts);
+  const m = new THREE.LineBasicMaterial({color:0x1a3a6a,transparent:true,opacity:0.4});
+  return new THREE.Line(g,m);
+}
+carGroup.add(sideWindow(-0.28, 0.75, -1.04, 1.2, 0.72));
+carGroup.add(sideWindow(-0.28, 0.75,  1.04, 1.2, 0.72));
+carGroup.add(sideWindow( 0.9,  0.75, -1.04, 0.9, 0.68));
+carGroup.add(sideWindow( 0.9,  0.75,  1.04, 0.9, 0.68));
+
+// Rear window
+const rwPts = [
+  [1.35,0.2,-0.88],[1.8,1.15,-0.82],[1.8,1.15,0.82],[1.35,0.2,0.88],[1.35,0.2,-0.88]
+].map(p=>new THREE.Vector3(...p));
+const rwGeo = new THREE.BufferGeometry().setFromPoints(rwPts);
+carGroup.add(new THREE.Line(rwGeo, new THREE.LineBasicMaterial({color:0x1a3a6a,transparent:true,opacity:0.4})));
+
+// Door lines
+[-0.28, 1.2].forEach(x => {
+  carGroup.add(wire([x, -0.6, -1.05],[x, 0.2, -1.05], 0x223355, false, 0.3));
+  carGroup.add(wire([x, -0.6,  1.05],[x, 0.2,  1.05], 0x223355, false, 0.3));
+});
+
+// Wheels (cylinders)
+const wheelPositions = [
+  [-1.7, -0.75, -1.1],[-1.7,-0.75, 1.1],
+  [ 1.7, -0.75, -1.1],[ 1.7,-0.75, 1.1]
+];
+wheelPositions.forEach(([x,y,z]) => {
+  const w = wfCylinder(0.42, 0.42, 0.22, 0x223355, 0.12);
+  w.rotation.x = Math.PI/2;
+  w.position.set(x, y, z);
+  carGroup.add(w);
+  // Hub
+  const hub = wfCylinder(0.18, 0.18, 0.24, 0x334466, 0.2);
+  hub.rotation.x = Math.PI/2;
+  hub.position.set(x, y, z);
+  carGroup.add(hub);
+  // Spokes
+  for(let i=0;i<5;i++){
+    const ang = (i/5)*Math.PI*2;
+    const sp = wire([x, y+Math.cos(ang)*0.18, z+Math.sin(ang)*0.18],[x, y+Math.cos(ang)*0.38, z+Math.sin(ang)*0.38], 0x334466, false, 0.4);
+    carGroup.add(sp);
+  }
+  // Wheel arch hint
+  const archPts = [];
+  for(let i=0;i<=24;i++){
+    const a = Math.PI + (i/24)*Math.PI;
+    archPts.push(new THREE.Vector3(x, y+Math.sin(a)*0.55, z));
+  }
+  archPts.forEach((p,i)=>{ if(i<archPts.length-1){ const l=wire([p.x,p.y,z-0.5],[p.x,p.y,z+0.5],0x1a2a3a,false,0.2); carGroup.add(l); }});
+});
+
+// Headlights
+const hl1 = wfBox(0.18, 0.12, 0.35, 0xffffaa, 0.3);
+hl1.position.set(-2.38, -0.1, -0.65);
+carGroup.add(hl1);
+const hl2 = wfBox(0.18, 0.12, 0.35, 0xffffaa, 0.3);
+hl2.position.set(-2.38, -0.1, 0.65);
+carGroup.add(hl2);
+
+// Tail lights
+const tl1 = wfBox(0.1, 0.14, 0.4, 0xff3333, 0.3);
+tl1.position.set(2.38, -0.1, -0.65);
+carGroup.add(tl1);
+const tl2 = wfBox(0.1, 0.14, 0.4, 0xff3333, 0.3);
+tl2.position.set(2.38, -0.1, 0.65);
+carGroup.add(tl2);
+
+// Grille
+const gr = wfBox(0.06, 0.3, 1.2, 0x335577, 0.2);
+gr.position.set(-2.4, -0.15, 0);
+carGroup.add(gr);
+
+// Undercarriage
+const uc = wfBox(3.8, 0.08, 1.8, 0x1a2a3a, 0.1);
+uc.position.set(0, -0.8, 0);
+carGroup.add(uc);
+
+// Dashboard bar
+const dash = wfBox(2.8, 0.14, 0.12, 0x2a3a50, 0.2);
+dash.position.set(-0.4, 0.18, -0.96);
+carGroup.add(dash);
+
+// Center console
+const cc = wfBox(0.35, 0.4, 0.22, 0x2a3a50, 0.15);
+cc.position.set(-0.1, -0.1, 0);
+carGroup.add(cc);
+
+// Seats (simplified)
+const seatPositions = [[-0.1, -0.25, -0.44], [-0.1, -0.25, 0.44], [0.9, -0.25, -0.44], [0.9, -0.25, 0.44]];
+seatPositions.forEach(([x,y,z]) => {
+  const seat = wfBox(0.55, 0.28, 0.38, 0x223344, 0.1);
+  seat.position.set(x, y, z);
+  carGroup.add(seat);
+  const back = wfBox(0.08, 0.55, 0.38, 0x223344, 0.1);
+  back.position.set(x - 0.24, y + 0.18, z);
+  carGroup.add(back);
+});
+
+// Steering wheel
+const swRing = new THREE.TorusGeometry(0.18, 0.025, 8, 24);
+const swMesh = new THREE.Mesh(swRing, new THREE.MeshBasicMaterial({color:0x446688,transparent:true,opacity:0.6,wireframe:true}));
+swMesh.position.set(-0.7, 0.25, -0.48);
+swMesh.rotation.x = Math.PI/2 + 0.35;
+carGroup.add(swMesh);
+
+scene.add(carGroup);
+
+// ─── HARDWARE MODULES ─────────────────────────────────────────────
+const modules = [];
+
+function addModule(name, model, iface, loc, latency, pos, color, size=[0.22,0.14,0.18]) {
+  const box = wfBox(...size, color, 0.35);
+  box.position.set(...pos);
+
+  // Glow pulse core
+  const glowGeo = new THREE.SphereGeometry(0.05, 8, 6);
+  const glowMat = new THREE.MeshBasicMaterial({color, transparent:true, opacity:0.9});
+  const glow = new THREE.Mesh(glowGeo, glowMat);
+  glow.position.set(...pos);
+  scene.add(glow);
+
+  scene.add(box);
+
+  // Label sprite
+  const lbl = label3D(name, color);
+  lbl.position.set(pos[0], pos[1]+size[1]/2+0.22, pos[2]);
+  scene.add(lbl);
+
+  const hitGeo = new THREE.BoxGeometry(...size.map(v=>v+0.1));
+  const hitMat = new THREE.MeshBasicMaterial({transparent:true, opacity:0});
+  const hitMesh = new THREE.Mesh(hitGeo, hitMat);
+  hitMesh.position.set(...pos);
+  scene.add(hitMesh);
+
+  modules.push({ mesh:hitMesh, glow, name, model, iface, loc, latency, color, basePos:[...pos] });
+  return box;
+}
+
+// 1. AI Unit — center console
+addModule('AI UNIT','Pi 4B + ESP32','USB · UART · I2C','Center console','<80ms',[-0.1, 0.02, 0.02], 0x00aaff, [0.3, 0.18, 0.2]);
+
+// 2. Driver Camera — dashboard top, driver side
+addModule('DRIVER CAM','Pi Camera v2','CSI-2 ribbon','Dashboard top','30fps',[-0.9, 0.3, -0.7], 0x00ff88, [0.14,0.1,0.1]);
+
+// 3. Road Camera — windshield center top
+addModule('ROAD CAM','USB Webcam 1080p','USB 2.0','Windshield mount','30fps',[-1.4, 0.95, -0.1], 0x00ff88, [0.14,0.1,0.12]);
+
+// 4. GPS — roof
+addModule('GPS','NEO-6M','UART 9600','Roof antenna','1Hz',[ 0.3, 1.3, 0.1], 0xffaa00, [0.2,0.06,0.14]);
+
+// 5. IMU — floor/under dash
+addModule('IMU','MPU-6050','I2C 0x68','Under console','50ms',[-0.1, -0.5, 0.1], 0xaa44ff, [0.14,0.08,0.14]);
+
+// 6. Alert — dashboard left
+addModule('ALERT','Speaker+LED','GPIO · 3.5mm','Dashboard left','<100ms',[-0.5, 0.3, -0.85], 0xff4444, [0.18,0.1,0.06]);
+
+// 7. BLE — dashboard right
+addModule('BLE MODULE','ESP32-S3','BLE 5.0','Dashboard edge','<200ms',[ 0.3, 0.28, -0.85], 0x00ff44, [0.14,0.1,0.06]);
+
+// 8. Power — under dash/firewall
+addModule('POWER','Buck 5V/5A','12V battery','Firewall','—',[-1.5, -0.3, 0.3], 0xffff00, [0.22,0.14,0.14]);
+
+// 9. OBD-II — steering column
+addModule('OBD-II','ELM327','Bluetooth','Steering col.','—',[-1.0, -0.1, -0.42], 0xffaa00, [0.1,0.08,0.08]);
+
+// ─── WIRING PATHS ─────────────────────────────────────────────────
+
+// Helper: right-angle path between two points
+function routeWire(p1, p2, color, opacity=0.7) {
+  const mid1 = [(p1[0]+p2[0])/2, p1[1], p1[2]];
+  const mid2 = [(p1[0]+p2[0])/2, p2[1], p2[2]];
+  return [
+    wirePath([p1, mid1, mid2, p2], color, opacity)
+  ];
+}
+
+// Power → AI (yellow, thick)
+scene.add(wirePath([[-1.5,-0.23,0.3],[-1.5,0.0,0.0],[-0.1,0.0,0.02]], 0xffff00, 0.8));
+
+// Power → Driver Cam
+scene.add(wirePath([[-1.5,-0.23,0.3],[-1.5,0.2,-0.7],[-0.9,0.2,-0.7]], 0xffcc00, 0.5));
+
+// Driver Cam → AI (CSI - blue)
+scene.add(wirePath([[-0.9,0.25,-0.7],[-0.9,0.2,-0.3],[-0.1,0.1,0.02]], 0x00aaff, 0.8));
+
+// Road Cam → AI (USB - blue)
+scene.add(wirePath([[-1.4,0.9,-0.1],[-1.2,0.5,-0.1],[-0.5,0.5,0.0],[-0.1,0.1,0.0]], 0x00aaff, 0.7));
+
+// GPS → AI (amber dashed)
+scene.add(wirePath([[0.3,1.24,0.1],[0.3,0.5,0.1],[0.15,0.1,0.02]], 0xffaa00, 0.6));
+
+// IMU → AI (purple)
+scene.add(wirePath([[-0.1,-0.42,0.1],[-0.1,-0.1,0.05]], 0xaa44ff, 0.8));
+
+// OBD-II → AI (amber)
+scene.add(wirePath([[-1.0,-0.06,-0.42],[-1.0,0.0,0.0],[-0.1,0.0,0.02]], 0xffaa00, 0.5));
+
+// AI → Alert (red)
+scene.add(wirePath([[-0.1,0.1,0.0],[-0.1,0.3,-0.6],[-0.5,0.3,-0.82]], 0xff4444, 0.8));
+
+// AI → BLE (green dashed)
+scene.add(wirePath([[-0.1,0.1,0.0],[0.1,0.25,-0.5],[0.3,0.25,-0.82]], 0x00ff44, 0.7));
+
+// ─── BLE BROADCAST RINGS ──────────────────────────────────────────
+const bleRings = [];
+for(let i=0;i<3;i++){
+  const rGeo = new THREE.TorusGeometry(0.4+i*0.35, 0.008, 6, 40);
+  const rMat = new THREE.MeshBasicMaterial({color:0x00ff44,transparent:true,opacity:0.0});
+  const ring = new THREE.Mesh(rGeo, rMat);
+  ring.position.set(0.3, 0.28, -0.85);
+  ring.rotation.x = Math.PI/2;
+  ring.userData.delay = i * 0.7;
+  scene.add(ring);
+  bleRings.push(ring);
+}
+
+// ─── PULSE PARTICLES (data flow hint) ────────────────────────────
+const pulseData = [
+  { path:[[-0.9,0.25,-0.7],[-0.9,0.2,-0.3],[-0.1,0.1,0.02]], color:0x00aaff, speed:0.4 },
+  { path:[[-1.4,0.9,-0.1],[-0.5,0.5,0.0],[-0.1,0.1,0.0]], color:0x00aaff, speed:0.3 },
+  { path:[[-0.1,-0.42,0.1],[-0.1,0.0,0.02]], color:0xaa44ff, speed:0.5 },
+  { path:[[-0.1,0.1,0.0],[-0.5,0.3,-0.82]], color:0xff4444, speed:0.45 },
+];
+
+const pulses = pulseData.map(d => {
+  const geo = new THREE.SphereGeometry(0.05, 6, 4);
+  const mat = new THREE.MeshBasicMaterial({color:d.color,transparent:true,opacity:0.9});
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.userData = {...d, t: Math.random()};
+  scene.add(mesh);
+  return mesh;
+});
+
+function lerpPath(path, t) {
+  if(path.length < 2) return path[0];
+  const total = path.length - 1;
+  const seg = t * total;
+  const idx = Math.min(Math.floor(seg), total-1);
+  const frac = seg - idx;
+  const a = path[idx], b = path[idx+1];
+  return [a[0]+(b[0]-a[0])*frac, a[1]+(b[1]-a[1])*frac, a[2]+(b[2]-a[2])*frac];
+}
+
+// ─── AMBIENT LIGHT BEAMS ──────────────────────────────────────────
+const ambientLines = [];
+for(let i=0;i<8;i++){
+  const pts = [
+    new THREE.Vector3(-6+Math.random()*12, 8, -4+Math.random()*8),
+    new THREE.Vector3(-6+Math.random()*12, -5, -4+Math.random()*8)
+  ];
+  const g = new THREE.BufferGeometry().setFromPoints(pts);
+  const m = new THREE.LineBasicMaterial({color:0x0a1828,transparent:true,opacity:0.15+Math.random()*0.1});
+  ambientLines.push(new THREE.Line(g, m));
+  scene.add(ambientLines[i]);
+}
+
+// ─── TOOLTIP / RAYCASTING ─────────────────────────────────────────
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+const tooltip = document.getElementById('tooltip');
+let hoveredModule = null;
+
+window.addEventListener('mousemove', e => {
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(modules.map(m=>m.mesh));
+
+  if(hits.length > 0) {
+    const mod = modules.find(m => m.mesh === hits[0].object);
+    if(mod && mod !== hoveredModule) {
+      hoveredModule = mod;
+      document.getElementById('tt-name').textContent = mod.name;
+      document.getElementById('tt-model').textContent = mod.model;
+      document.getElementById('tt-iface').textContent = mod.iface;
+      document.getElementById('tt-loc').textContent = mod.loc;
+      document.getElementById('tt-lat').textContent = mod.latency;
+      tooltip.style.display = 'block';
+    }
+    tooltip.style.left = (e.clientX + 18) + 'px';
+    tooltip.style.top  = (e.clientY - 10) + 'px';
+  } else {
+    hoveredModule = null;
+    tooltip.style.display = 'none';
+  }
+});
+
+// ─── LOADING FAKE PROGRESS ────────────────────────────────────────
+let prog = 0;
+const loadbar = document.getElementById('loadbar');
+const loadInterval = setInterval(() => {
+  prog += 12 + Math.random()*8;
+  loadbar.style.width = Math.min(prog, 100) + '%';
+  if(prog >= 100) {
+    clearInterval(loadInterval);
+    setTimeout(() => {
+      document.getElementById('loading').style.opacity = '0';
+      setTimeout(() => document.getElementById('loading').style.display='none', 800);
+    }, 400);
+  }
+}, 120);
+
+// ─── ANIMATION LOOP ───────────────────────────────────────────────
+let t = 0;
+function animate() {
+  requestAnimationFrame(animate);
+  t += 0.016;
+
+  // Gentle car rotation
+  carGroup.rotation.y = Math.sin(t * 0.08) * 0.04;
+
+  // Pulse module glows
+  modules.forEach((m, i) => {
+    const pulse = 0.7 + Math.sin(t * 1.8 + i * 0.9) * 0.3;
+    m.glow.material.opacity = pulse;
+    m.glow.scale.setScalar(0.8 + Math.sin(t * 2.2 + i) * 0.2);
+  });
+
+  // BLE rings expand and fade
+  bleRings.forEach((ring, i) => {
+    const phase = ((t * 0.8 + ring.userData.delay) % 2.4) / 2.4;
+    ring.scale.setScalar(1 + phase * 2.5);
+    ring.material.opacity = Math.max(0, (1 - phase) * 0.55);
+  });
+
+  // Data pulse particles
+  pulses.forEach(pulse => {
+    pulse.userData.t = (pulse.userData.t + pulse.userData.speed * 0.008) % 1;
+    const pos = lerpPath(pulse.userData.path, pulse.userData.t);
+    pulse.position.set(...pos);
+    pulse.material.opacity = 0.5 + Math.sin(t * 3 + pulse.userData.t * 10) * 0.4;
+  });
+
+  renderer.render(scene, camera);
+}
+
+// ─── RESIZE ───────────────────────────────────────────────────────
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+animate();
+</script>
+</body>
+</html>

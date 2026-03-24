@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Project Garuda — AutoCAD Wiring Schematic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:#f5f3ee;
+  font-family:'Share Tech Mono',monospace;
+  padding:0;
+  min-width:1280px;
+}
+.page{
+  width:1280px;
+  margin:0 auto;
+  background:#fdfcf8;
+  border:1px solid #ccc;
+}
+
+/* TITLE BLOCK */
+.title-block{
+  border-bottom:3px solid #111;
+  display:grid;
+  grid-template-columns:1fr auto;
+}
+.tb-left{
+  padding:14px 24px;
+  border-right:2px solid #111;
+}
+.tb-company{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:11px;
+  letter-spacing:3px;
+  color:#555;
+  text-transform:uppercase;
+}
+.tb-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:26px;
+  font-weight:700;
+  color:#111;
+  letter-spacing:0.5px;
+  margin:2px 0;
+}
+.tb-title span{color:#1a5f8a;}
+.tb-sub{font-size:10px;color:#666;letter-spacing:1px;}
+.tb-right{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+}
+.tb-cell{
+  padding:6px 16px;
+  border-left:1px solid #ccc;
+  border-bottom:1px solid #ccc;
+}
+.tb-cell:nth-child(n+3){border-bottom:none;}
+.tb-cell .tbc-l{font-size:8px;color:#999;letter-spacing:1px;display:block;}
+.tb-cell .tbc-v{font-size:11px;color:#111;font-weight:500;}
+
+/* SAVE TIP */
+.save-tip{
+  background:#fffdf0;
+  border-bottom:1px solid #e0d890;
+  padding:6px 24px;
+  font-size:9px;
+  color:#8a7a10;
+  letter-spacing:0.5px;
+}
+.save-tip b{color:#c09010;}
+
+/* MAIN SCHEMATIC */
+.schematic{
+  padding:28px 32px 20px;
+  position:relative;
+}
+
+/* LEGEND BLOCK */
+.legend-block{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr 1fr;
+  border:1.5px solid #111;
+  margin-bottom:20px;
+}
+.leg-col{
+  padding:8px 14px;
+  border-right:1px solid #555;
+}
+.leg-col:last-child{border-right:none;}
+.leg-title{font-size:8px;letter-spacing:2px;color:#555;margin-bottom:6px;text-transform:uppercase;}
+.leg-item{
+  display:flex;align-items:center;gap:8px;margin-bottom:5px;
+}
+.leg-line{height:3px;width:28px;flex-shrink:0;}
+.leg-label{font-size:9px;color:#333;}
+.leg-dot{width:10px;height:10px;border:1.5px solid;flex-shrink:0;}
+
+/* SVG SCHEMATIC */
+.sch-svg-wrap{
+  border:1.5px solid #111;
+}
+
+/* NOTES BLOCK */
+.notes-block{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  border:1.5px solid #111;
+  border-top:none;
+}
+.note-col{
+  padding:8px 14px;
+  border-right:1px solid #555;
+  font-size:9px;
+  color:#444;
+  line-height:1.7;
+}
+.note-col:last-child{border-right:none;}
+.note-title{font-size:8px;letter-spacing:2px;color:#777;margin-bottom:5px;text-transform:uppercase;display:block;}
+
+/* FOOTER */
+.footer-block{
+  border-top:2px solid #111;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:8px 24px;
+  background:#f0ede6;
+}
+.footer-block .fl{font-size:9px;color:#777;letter-spacing:1px;}
+.footer-block .fr{font-size:9px;color:#777;letter-spacing:1px;}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- TITLE BLOCK -->
+<div class="title-block">
+  <div class="tb-left">
+    <div class="tb-company">Plug-and-Play Modular Kit · Automotive Grade · Rev B</div>
+    <div class="tb-title">PROJECT <span>GARUDA</span> — SYSTEM WIRING SCHEMATIC</div>
+    <div class="tb-sub">AI CO-DRIVER · ACCIDENT PREVENTION · COMPLETE ELECTRICAL DIAGRAM · ALL MODULES</div>
+  </div>
+  <div class="tb-right">
+    <div class="tb-cell"><span class="tbc-l">DRAWN BY</span><span class="tbc-v">GARUDA ENG.</span></div>
+    <div class="tb-cell"><span class="tbc-l">SHEET</span><span class="tbc-v">1 OF 1</span></div>
+    <div class="tb-cell"><span class="tbc-l">SCALE</span><span class="tbc-v">NTS</span></div>
+    <div class="tb-cell"><span class="tbc-l">REV</span><span class="tbc-v">B.2</span></div>
+  </div>
+</div>
+
+<div class="save-tip">Save: <b>Chrome → Ctrl+Shift+P → "Capture full size screenshot"</b></div>
+
+<div class="schematic">
+
+<!-- LEGEND -->
+<div class="legend-block">
+  <div class="leg-col">
+    <div class="leg-title">Power Lines</div>
+    <div class="leg-item"><div class="leg-line" style="background:#c00;height:4px;"></div><span class="leg-label">12V DC (battery)</span></div>
+    <div class="leg-item"><div class="leg-line" style="background:#e07000;height:3px;"></div><span class="leg-label">5V regulated</span></div>
+    <div class="leg-item"><div class="leg-line" style="background:#333;height:2px;border-top:2px dashed #555;background:none;"></div><span class="leg-label">GND / common</span></div>
+  </div>
+  <div class="leg-col">
+    <div class="leg-title">Data Lines</div>
+    <div class="leg-item"><div class="leg-line" style="background:#1a5f8a;height:2px;"></div><span class="leg-label">USB 2.0 (camera)</span></div>
+    <div class="leg-item"><div class="leg-line" style="background:#1a5f8a;height:2px;border-top:1px dashed #1a5f8a;background:none;"></div><span class="leg-label">UART (BLE/GPS)</span></div>
+    <div class="leg-item"><div class="leg-line" style="background:#7a2a8a;height:2px;"></div><span class="leg-label">I2C bus (sensors)</span></div>
+  </div>
+  <div class="leg-col">
+    <div class="leg-title">Wireless / Connectors</div>
+    <div class="leg-item"><div class="leg-line" style="background:#2a8a3a;height:2px;border-top:2px dashed #2a8a3a;background:none;"></div><span class="leg-label">BLE 5.0 (wireless)</span></div>
+    <div class="leg-item"><div class="leg-dot" style="background:#fff;border-color:#555;width:12px;height:12px;border-radius:0;"></div><span class="leg-label">JST-PH 2mm</span></div>
+    <div class="leg-item"><div class="leg-dot" style="background:#fff;border-color:#555;width:14px;height:10px;border-radius:0;"></div><span class="leg-label">USB-A / USB-C</span></div>
+  </div>
+  <div class="leg-col">
+    <div class="leg-title">Module Types</div>
+    <div class="leg-item"><div style="width:28px;height:14px;border:2px solid #1a5f8a;background:#e8f2fb;"></div><span class="leg-label">Core AI module</span></div>
+    <div class="leg-item"><div style="width:28px;height:14px;border:2px solid #2a8a3a;background:#edfaf3;"></div><span class="leg-label">Sensor / vision</span></div>
+    <div class="leg-item"><div style="width:28px;height:14px;border:2px solid #c00;background:#fff0ee;"></div><span class="leg-label">Power / alert</span></div>
+  </div>
+</div>
+
+<!-- MAIN SVG SCHEMATIC -->
+<div class="sch-svg-wrap">
+<svg viewBox="0 0 1216 820" width="100%" xmlns="http://www.w3.org/2000/svg"
+     style="display:block;background:#fdfcf8;">
+
+<!-- ═══════════════════════════════════════════════════
+     GRID / ZONE SEPARATORS
+═══════════════════════════════════════════════════ -->
+<!-- Zone labels -->
+<text x="8" y="14" font-family="Share Tech Mono,monospace" font-size="9" fill="#ccc" letter-spacing="2">A</text>
+<text x="8" y="114" font-family="Share Tech Mono,monospace" font-size="9" fill="#ccc" letter-spacing="2">B</text>
+<text x="8" y="214" font-family="Share Tech Mono,monospace" font-size="9" fill="#ccc" letter-spacing="2">C</text>
+<text x="8" y="314" font-family="Share Tech Mono,monospace" font-size="9" fill="#ccc" letter-spacing="2">D</text>
+<text x="8" y="414" font-family="Share Tech Mono,monospace" font-size="9" fill="#ccc" letter-spacing="2">E</text>
+<text x="8" y="514" font-family="Share Tech Mono,monospace" font-size="9" fill="#ccc" letter-spacing="2">F</text>
+<text x="8" y="614" font-family="Share Tech Mono,monospace" font-size="9" fill="#ccc" letter-spacing="2">G</text>
+<text x="8" y="714" font-family="Share Tech Mono,monospace" font-size="9" fill="#ccc" letter-spacing="2">H</text>
+
+<!-- Horizontal zone lines (faint) -->
+<line x1="22" y1="100" x2="1210" y2="100" stroke="#e8e8e0" stroke-width="0.5"/>
+<line x1="22" y1="200" x2="1210" y2="200" stroke="#e8e8e0" stroke-width="0.5"/>
+<line x1="22" y1="300" x2="1210" y2="300" stroke="#e8e8e0" stroke-width="0.5"/>
+<line x1="22" y1="400" x2="1210" y2="400" stroke="#e8e8e0" stroke-width="0.5"/>
+<line x1="22" y1="500" x2="1210" y2="500" stroke="#e8e8e0" stroke-width="0.5"/>
+<line x1="22" y1="600" x2="1210" y2="600" stroke="#e8e8e0" stroke-width="0.5"/>
+<line x1="22" y1="700" x2="1210" y2="700" stroke="#e8e8e0" stroke-width="0.5"/>
+
+<!-- Section headers -->
+<rect x="22" y="18" width="100" height="14" fill="#f0ede6"/>
+<text x="26" y="28" font-family="Share Tech Mono,monospace" font-size="8" fill="#888" letter-spacing="1">POWER</text>
+<rect x="22" y="168" width="110" height="14" fill="#f0ede6"/>
+<text x="26" y="178" font-family="Share Tech Mono,monospace" font-size="8" fill="#888" letter-spacing="1">VISION SYS.</text>
+<rect x="22" y="318" width="120" height="14" fill="#f0ede6"/>
+<text x="26" y="328" font-family="Share Tech Mono,monospace" font-size="8" fill="#888" letter-spacing="1">SENSOR ARRAY</text>
+<rect x="22" y="468" width="100" height="14" fill="#f0ede6"/>
+<text x="26" y="478" font-family="Share Tech Mono,monospace" font-size="8" fill="#888" letter-spacing="1">BLE COMM.</text>
+<rect x="22" y="618" width="100" height="14" fill="#f0ede6"/>
+<text x="26" y="628" font-family="Share Tech Mono,monospace" font-size="8" fill="#888" letter-spacing="1">ALERT SYS.</text>
+
+<!-- ═══════════════════════════════════════════════════
+     MODULE 7: POWER MODULE (top-left)
+═══════════════════════════════════════════════════ -->
+<!-- Outer module box -->
+<rect x="36" y="34" width="230" height="130" rx="0" fill="#fff8f6" stroke="#c00" stroke-width="2"/>
+<rect x="36" y="34" width="230" height="18" fill="#c00"/>
+<text x="46" y="47" font-family="Share Tech Mono,monospace" font-size="9" fill="#fff" letter-spacing="1">MOD-07: POWER MODULE</text>
+<text x="240" y="47" text-anchor="end" font-family="Share Tech Mono,monospace" font-size="8" fill="#ffaaaa">12V→5V</text>
+
+<!-- Car Battery symbol -->
+<rect x="52" y="64" width="60" height="38" rx="0" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<text x="82" y="76" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">BATTERY</text>
+<text x="82" y="87" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="9" fill="#c00" font-weight="bold">12V DC</text>
+<text x="82" y="97" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">CAR BATT.</text>
+<!-- Battery terminals -->
+<rect x="75" y="59" width="6" height="5" fill="#333"/>
+<rect x="85" y="61" width="4" height="3" fill="#333"/>
+
+<!-- TVS Diode + Fuse -->
+<rect x="124" y="70" width="50" height="26" rx="0" fill="#fff" stroke="#888" stroke-width="1"/>
+<text x="149" y="80" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#555">TVS + FUSE</text>
+<text x="149" y="90" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">5A BLADE</text>
+
+<!-- Buck Converter -->
+<rect x="52" y="114" width="96" height="36" rx="0" fill="#fff" stroke="#e07000" stroke-width="1.5"/>
+<text x="100" y="126" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="8" fill="#e07000">DC-DC BUCK</text>
+<text x="100" y="137" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="9" fill="#c05000" font-weight="bold">5V / 5A</text>
+<text x="100" y="146" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">XL4016 / LM2596</text>
+
+<!-- Cap bank -->
+<rect x="162" y="114" width="50" height="36" rx="0" fill="#fff" stroke="#888" stroke-width="1"/>
+<text x="187" y="126" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#555">CAP BANK</text>
+<text x="187" y="137" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">2×2200µF</text>
+<text x="187" y="147" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">35V ELEC.</text>
+
+<!-- Internal power wires -->
+<line x1="112" y1="83" x2="124" y2="83" stroke="#c00" stroke-width="3" stroke-linecap="square"/>
+<line x1="174" y1="83" x2="187" y2="83" stroke="#c00" stroke-width="2" stroke-linecap="square"/>
+<line x1="187" y1="83" x2="187" y2="114" stroke="#c00" stroke-width="2" stroke-linecap="square"/>
+<line x1="100" y1="102" x2="100" y2="114" stroke="#c00" stroke-width="2" stroke-linecap="square"/>
+<!-- 12V label -->
+<text x="116" y="80" font-family="Share Tech Mono,monospace" font-size="7" fill="#c00">12V</text>
+
+<!-- 5V output rail (right side of power module) -->
+<rect x="222" y="130" width="8" height="16" rx="0" fill="#e07000" stroke="#c05000" stroke-width="1"/>
+<text x="230" y="140" font-family="Share Tech Mono,monospace" font-size="7" fill="#e07000">5V OUT</text>
+<text x="250" y="140" font-family="Share Tech Mono,monospace" font-size="7" fill="#c05000">JST-PH</text>
+
+<!-- Connector marker (output) -->
+<polygon points="230,130 240,138 230,146" fill="#e07000"/>
+
+<!-- ═══════════════════════════════════════════════════
+     MODULE 1: CORE AI MODULE (center-left)
+═══════════════════════════════════════════════════ -->
+<rect x="320" y="34" width="320" height="740" rx="0" fill="#e8f2fb" stroke="#1a5f8a" stroke-width="3"/>
+<rect x="320" y="34" width="320" height="20" fill="#1a5f8a"/>
+<text x="330" y="48" font-family="Share Tech Mono,monospace" font-size="10" fill="#fff" letter-spacing="1">MOD-01: CORE AI MODULE (CENTRAL UNIT)</text>
+<text x="634" y="48" text-anchor="end" font-family="Share Tech Mono,monospace" font-size="8" fill="#90c8ff">PI 4B + ESP32</text>
+
+<!-- Raspberry Pi 4B block -->
+<rect x="336" y="64" width="200" height="140" rx="0" fill="#fff" stroke="#1a5f8a" stroke-width="1.5"/>
+<rect x="336" y="64" width="200" height="16" fill="#1a5f8a" fill-opacity="0.2"/>
+<text x="436" y="75" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="9" fill="#1a5f8a">RASPBERRY PI 4B — 4GB</text>
+
+<!-- Pi ports listed -->
+<text x="346" y="92" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">PORT MAP:</text>
+<text x="346" y="106" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">USB-A ×4  ──  CAMERA / OBD-II</text>
+<text x="346" y="118" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">USB-C     ──  POWER IN (5V/3A)</text>
+<text x="346" y="130" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">CSI-2     ──  PI CAMERA v2</text>
+<text x="346" y="142" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">UART TX/RX ─  ESP32-S3</text>
+<text x="346" y="154" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">GPIO 2,3  ──  I2C (SDA/SCL)</text>
+<text x="346" y="166" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">3.5mm AUD ──  SPEAKER (TTS)</text>
+<text x="346" y="178" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">802.11ac  ──  WI-FI / BLE 5.0</text>
+<text x="346" y="191" font-family="Share Tech Mono,monospace" font-size="8" fill="#888">TFLITE · OPENCV · PYTTSX3</text>
+
+<!-- Port connectors on Pi left side -->
+<rect x="328" y="108" width="8" height="10" fill="#1a5f8a" stroke="#0c447c" stroke-width="0.5"/>
+<rect x="328" y="122" width="8" height="10" fill="#1a5f8a" stroke="#0c447c" stroke-width="0.5"/>
+<rect x="328" y="136" width="8" height="10" fill="#1a5f8a" stroke="#0c447c" stroke-width="0.5"/>
+<rect x="328" y="150" width="8" height="10" fill="#1a5f8a" stroke="#0c447c" stroke-width="0.5"/>
+<text x="326" y="115" text-anchor="end" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">USB</text>
+<text x="326" y="129" text-anchor="end" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">PWR</text>
+<text x="326" y="143" text-anchor="end" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">CSI</text>
+<text x="326" y="157" text-anchor="end" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">UART</text>
+
+<!-- ESP32-S3 co-processor block -->
+<rect x="548" y="64" width="82" height="140" rx="0" fill="#fff" stroke="#1a5f8a" stroke-width="1.5"/>
+<rect x="548" y="64" width="82" height="14" fill="#1a5f8a" fill-opacity="0.15"/>
+<text x="589" y="73" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7.5" fill="#1a5f8a">ESP32-S3</text>
+<text x="589" y="86" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#555">BLE 5.0</text>
+<text x="589" y="97" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#555">240MHz</text>
+<text x="589" y="108" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#555">2-CORE</text>
+<line x1="548" y1="116" x2="630" y2="116" stroke="#ddd" stroke-width="0.5"/>
+<text x="589" y="125" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#333">PORTS:</text>
+<text x="589" y="136" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#555">UART0</text>
+<text x="589" y="146" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#555">I2C</text>
+<text x="589" y="156" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#555">GPIO×45</text>
+<text x="589" y="166" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#555">BLE TX</text>
+<text x="589" y="176" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#555">ANT OUT</text>
+
+<!-- Pi → ESP32 UART bus -->
+<line x1="536" y1="150" x2="548" y2="150" stroke="#1a5f8a" stroke-width="1.5" stroke-dasharray="4 2"/>
+<text x="539" y="146" font-family="Share Tech Mono,monospace" font-size="7" fill="#1a5f8a">UART</text>
+
+<!-- Storage + OS block -->
+<rect x="336" y="218" width="100" height="48" rx="0" fill="#fff" stroke="#888" stroke-width="1"/>
+<text x="386" y="232" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">microSD</text>
+<text x="386" y="244" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">32GB A2</text>
+<text x="386" y="255" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">RASPBIAN OS</text>
+<text x="386" y="262" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">TFLITE MODELS</text>
+
+<!-- Heatsink block -->
+<rect x="450" y="218" width="80" height="48" rx="0" fill="#fff" stroke="#888" stroke-width="1"/>
+<text x="490" y="232" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">HEATSINK</text>
+<text x="490" y="244" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">+ 40mm FAN</text>
+<text x="490" y="255" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">5V / 0.2A</text>
+<text x="490" y="263" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">ACTIVE COOL</text>
+
+<!-- Divider inside AI module -->
+<line x1="336" y1="282" x2="624" y2="282" stroke="#1a5f8a" stroke-width="0.8" stroke-dasharray="6 3"/>
+<text x="340" y="292" font-family="Share Tech Mono,monospace" font-size="7" fill="#888" letter-spacing="1">AI PIPELINE: SENSOR FUSION → LSTM → CNN → DECISION → OUTPUT</text>
+
+<!-- AI pipeline strip -->
+<rect x="336" y="296" width="48" height="22" fill="#dbeeff" stroke="#1a5f8a" stroke-width="0.8"/>
+<text x="360" y="310" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#1a5f8a">PREPROC</text>
+<line x1="384" y1="307" x2="394" y2="307" stroke="#1a5f8a" stroke-width="1" marker-end="url(#pip)"/>
+<rect x="394" y="296" width="48" height="22" fill="#dbeeff" stroke="#1a5f8a" stroke-width="0.8"/>
+<text x="418" y="310" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#1a5f8a">FUSION</text>
+<line x1="442" y1="307" x2="452" y2="307" stroke="#1a5f8a" stroke-width="1" marker-end="url(#pip)"/>
+<rect x="452" y="296" width="44" height="22" fill="#dbeeff" stroke="#1a5f8a" stroke-width="0.8"/>
+<text x="474" y="310" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#1a5f8a">PREDICT</text>
+<line x1="496" y1="307" x2="506" y2="307" stroke="#1a5f8a" stroke-width="1" marker-end="url(#pip)"/>
+<rect x="506" y="296" width="44" height="22" fill="#dbeeff" stroke="#1a5f8a" stroke-width="0.8"/>
+<text x="528" y="310" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#1a5f8a">DECIDE</text>
+<line x1="550" y1="307" x2="560" y2="307" stroke="#1a5f8a" stroke-width="1" marker-end="url(#pip)"/>
+<rect x="560" y="296" width="48" height="22" fill="#dbeeff" stroke="#1a5f8a" stroke-width="0.8"/>
+<text x="584" y="310" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#1a5f8a">OUTPUT</text>
+
+<defs>
+  <marker id="pip" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+    <path d="M1 1L7 4L1 7" fill="none" stroke="#1a5f8a" stroke-width="1.2"/>
+  </marker>
+  <marker id="pwrA" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+    <path d="M1 1L7 4L1 7" fill="none" stroke="#c00" stroke-width="1.5"/>
+  </marker>
+  <marker id="pwr5" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+    <path d="M1 1L7 4L1 7" fill="none" stroke="#e07000" stroke-width="1.5"/>
+  </marker>
+  <marker id="dat" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+    <path d="M1 1L7 4L1 7" fill="none" stroke="#1a5f8a" stroke-width="1.2"/>
+  </marker>
+  <marker id="datg" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+    <path d="M1 1L7 4L1 7" fill="none" stroke="#2a8a3a" stroke-width="1.2"/>
+  </marker>
+  <marker id="datv" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+    <path d="M1 1L7 4L1 7" fill="none" stroke="#7a2a8a" stroke-width="1.2"/>
+  </marker>
+  <marker id="datr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+    <path d="M1 1L7 4L1 7" fill="none" stroke="#c00" stroke-width="1.2"/>
+  </marker>
+</defs>
+
+<!-- ═══════════════════════════════════════════════════
+     MODULE 2: DRIVER MONITORING MODULE
+═══════════════════════════════════════════════════ -->
+<rect x="36" y="186" width="230" height="110" rx="0" fill="#edfaf3" stroke="#2a8a3a" stroke-width="2"/>
+<rect x="36" y="186" width="230" height="16" fill="#2a8a3a"/>
+<text x="46" y="198" font-family="Share Tech Mono,monospace" font-size="9" fill="#fff" letter-spacing="1">MOD-02: DRIVER MONITORING</text>
+
+<!-- Camera block -->
+<rect x="52" y="210" width="80" height="72" rx="0" fill="#fff" stroke="#2a8a3a" stroke-width="1.5"/>
+<text x="92" y="222" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="8" fill="#2a8a3a">PI CAM v2</text>
+<text x="92" y="234" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#555">IMX219</text>
+<text x="92" y="246" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#555">8MP · 30fps</text>
+<text x="92" y="258" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">DRIVER FACE</text>
+<!-- Camera lens -->
+<circle cx="92" cy="270" r="8" fill="#111" stroke="#555" stroke-width="1"/>
+<circle cx="92" cy="270" r="5" fill="#222"/>
+<circle cx="92" cy="270" r="2" fill="#333"/>
+
+<!-- IR LED ring -->
+<rect x="148" y="210" width="60" height="36" rx="0" fill="#fff" stroke="#888" stroke-width="1"/>
+<text x="178" y="222" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#555">IR LED RING</text>
+<text x="178" y="233" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">850nm · 6 LED</text>
+<text x="178" y="244" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">NIGHT VISION</text>
+
+<!-- Interface label -->
+<text x="52" y="296" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">INTERFACE: CSI-2 RIBBON (200mm)</text>
+<text x="52" y="306" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">MOUNT: DASHBOARD · DRIVER-FACING</text>
+
+<!-- CSI connector -->
+<rect x="218" y="238" width="10" height="30" fill="#2a8a3a" stroke="#1a6a2a" stroke-width="0.5"/>
+<text x="222" y="252" font-family="Share Tech Mono,monospace" font-size="6" fill="#2a8a3a" writing-mode="tb">CSI</text>
+
+<!-- ═══════════════════════════════════════════════════
+     MODULE 3: ROAD VISION MODULE
+═══════════════════════════════════════════════════ -->
+<rect x="36" y="318" width="230" height="100" rx="0" fill="#edfaf3" stroke="#2a8a3a" stroke-width="2"/>
+<rect x="36" y="318" width="230" height="16" fill="#2a8a3a"/>
+<text x="46" y="330" font-family="Share Tech Mono,monospace" font-size="9" fill="#fff" letter-spacing="1">MOD-03: ROAD VISION</text>
+
+<rect x="52" y="342" width="80" height="68" rx="0" fill="#fff" stroke="#2a8a3a" stroke-width="1.5"/>
+<text x="92" y="354" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="8" fill="#2a8a3a">USB WEBCAM</text>
+<text x="92" y="366" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#555">1080p · 120°</text>
+<text x="92" y="378" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#555">WIDE ANGLE</text>
+<circle cx="92" cy="397" r="7" fill="#111" stroke="#555" stroke-width="1"/>
+<circle cx="92" cy="397" r="4" fill="#222"/>
+<circle cx="92" cy="397" r="1.5" fill="#333"/>
+
+<rect x="148" y="342" width="60" height="36" rx="0" fill="#fff" stroke="#888" stroke-width="1"/>
+<text x="178" y="354" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#555">USB-A CABLE</text>
+<text x="178" y="365" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">USB 2.0 HS</text>
+<text x="178" y="376" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">480 Mbit/s</text>
+
+<text x="52" y="424" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">MOUNT: WINDSHIELD · FORWARD-FACING</text>
+<text x="52" y="434" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">INTERFACE: USB-A CABLE (1m)</text>
+
+<!-- USB connector -->
+<rect x="218" y="355" width="10" height="20" fill="#2a8a3a" stroke="#1a6a2a" stroke-width="0.5"/>
+
+<!-- ═══════════════════════════════════════════════════
+     MODULE 4: SENSOR MODULE
+═══════════════════════════════════════════════════ -->
+<rect x="36" y="440" width="230" height="150" rx="0" fill="#f3f0ff" stroke="#7a2a8a" stroke-width="2"/>
+<rect x="36" y="440" width="230" height="16" fill="#7a2a8a"/>
+<text x="46" y="452" font-family="Share Tech Mono,monospace" font-size="9" fill="#fff" letter-spacing="1">MOD-04: SENSOR MODULE</text>
+
+<!-- IMU -->
+<rect x="52" y="464" width="70" height="52" rx="0" fill="#fff" stroke="#7a2a8a" stroke-width="1.2"/>
+<text x="87" y="476" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="8" fill="#7a2a8a">IMU</text>
+<text x="87" y="488" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#555">MPU-6050</text>
+<text x="87" y="499" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">ACCEL+GYRO</text>
+<text x="87" y="510" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">I2C · 0x68</text>
+
+<!-- GPS -->
+<rect x="134" y="464" width="70" height="52" rx="0" fill="#fff" stroke="#7a2a8a" stroke-width="1.2"/>
+<text x="169" y="476" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="8" fill="#7a2a8a">GPS</text>
+<text x="169" y="488" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#555">NEO-6M</text>
+<text x="169" y="499" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">UART 9600</text>
+<text x="169" y="510" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">±0.5 km/h</text>
+
+<!-- OBD-II -->
+<rect x="52" y="528" width="70" height="48" rx="0" fill="#fff" stroke="#888" stroke-width="1"/>
+<text x="87" y="540" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">OBD-II</text>
+<text x="87" y="552" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">ELM327</text>
+<text x="87" y="563" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">BT → Pi</text>
+<text x="87" y="573" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#aaa">OPTIONAL</text>
+
+<!-- Brake wire tap -->
+<rect x="134" y="528" width="70" height="48" rx="0" fill="#fff" stroke="#888" stroke-width="1"/>
+<text x="169" y="540" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">BRAKE TAP</text>
+<text x="169" y="552" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">PC817 OPTO</text>
+<text x="169" y="563" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">12V → GPIO</text>
+<text x="169" y="573" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">ISOLATED</text>
+
+<!-- I2C bus bar -->
+<line x1="87" y1="516" x2="87" y2="526" stroke="#7a2a8a" stroke-width="1.5"/>
+<line x1="169" y1="516" x2="169" y2="526" stroke="#7a2a8a" stroke-width="1.5"/>
+<line x1="87" y1="522" x2="169" y2="522" stroke="#7a2a8a" stroke-width="1.5"/>
+<text x="128" y="520" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#7a2a8a">I2C BUS</text>
+
+<!-- I2C → AI connector -->
+<rect x="218" y="480" width="10" height="20" fill="#7a2a8a" stroke="#5a1a7a" stroke-width="0.5"/>
+<text x="222" y="492" font-family="Share Tech Mono,monospace" font-size="6" fill="#7a2a8a" writing-mode="tb">I2C</text>
+
+<!-- UART GPS connector -->
+<rect x="218" y="510" width="10" height="20" fill="#f0a020" stroke="#c07800" stroke-width="0.5"/>
+<text x="222" y="522" font-family="Share Tech Mono,monospace" font-size="6" fill="#f0a020" writing-mode="tb">UART</text>
+
+<!-- ═══════════════════════════════════════════════════
+     MODULE 5: BLE COMMUNICATION MODULE
+═══════════════════════════════════════════════════ -->
+<rect x="36" y="608" width="230" height="100" rx="0" fill="#edfaf3" stroke="#2a8a3a" stroke-width="2"/>
+<rect x="36" y="608" width="230" height="16" fill="#2a8a3a"/>
+<text x="46" y="620" font-family="Share Tech Mono,monospace" font-size="9" fill="#fff" letter-spacing="1">MOD-05: BLE COMMUNICATION</text>
+
+<rect x="52" y="632" width="80" height="60" rx="0" fill="#fff" stroke="#2a8a3a" stroke-width="1.5"/>
+<text x="92" y="644" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="8" fill="#2a8a3a">BLE UNIT</text>
+<text x="92" y="656" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#555">ESP32-S3</text>
+<text x="92" y="667" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">BLE 5.0</text>
+<text x="92" y="678" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">~100m RANGE</text>
+<text x="92" y="688" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#aaa">INT. TO AI MOD</text>
+
+<!-- BLE antenna symbol -->
+<line x1="160" y1="692" x2="160" y2="640" stroke="#2a8a3a" stroke-width="2"/>
+<line x1="152" y1="650" x2="168" y2="650" stroke="#2a8a3a" stroke-width="1.5"/>
+<line x1="154" y1="660" x2="166" y2="660" stroke="#2a8a3a" stroke-width="1.2"/>
+<line x1="156" y1="670" x2="164" y2="670" stroke="#2a8a3a" stroke-width="1"/>
+<!-- Wireless arcs -->
+<path d="M178 658 Q195 645 178 632" fill="none" stroke="#2a8a3a" stroke-width="1" stroke-dasharray="3 2"/>
+<path d="M186 664 Q210 645 186 626" fill="none" stroke="#2a8a3a" stroke-width="0.8" stroke-dasharray="3 3" opacity="0.6"/>
+<path d="M194 670 Q225 645 194 620" fill="none" stroke="#2a8a3a" stroke-width="0.6" stroke-dasharray="3 4" opacity="0.35"/>
+<text x="220" y="648" font-family="Share Tech Mono,monospace" font-size="7" fill="#2a8a3a">BLE TX</text>
+<text x="220" y="658" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">V2V MESH</text>
+<text x="220" y="668" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">OFFLINE</text>
+
+<text x="52" y="704" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">PROTOCOL: BLE 5.0 GATT · AES-128</text>
+<text x="52" y="714" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">PAYLOAD: RISK_SCORE + GPS + TS</text>
+
+<!-- ═══════════════════════════════════════════════════
+     MODULE 6: ALERT MODULE
+═══════════════════════════════════════════════════ -->
+<rect x="36" y="728" width="230" height="80" rx="0" fill="#fff8f0" stroke="#c00" stroke-width="2"/>
+<rect x="36" y="728" width="230" height="16" fill="#c00"/>
+<text x="46" y="740" font-family="Share Tech Mono,monospace" font-size="9" fill="#fff" letter-spacing="1">MOD-06: ALERT MODULE</text>
+
+<rect x="52" y="748" width="55" height="48" rx="0" fill="#fff" stroke="#c00" stroke-width="1.2"/>
+<text x="79" y="760" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7.5" fill="#c00">SPEAKER</text>
+<text x="79" y="771" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">3W · 8Ω</text>
+<text x="79" y="782" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">PAM8403</text>
+<text x="79" y="793" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">TTS VOICE</text>
+
+<rect x="116" y="748" width="50" height="48" rx="0" fill="#fff" stroke="#c00" stroke-width="1.2"/>
+<text x="141" y="760" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7.5" fill="#c00">BUZZER</text>
+<text x="141" y="771" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">85dB · 5V</text>
+<text x="141" y="782" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">ACTIVE</text>
+<text x="141" y="793" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">&lt;5ms</text>
+
+<rect x="176" y="748" width="60" height="48" rx="0" fill="#fff" stroke="#c00" stroke-width="1.2"/>
+<text x="206" y="760" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7.5" fill="#c00">LED BAR</text>
+<text x="206" y="771" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">WS2812B</text>
+<text x="206" y="782" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">10 RGB LED</text>
+<text x="206" y="793" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">G/A/R RISK</text>
+
+<!-- Alert GPIO connector -->
+<rect x="218" y="760" width="10" height="20" fill="#c00" stroke="#800" stroke-width="0.5"/>
+
+<!-- ═══════════════════════════════════════════════════
+     INTER-MODULE WIRING
+═══════════════════════════════════════════════════ -->
+
+<!-- ── 5V POWER BUS (orange, thick) ── -->
+<!-- Power → AI module (5V) -->
+<line x1="266" y1="137" x2="320" y2="137" stroke="#e07000" stroke-width="4" stroke-linecap="square" marker-end="url(#pwr5)"/>
+<text x="270" y="132" font-family="Share Tech Mono,monospace" font-size="8" fill="#e07000">5V / 3A</text>
+<text x="270" y="148" font-family="Share Tech Mono,monospace" font-size="7" fill="#e07000">USB-C PWR</text>
+
+<!-- 5V → Driver Cam (from AI module left) -->
+<line x1="320" y1="150" x2="280" y2="150" stroke="#e07000" stroke-width="2.5" stroke-linecap="square"/>
+<line x1="280" y1="150" x2="280" y2="240" stroke="#e07000" stroke-width="2.5" stroke-linecap="square" marker-end="url(#pwr5)"/>
+<text x="283" y="200" font-family="Share Tech Mono,monospace" font-size="7" fill="#e07000">5V</text>
+
+<!-- 5V → Road cam -->
+<line x1="280" y1="240" x2="280" y2="380" stroke="#e07000" stroke-width="2" stroke-linecap="square" marker-end="url(#pwr5)"/>
+<text x="283" y="330" font-family="Share Tech Mono,monospace" font-size="7" fill="#e07000">5V</text>
+
+<!-- 5V → Sensor module -->
+<line x1="280" y1="380" x2="280" y2="490" stroke="#e07000" stroke-width="2" stroke-linecap="square" marker-end="url(#pwr5)"/>
+<text x="283" y="440" font-family="Share Tech Mono,monospace" font-size="7" fill="#e07000">3.3V</text>
+
+<!-- 5V → BLE module -->
+<line x1="280" y1="490" x2="280" y2="660" stroke="#e07000" stroke-width="2" stroke-linecap="square" marker-end="url(#pwr5)"/>
+<text x="283" y="580" font-family="Share Tech Mono,monospace" font-size="7" fill="#e07000">5V</text>
+
+<!-- 5V → Alert module -->
+<line x1="280" y1="660" x2="280" y2="772" stroke="#e07000" stroke-width="2" stroke-linecap="square" marker-end="url(#pwr5)"/>
+<text x="283" y="730" font-family="Share Tech Mono,monospace" font-size="7" fill="#e07000">5V</text>
+
+<!-- Power bus vertical trunk label -->
+<rect x="272" y="180" width="7" height="280" fill="#e07000" fill-opacity="0.08"/>
+<text x="269" y="320" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#e07000" transform="rotate(-90,269,320)">5V POWER DISTRIBUTION BUS</text>
+
+<!-- ── CSI DATA LINE: Driver cam → Pi ── -->
+<line x1="228" y1="252" x2="320" y2="128" stroke="#1a5f8a" stroke-width="2" marker-end="url(#dat)"/>
+<text x="260" y="190" font-family="Share Tech Mono,monospace" font-size="8" fill="#1a5f8a">CSI-2</text>
+<text x="260" y="200" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">200mm</text>
+
+<!-- ── USB DATA LINE: Road cam → Pi ── -->
+<line x1="228" y1="365" x2="308" y2="113" stroke="#1a5f8a" stroke-width="1.8" stroke-dasharray="6 2" marker-end="url(#dat)"/>
+<text x="258" y="300" font-family="Share Tech Mono,monospace" font-size="8" fill="#1a5f8a">USB 2.0</text>
+
+<!-- ── I2C: Sensor → ESP32/Pi GPIO ── -->
+<line x1="228" y1="490" x2="320" y2="490" stroke="#7a2a8a" stroke-width="1.8" marker-end="url(#datv)"/>
+<text x="242" y="486" font-family="Share Tech Mono,monospace" font-size="7" fill="#7a2a8a">I2C</text>
+
+<!-- I2C enters AI module and goes to Pi GPIO -->
+<line x1="320" y1="490" x2="340" y2="490" stroke="#7a2a8a" stroke-width="1.8"/>
+<line x1="340" y1="490" x2="340" y2="156" stroke="#7a2a8a" stroke-width="1.5" stroke-dasharray="4 2"/>
+<line x1="340" y1="156" x2="336" y2="156" stroke="#7a2a8a" stroke-width="1.5" marker-end="url(#datv)"/>
+<text x="343" y="340" font-family="Share Tech Mono,monospace" font-size="7" fill="#7a2a8a">I2C</text>
+
+<!-- ── UART: GPS → ESP32 ── -->
+<line x1="228" y1="520" x2="320" y2="520" stroke="#f0a020" stroke-width="1.5" stroke-dasharray="5 2" marker-end="url(#pwr5)"/>
+<text x="242" y="516" font-family="Share Tech Mono,monospace" font-size="7" fill="#f0a020">UART</text>
+
+<!-- GPS UART enters AI, goes to ESP32 -->
+<line x1="320" y1="520" x2="350" y2="520" stroke="#f0a020" stroke-width="1.5"/>
+<line x1="350" y1="520" x2="350" y2="164" stroke="#f0a020" stroke-width="1.2" stroke-dasharray="4 2"/>
+<line x1="350" y1="164" x2="548" y2="164" stroke="#f0a020" stroke-width="1.2" stroke-dasharray="4 2" marker-end="url(#pwr5)"/>
+<text x="450" y="160" font-family="Share Tech Mono,monospace" font-size="7" fill="#f0a020">UART→ESP32</text>
+
+<!-- ── UART: BLE module internal (already inside AI box) shown as label ── -->
+<text x="340" y="465" font-family="Share Tech Mono,monospace" font-size="8" fill="#888" font-style="italic">BLE IS ESP32 INTEGRATED INSIDE AI MODULE</text>
+
+<!-- ── GPIO: Alert module ← AI ── -->
+<line x1="228" y1="772" x2="320" y2="772" stroke="#c00" stroke-width="2" marker-end="url(#datr)"/>
+<line x1="320" y1="772" x2="360" y2="772" stroke="#c00" stroke-width="2"/>
+<line x1="360" y1="772" x2="360" y2="204" stroke="#c00" stroke-width="1.8"/>
+<line x1="360" y1="204" x2="336" y2="204" stroke="#c00" stroke-width="1.8" marker-end="url(#datr)"/>
+<text x="232" y="768" font-family="Share Tech Mono,monospace" font-size="7" fill="#c00">GPIO</text>
+<text x="363" y="490" font-family="Share Tech Mono,monospace" font-size="7" fill="#c00">GPIO ALERT</text>
+
+<!-- ═══════════════════════════════════════════════════
+     RIGHT SIDE: OUTPUT / CLOUD / NEARBY VEHICLE
+═══════════════════════════════════════════════════ -->
+
+<!-- Output section header -->
+<rect x="660" y="34" width="540" height="740" rx="0" fill="#fafaf8" stroke="#ccc" stroke-width="1"/>
+<rect x="660" y="34" width="540" height="16" fill="#555"/>
+<text x="670" y="46" font-family="Share Tech Mono,monospace" font-size="9" fill="#ddd" letter-spacing="1">OUTPUT INTERFACES · CLOUD · V2V COMMUNICATION</text>
+
+<!-- ── BLE NEARBY VEHICLE ── -->
+<rect x="680" y="64" width="200" height="130" rx="0" fill="#edfaf3" stroke="#2a8a3a" stroke-width="1.5"/>
+<rect x="680" y="64" width="200" height="14" fill="#2a8a3a" fill-opacity="0.5"/>
+<text x="690" y="74" font-family="Share Tech Mono,monospace" font-size="8" fill="#fff" letter-spacing="1">NEARBY VEHICLE (BLE RX)</text>
+<text x="780" y="96" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="8" fill="#2a8a3a">PAYLOAD RECEIVED:</text>
+<rect x="696" y="103" width="168" height="76" fill="#f8fff8" stroke="#aad4aa" stroke-width="0.8"/>
+<text x="706" y="117" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">risk_score: 0.87</text>
+<text x="706" y="129" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">risk_type: "collision"</text>
+<text x="706" y="141" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">lat: 12.9716°N</text>
+<text x="706" y="153" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">lon: 77.5946°E</text>
+<text x="706" y="165" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">ts: 1700000000ms</text>
+<text x="706" y="176" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">ttl: 3 hops</text>
+
+<!-- BLE wireless from AI module -->
+<path d="M634 180 Q660 160 680 100" fill="none" stroke="#2a8a3a" stroke-width="1.5" stroke-dasharray="6 3" marker-end="url(#datg)"/>
+<text x="645" y="155" font-family="Share Tech Mono,monospace" font-size="8" fill="#2a8a3a">BLE 5.0</text>
+<text x="645" y="165" font-family="Share Tech Mono,monospace" font-size="8" fill="#888">&lt;200ms</text>
+
+<!-- ── CLOUD CONNECTIVITY ── -->
+<rect x="680" y="210" width="200" height="140" rx="0" fill="#e8f2fb" stroke="#1a5f8a" stroke-width="1.5"/>
+<rect x="680" y="210" width="200" height="14" fill="#1a5f8a" fill-opacity="0.5"/>
+<text x="690" y="220" font-family="Share Tech Mono,monospace" font-size="8" fill="#fff" letter-spacing="1">CLOUD LAYER (OPT.)</text>
+
+<rect x="696" y="230" width="80" height="48" rx="0" fill="#fff" stroke="#888" stroke-width="1"/>
+<text x="736" y="242" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7.5" fill="#555">4G DONGLE</text>
+<text x="736" y="253" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">USB → PI</text>
+<text x="736" y="264" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">MQTT/REST</text>
+<text x="736" y="275" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#aaa">OPTIONAL</text>
+
+<rect x="786" y="230" width="76" height="48" rx="0" fill="#fff" stroke="#888" stroke-width="1"/>
+<text x="824" y="242" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7.5" fill="#555">MODEL OTA</text>
+<text x="824" y="253" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">TFLITE UPD</text>
+<text x="824" y="264" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">SECURE</text>
+<text x="824" y="275" text-anchor="middle" font-family="Share Tech Mono,monospace" font-size="7" fill="#aaa">AES-256</text>
+
+<text x="696" y="300" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">SERVICES: KAFKA · MQTT · REST API</text>
+<text x="696" y="312" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">DATA: RISK EVENTS · FLEET ANALYTICS</text>
+<text x="696" y="324" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">LEARNING: MODEL RETRAIN → OTA PUSH</text>
+<text x="696" y="336" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">SOS: GPS + EMERGENCY CONTACTS</text>
+
+<!-- Cloud ← AI wire -->
+<line x1="634" y1="100" x2="660" y2="100" stroke="#1a5f8a" stroke-width="1.5" stroke-dasharray="4 2"/>
+<line x1="660" y1="100" x2="660" y2="280" stroke="#1a5f8a" stroke-width="1.2" stroke-dasharray="4 2"/>
+<line x1="660" y1="280" x2="680" y2="280" stroke="#1a5f8a" stroke-width="1.2" stroke-dasharray="4 2" marker-end="url(#dat)"/>
+<text x="662" y="200" font-family="Share Tech Mono,monospace" font-size="7" fill="#1a5f8a">4G / WIFI</text>
+
+<!-- ── PERFORMANCE TABLE ── -->
+<rect x="680" y="370" width="200" height="180" rx="0" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<rect x="680" y="370" width="200" height="14" fill="#555"/>
+<text x="690" y="380" font-family="Share Tech Mono,monospace" font-size="8" fill="#fff" letter-spacing="1">PERFORMANCE SPEC</text>
+
+<line x1="680" y1="396" x2="880" y2="396" stroke="#ddd" stroke-width="0.5"/>
+<text x="690" y="408" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">INFERENCE LATENCY</text>
+<text x="870" y="408" text-anchor="end" font-family="Share Tech Mono,monospace" font-size="8" fill="#1a5f8a">&lt;80ms</text>
+<line x1="680" y1="416" x2="880" y2="416" stroke="#ddd" stroke-width="0.5"/>
+<text x="690" y="428" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">ALERT TRIGGER</text>
+<text x="870" y="428" text-anchor="end" font-family="Share Tech Mono,monospace" font-size="8" fill="#c00">&lt;100ms</text>
+<line x1="680" y1="436" x2="880" y2="436" stroke="#ddd" stroke-width="0.5"/>
+<text x="690" y="448" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">BLE BROADCAST</text>
+<text x="870" y="448" text-anchor="end" font-family="Share Tech Mono,monospace" font-size="8" fill="#2a8a3a">&lt;200ms</text>
+<line x1="680" y1="456" x2="880" y2="456" stroke="#ddd" stroke-width="0.5"/>
+<text x="690" y="468" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">CAMERA FPS</text>
+<text x="870" y="468" text-anchor="end" font-family="Share Tech Mono,monospace" font-size="8" fill="#1a5f8a">20-30fps</text>
+<line x1="680" y1="476" x2="880" y2="476" stroke="#ddd" stroke-width="0.5"/>
+<text x="690" y="488" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">POWER DRAW</text>
+<text x="870" y="488" text-anchor="end" font-family="Share Tech Mono,monospace" font-size="8" fill="#e07000">~18W</text>
+<line x1="680" y1="496" x2="880" y2="496" stroke="#ddd" stroke-width="0.5"/>
+<text x="690" y="508" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">GPS ACCURACY</text>
+<text x="870" y="508" text-anchor="end" font-family="Share Tech Mono,monospace" font-size="8" fill="#7a2a8a">±0.5km/h</text>
+<line x1="680" y1="516" x2="880" y2="516" stroke="#ddd" stroke-width="0.5"/>
+<text x="690" y="528" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">BOOT TIME</text>
+<text x="870" y="528" text-anchor="end" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">~25s</text>
+<line x1="680" y1="536" x2="880" y2="536" stroke="#ddd" stroke-width="0.5"/>
+<text x="690" y="548" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">TOTAL BUDGET</text>
+<text x="870" y="548" text-anchor="end" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">₹13,790</text>
+
+<!-- ── INSTALLATION LOCATION TABLE ── -->
+<rect x="680" y="570" width="200" height="180" rx="0" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<rect x="680" y="570" width="200" height="14" fill="#555"/>
+<text x="690" y="580" font-family="Share Tech Mono,monospace" font-size="8" fill="#fff" letter-spacing="1">INSTALL LOCATIONS</text>
+
+<text x="690" y="602" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">MODULE</text>
+<text x="820" y="602" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">LOCATION</text>
+<line x1="680" y1="607" x2="880" y2="607" stroke="#ddd" stroke-width="1"/>
+
+<text x="690" y="620" font-family="Share Tech Mono,monospace" font-size="8" fill="#1a5f8a">AI UNIT</text>
+<text x="760" y="620" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">CENTER CONSOLE</text>
+<text x="690" y="634" font-family="Share Tech Mono,monospace" font-size="8" fill="#2a8a3a">DRIVER CAM</text>
+<text x="760" y="634" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">DASHBOARD TOP</text>
+<text x="690" y="648" font-family="Share Tech Mono,monospace" font-size="8" fill="#2a8a3a">ROAD CAM</text>
+<text x="760" y="648" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">WINDSHIELD CTR</text>
+<text x="690" y="662" font-family="Share Tech Mono,monospace" font-size="8" fill="#7a2a8a">GPS</text>
+<text x="760" y="662" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">ROOF ANTENNA</text>
+<text x="690" y="676" font-family="Share Tech Mono,monospace" font-size="8" fill="#7a2a8a">IMU</text>
+<text x="760" y="676" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">FLOOR / UNDER DASH</text>
+<text x="690" y="690" font-family="Share Tech Mono,monospace" font-size="8" fill="#e07000">POWER</text>
+<text x="760" y="690" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">FIREWALL / FUSE BOX</text>
+<text x="690" y="704" font-family="Share Tech Mono,monospace" font-size="8" fill="#c00">ALERTS</text>
+<text x="760" y="704" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">DASHBOARD LEFT</text>
+<text x="690" y="718" font-family="Share Tech Mono,monospace" font-size="8" fill="#f0a020">OBD-II</text>
+<text x="760" y="718" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">STEERING COLUMN</text>
+<text x="690" y="732" font-family="Share Tech Mono,monospace" font-size="8" fill="#2a8a3a">BLE ANT.</text>
+<text x="760" y="732" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">DASHBOARD EDGE</text>
+
+<!-- ── CONNECTOR SPEC ── -->
+<rect x="900" y="64" width="290" height="640" rx="0" fill="#fff" stroke="#555" stroke-width="1.5"/>
+<rect x="900" y="64" width="290" height="14" fill="#555"/>
+<text x="910" y="74" font-family="Share Tech Mono,monospace" font-size="8" fill="#fff" letter-spacing="1">CONNECTOR SPECIFICATION</text>
+
+<text x="910" y="96" font-family="Share Tech Mono,monospace" font-size="8" fill="#888" letter-spacing="1">ID   TYPE        PINS  SIGNAL</text>
+<line x1="900" y1="102" x2="1190" y2="102" stroke="#ddd" stroke-width="1"/>
+
+<!-- Connector rows -->
+<text x="910" y="116" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">J1   USB-C       ——    5V PWR IN (PI)</text>
+<text x="910" y="130" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">J2   USB-A ×4    ——    CAM / OBD DATA</text>
+<text x="910" y="144" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">J3   CSI-2 FPC   15T   DRIVER CAM</text>
+<text x="910" y="158" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">J4   JST-PH 2mm  4P    I2C (IMU)</text>
+<text x="910" y="172" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">J5   JST-PH 2mm  4P    UART (GPS)</text>
+<text x="910" y="186" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">J6   JST-PH 2mm  4P    UART (ESP32)</text>
+<text x="910" y="200" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">J7   2.5mm SPADE 2P    12V BATTERY</text>
+<text x="910" y="214" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">J8   BLADE FUSE  ——    5A PROTECTION</text>
+<text x="910" y="228" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">J9   OBD-II DLC  16P   VEHICLE DATA</text>
+<text x="910" y="242" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">J10  3.5mm AUD   3P    SPEAKER OUT</text>
+<text x="910" y="256" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">J11  GPIO HDR    40P   PI EXPANSION</text>
+<text x="910" y="270" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">J12  JST-PH 2mm  3P    BRAKE WIRE TAP</text>
+<text x="910" y="284" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">J13  SMA ANT.    ——    BLE ANTENNA</text>
+<text x="910" y="298" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">J14  JST-PH 2mm  3P    LED STRIP</text>
+
+<line x1="900" y1="308" x2="1190" y2="308" stroke="#555" stroke-width="1"/>
+
+<!-- Signal types legend in connector box -->
+<text x="910" y="324" font-family="Share Tech Mono,monospace" font-size="8" fill="#888" letter-spacing="1">SIGNAL VOLTAGES:</text>
+<text x="910" y="338" font-family="Share Tech Mono,monospace" font-size="8" fill="#c00">12V DC  ─── BATTERY INPUT (FUSED)</text>
+<text x="910" y="352" font-family="Share Tech Mono,monospace" font-size="8" fill="#e07000">5V DC   ─── PI POWER · MODULES</text>
+<text x="910" y="366" font-family="Share Tech Mono,monospace" font-size="8" fill="#7a2a8a">3.3V DC ─── I2C BUS · ESP32 IO</text>
+<text x="910" y="380" font-family="Share Tech Mono,monospace" font-size="8" fill="#1a5f8a">USB     ─── 5V / DATA COMBINED</text>
+<text x="910" y="394" font-family="Share Tech Mono,monospace" font-size="8" fill="#2a8a3a">BLE     ─── 2.4GHz WIRELESS TX</text>
+
+<line x1="900" y1="404" x2="1190" y2="404" stroke="#555" stroke-width="1"/>
+
+<!-- I2C address map -->
+<text x="910" y="420" font-family="Share Tech Mono,monospace" font-size="8" fill="#888" letter-spacing="1">I2C ADDRESS MAP:</text>
+<text x="910" y="434" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">0x68  MPU-6050  IMU SENSOR</text>
+<text x="910" y="448" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">0x3C  SSD1306   OLED DISPLAY</text>
+<text x="910" y="462" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">SDA → GPIO2 (PIN 3)</text>
+<text x="910" y="476" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">SCL → GPIO3 (PIN 5)</text>
+
+<line x1="900" y1="486" x2="1190" y2="486" stroke="#555" stroke-width="1"/>
+
+<!-- UART map -->
+<text x="910" y="502" font-family="Share Tech Mono,monospace" font-size="8" fill="#888" letter-spacing="1">UART BAUD RATES:</text>
+<text x="910" y="516" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">ESP32   115200 baud  SENSOR DATA</text>
+<text x="910" y="530" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">NEO-6M   9600 baud  GPS NMEA</text>
+<text x="910" y="544" font-family="Share Tech Mono,monospace" font-size="8" fill="#333">ELM327  38400 baud  OBD-II</text>
+
+<line x1="900" y1="554" x2="1190" y2="554" stroke="#555" stroke-width="1"/>
+
+<!-- Plug and play note -->
+<rect x="910" y="564" width="268" height="80" rx="0" fill="#f5fff5" stroke="#2a8a3a" stroke-width="1"/>
+<text x="920" y="578" font-family="Share Tech Mono,monospace" font-size="8" fill="#2a8a3a" letter-spacing="1">PLUG-AND-PLAY INSTALL:</text>
+<text x="920" y="592" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">1. CONNECT POWER MODULE TO 12V</text>
+<text x="920" y="604" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">2. PLUG AI MODULE TO 5V RAIL</text>
+<text x="920" y="616" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">3. CONNECT CAMERAS VIA USB/CSI</text>
+<text x="920" y="628" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">4. PLUG SENSORS (I2C + UART)</text>
+<text x="920" y="640" font-family="Share Tech Mono,monospace" font-size="8" fill="#555">5. BOOT — SYSTEM AUTO-STARTS</text>
+
+<text x="910" y="666" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">INSTALL TIME: ~45 MIN · NO ECU MODIFICATION</text>
+<text x="910" y="678" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">COMPATIBLE: ANY 12V VEHICLE (POST 1990)</text>
+<text x="910" y="690" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">ENCLOSURE: IP54 · VIBRATION DAMPED</text>
+<text x="910" y="702" font-family="Share Tech Mono,monospace" font-size="7" fill="#888">CERTIFICATIONS: BIS · CE PENDING</text>
+
+</svg>
+</div><!-- /sch-svg-wrap -->
+
+<!-- NOTES BLOCK -->
+<div class="notes-block">
+  <div class="note-col">
+    <span class="note-title">Electrical notes</span>
+    1. All 5V lines must be fused at 500mA per branch.<br>
+    2. 12V input requires TVS diode (P6KE18A) for spike protection.<br>
+    3. I2C pull-up: 4.7kΩ to 3.3V on SDA and SCL lines.<br>
+    4. Camera CSI ribbon max length: 200mm — use shielded extension for longer runs.<br>
+    5. USB cables must be data-rated (not charge-only) for camera operation.
+  </div>
+  <div class="note-col">
+    <span class="note-title">Installation notes</span>
+    1. Mount AI module on anti-vibration rubber standoffs (M3).<br>
+    2. Route all wiring away from airbag deployment zones.<br>
+    3. Driver camera angle: 15° downward tilt toward driver eyes.<br>
+    4. GPS antenna must have clear sky view — avoid metallic roof.<br>
+    5. Brake wire tap: connect only to brake light feed wire, not ground.
+  </div>
+  <div class="note-col">
+    <span class="note-title">Safety &amp; compliance</span>
+    1. All modifications reversible — no permanent vehicle wiring changes.<br>
+    2. BLE frequency: 2.402–2.480 GHz — compliant with BIS/WPC India.<br>
+    3. OBD-II read-only — no ECU write access in current firmware.<br>
+    4. Emergency SOS requires active SIM in 4G module.<br>
+    5. Designed to AIS-140 telematics standard compatibility.
+  </div>
+</div>
+
+</div><!-- /schematic -->
+
+<!-- FOOTER -->
+<div class="footer-block">
+  <span class="fl">PROJECT GARUDA · SYSTEM WIRING SCHEMATIC · SHEET 1/1 · REV B.2</span>
+  <span class="fr">PLUG-AND-PLAY · MODULAR · AUTOMOTIVE GRADE · ₹25,000 BUDGET</span>
+</div>
+
+</div>
+</body>
+</html>

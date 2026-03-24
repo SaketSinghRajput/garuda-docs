@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Project Garuda — In-Vehicle Installation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #ffffff;
+    font-family: 'DM Sans', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 48px 32px 56px;
+    min-width: 960px;
+  }
+
+  .page {
+    width: 1100px;
+    background: #ffffff;
+  }
+
+  /* HEADER */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1.5px solid #e8e8e8;
+  }
+  .header-left .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: #999;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .header-left h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #0f0f0f;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+  .header-left h1 span { color: #1a5f8a; }
+  .header-left .subtitle {
+    font-size: 13px;
+    color: #888;
+    margin-top: 5px;
+    font-weight: 400;
+  }
+  .header-right {
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+  }
+  .stat-chip {
+    text-align: right;
+  }
+  .stat-chip .label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: #bbb;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 3px;
+  }
+  .stat-chip .value {
+    font-size: 13px;
+    font-weight: 500;
+    color: #333;
+  }
+
+  /* PRINT TIP */
+  .print-tip {
+    background: #fffbf0;
+    border: 1px solid #f0e4b0;
+    border-radius: 6px;
+    padding: 9px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: #a07820;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .print-tip::before {
+    content: "→";
+    font-weight: 700;
+  }
+
+  /* MAIN DIAGRAM AREA */
+  .diagram-wrap {
+    background: #fafafa;
+    border: 1px solid #ebebeb;
+    border-radius: 12px;
+    padding: 36px 40px 32px;
+    margin-bottom: 24px;
+    position: relative;
+  }
+
+  .diagram-wrap svg {
+    display: block;
+    width: 100%;
+  }
+
+  /* LEGEND ROW */
+  .legend {
+    display: flex;
+    gap: 0;
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .legend-item {
+    flex: 1;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-right: 1px solid #e8e8e8;
+  }
+  .legend-item:last-child { border-right: none; }
+  .legend-line {
+    width: 32px;
+    height: 2px;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .legend-line.dashed {
+    background: repeating-linear-gradient(90deg, currentColor 0, currentColor 4px, transparent 4px, transparent 8px);
+  }
+  .legend-arrow::after {
+    content: '';
+    position: absolute;
+    right: -1px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-top: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+    border-left: 5px solid currentColor;
+  }
+  .legend-text .lt { font-size: 12px; font-weight: 500; color: #222; display: block; }
+  .legend-text .ls { font-size: 11px; color: #999; display: block; }
+
+  /* COMPONENT GRID */
+  .component-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .comp-card {
+    border-radius: 8px;
+    padding: 14px 16px;
+    border: 1px solid;
+  }
+  .comp-card .cc-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    display: block;
+  }
+  .comp-card .cc-name {
+    font-size: 13px;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 3px;
+  }
+  .comp-card .cc-sub {
+    font-size: 11px;
+    display: block;
+  }
+
+  /* FOOTER */
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 18px;
+    border-top: 1px solid #ebebeb;
+  }
+  .footer .fl {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: #ccc;
+    text-transform: uppercase;
+  }
+  .footer .fr {
+    font-size: 11px;
+    color: #bbb;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <div class="eyebrow">In-vehicle installation diagram</div>
+      <h1>Project <span>Garuda</span></h1>
+      <div class="subtitle">AI-powered intelligent co-driver · accident prevention system · component layout &amp; wiring</div>
+    </div>
+    <div class="header-right">
+      <div class="stat-chip">
+        <span class="label">Inference</span>
+        <span class="value">&lt; 80 ms</span>
+      </div>
+      <div class="stat-chip">
+        <span class="label">BLE range</span>
+        <span class="value">~100 m</span>
+      </div>
+      <div class="stat-chip">
+        <span class="label">Power</span>
+        <span class="value">12 V → 5 V</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRINT TIP -->
+  <div class="print-tip">Chrome: Ctrl + Shift + P → "Capture full size screenshot" to save as image</div>
+
+  <!-- MAIN DIAGRAM -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 1020 520" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <!-- Arrow markers -->
+      <marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M1 1L9 5L1 9" fill="none" stroke="#1a5f8a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </marker>
+      <marker id="aa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M1 1L9 5L1 9" fill="none" stroke="#c08010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </marker>
+      <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M1 1L9 5L1 9" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </marker>
+      <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M1 1L9 5L1 9" fill="none" stroke="#2d7a3a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </marker>
+      <marker id="ay" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M1 1L9 5L1 9" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </marker>
+    </defs>
+
+    <!-- ═══════════════════════════════ CAR SILHOUETTE ═══════════════════════════════ -->
+
+    <!-- Road / ground shadow -->
+    <ellipse cx="510" cy="466" rx="370" ry="8" fill="#e8e8e8"/>
+
+    <!-- Main body lower -->
+    <path d="M110 380 L110 340 Q110 315 135 305 L220 270 Q260 248 320 242 L640 238 Q700 238 745 258 L820 300 Q848 315 855 335 L855 380 Z"
+          fill="#f0f0f0" stroke="#d0d0d0" stroke-width="1.5"/>
+
+    <!-- Car roof + cabin -->
+    <path d="M220 270 Q265 218 335 206 L620 200 Q685 200 730 228 L745 258 L640 238 L320 242 Z"
+          fill="#e8e8e8" stroke="#d0d0d0" stroke-width="1.2"/>
+
+    <!-- Front windshield -->
+    <path d="M620 200 L730 228 L745 258 L640 238 Z"
+          fill="#dbeeff" stroke="#a0c4e8" stroke-width="1" fill-opacity="0.7"/>
+
+    <!-- Rear windshield -->
+    <path d="M335 206 L220 270 L320 242 L430 215 Z"
+          fill="#dbeeff" stroke="#a0c4e8" stroke-width="1" fill-opacity="0.6"/>
+
+    <!-- Side window 1 -->
+    <path d="M438 214 L530 208 L522 238 L430 240 Z"
+          fill="#dbeeff" stroke="#c0d8f0" stroke-width="0.8" fill-opacity="0.5"/>
+
+    <!-- Side window 2 -->
+    <path d="M536 207 L618 200 L615 236 L527 238 Z"
+          fill="#dbeeff" stroke="#c0d8f0" stroke-width="0.8" fill-opacity="0.5"/>
+
+    <!-- Door lines -->
+    <line x1="430" y1="240" x2="425" y2="380" stroke="#d0d0d0" stroke-width="0.8"/>
+    <line x1="530" y1="238" x2="526" y2="380" stroke="#d0d0d0" stroke-width="0.8"/>
+
+    <!-- Wheels -->
+    <circle cx="225" cy="380" r="52" fill="#222" stroke="#333" stroke-width="1.5"/>
+    <circle cx="225" cy="380" r="36" fill="#555"/>
+    <circle cx="225" cy="380" r="20" fill="#888"/>
+    <circle cx="225" cy="380" r="7" fill="#444"/>
+
+    <circle cx="745" cy="380" r="52" fill="#222" stroke="#333" stroke-width="1.5"/>
+    <circle cx="745" cy="380" r="36" fill="#555"/>
+    <circle cx="745" cy="380" r="20" fill="#888"/>
+    <circle cx="745" cy="380" r="7" fill="#444"/>
+
+    <!-- Bumpers -->
+    <path d="M110 335 Q102 355 100 380 L110 380" fill="#ccc" stroke="#bbb" stroke-width="1"/>
+    <path d="M855 330 Q864 350 866 380 L855 380" fill="#ccc" stroke="#bbb" stroke-width="1"/>
+
+    <!-- Door handles -->
+    <rect x="376" y="308" width="22" height="6" rx="3" fill="#bbb" stroke="#aaa" stroke-width="0.5"/>
+    <rect x="480" y="308" width="22" height="6" rx="3" fill="#bbb" stroke="#aaa" stroke-width="0.5"/>
+
+    <!-- Headlight -->
+    <ellipse cx="125" cy="320" rx="14" ry="8" fill="#fff9cc" stroke="#e8d060" stroke-width="1"/>
+
+    <!-- Tail light -->
+    <rect x="848" y="310" width="10" height="22" rx="3" fill="#ffcccc" stroke="#e88080" stroke-width="0.8"/>
+
+    <!-- ═══════════════════════════════ GARUDA COMPONENTS ═══════════════════════════════ -->
+
+    <!-- ── AI Processing Unit (central console) ── -->
+    <g>
+      <rect x="466" y="276" width="100" height="54" rx="7" fill="#e8f2fb" stroke="#1a5f8a" stroke-width="2"/>
+      <rect x="466" y="276" width="100" height="16" rx="7" fill="#1a5f8a"/>
+      <rect x="466" y="284" width="100" height="8" fill="#1a5f8a"/>
+      <text x="516" y="288" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="9" font-weight="600" fill="white" dominant-baseline="central">AI UNIT</text>
+      <text x="516" y="304" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#1a5f8a" dominant-baseline="central">Raspberry Pi 4B</text>
+      <text x="516" y="316" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#3a80b0" dominant-baseline="central">ESP32-S3 co-proc</text>
+      <text x="516" y="328" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#3a80b0" dominant-baseline="central">&lt;80ms inference</text>
+    </g>
+
+    <!-- ── Driver camera (dashboard, driver-facing) ── -->
+    <g>
+      <rect x="352" y="260" width="88" height="42" rx="6" fill="#edfaf3" stroke="#2d7a3a" stroke-width="1.5"/>
+      <rect x="352" y="260" width="88" height="14" rx="6" fill="#2d7a3a"/>
+      <rect x="352" y="266" width="88" height="8" fill="#2d7a3a"/>
+      <text x="396" y="268" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="8" font-weight="600" fill="white" dominant-baseline="central">DRIVER CAM</text>
+      <text x="396" y="282" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#2d7a3a" dominant-baseline="central">EAR tracking</text>
+      <text x="396" y="293" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#3a9a50" dominant-baseline="central">blink · head pose</text>
+    </g>
+
+    <!-- ── Road camera (windshield) ── -->
+    <g>
+      <rect x="620" y="240" width="88" height="42" rx="6" fill="#edfaf3" stroke="#2d7a3a" stroke-width="1.5"/>
+      <rect x="620" y="240" width="88" height="14" rx="6" fill="#2d7a3a"/>
+      <rect x="620" y="246" width="88" height="8" fill="#2d7a3a"/>
+      <text x="664" y="248" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="8" font-weight="600" fill="white" dominant-baseline="central">ROAD CAM</text>
+      <text x="664" y="262" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#2d7a3a" dominant-baseline="central">obstacle detect</text>
+      <text x="664" y="273" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#3a9a50" dominant-baseline="central">lane monitoring</text>
+    </g>
+
+    <!-- ── GPS module (roof area) ── -->
+    <g>
+      <rect x="520" y="210" width="80" height="36" rx="6" fill="#fffbee" stroke="#c08010" stroke-width="1.5"/>
+      <rect x="520" y="210" width="80" height="13" rx="6" fill="#c08010"/>
+      <rect x="520" y="216" width="80" height="7" fill="#c08010"/>
+      <text x="560" y="218" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="8" font-weight="600" fill="white" dominant-baseline="central">GPS MODULE</text>
+      <text x="560" y="232" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#c08010" dominant-baseline="central">NEO-6M</text>
+      <text x="560" y="241" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#d09030" dominant-baseline="central">position · speed</text>
+    </g>
+
+    <!-- ── IMU sensor (under dash) ── -->
+    <g>
+      <rect x="352" y="318" width="80" height="38" rx="6" fill="#f3f0ff" stroke="#5a4db0" stroke-width="1.5"/>
+      <rect x="352" y="318" width="80" height="13" rx="6" fill="#5a4db0"/>
+      <rect x="352" y="324" width="80" height="7" fill="#5a4db0"/>
+      <text x="392" y="326" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="8" font-weight="600" fill="white" dominant-baseline="central">IMU SENSOR</text>
+      <text x="392" y="340" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#5a4db0" dominant-baseline="central">MPU-6050</text>
+      <text x="392" y="350" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#7a6dd0" dominant-baseline="central">accel · gyro · jerk</text>
+    </g>
+
+    <!-- ── OBD-II (steering column) ── -->
+    <g>
+      <rect x="236" y="316" width="80" height="36" rx="6" fill="#fffbee" stroke="#c08010" stroke-width="1.5"/>
+      <rect x="236" y="316" width="80" height="13" rx="6" fill="#c08010"/>
+      <rect x="236" y="322" width="80" height="7" fill="#c08010"/>
+      <text x="276" y="324" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="8" font-weight="600" fill="white" dominant-baseline="central">OBD-II PORT</text>
+      <text x="276" y="338" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#c08010" dominant-baseline="central">speed · RPM</text>
+      <text x="276" y="348" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#d09030" dominant-baseline="central">brake pressure</text>
+    </g>
+
+    <!-- ── Alert system (dashboard left) ── -->
+    <g>
+      <rect x="236" y="266" width="88" height="38" rx="6" fill="#fff0ee" stroke="#c0392b" stroke-width="1.5"/>
+      <rect x="236" y="266" width="88" height="13" rx="6" fill="#c0392b"/>
+      <rect x="236" y="272" width="88" height="7" fill="#c0392b"/>
+      <text x="280" y="274" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="8" font-weight="600" fill="white" dominant-baseline="central">ALERT SYSTEM</text>
+      <text x="280" y="288" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#c0392b" dominant-baseline="central">speaker · buzzer</text>
+      <text x="280" y="298" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#d05040" dominant-baseline="central">LED bar · haptic</text>
+    </g>
+
+    <!-- ── BLE module (right side) ── -->
+    <g>
+      <rect x="596" y="288" width="82" height="42" rx="6" fill="#edfaf3" stroke="#2d7a3a" stroke-width="1.5"/>
+      <rect x="596" y="288" width="82" height="14" rx="6" fill="#2d7a3a"/>
+      <rect x="596" y="294" width="82" height="8" fill="#2d7a3a"/>
+      <text x="637" y="296" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="8" font-weight="600" fill="white" dominant-baseline="central">BLE MODULE</text>
+      <text x="637" y="311" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#2d7a3a" dominant-baseline="central">ESP32 BLE 5.0</text>
+      <text x="637" y="322" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#3a9a50" dominant-baseline="central">V2V mesh offline</text>
+    </g>
+
+    <!-- ── Power system (near battery / front) ── -->
+    <g>
+      <rect x="148" y="322" width="72" height="36" rx="6" fill="#f5f5f5" stroke="#666" stroke-width="1.5"/>
+      <rect x="148" y="322" width="72" height="13" rx="6" fill="#555"/>
+      <rect x="148" y="328" width="72" height="7" fill="#555"/>
+      <text x="184" y="330" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="8" font-weight="600" fill="white" dominant-baseline="central">POWER</text>
+      <text x="184" y="343" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#555" dominant-baseline="central">12V → 5V buck</text>
+      <text x="184" y="353" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#777" dominant-baseline="central">regulated · 5A</text>
+    </g>
+
+    <!-- ═══════════════════════════════ WIRING ═══════════════════════════════ -->
+
+    <!-- Power → AI unit (gray, solid) -->
+    <path d="M220 340 L466 318" fill="none" stroke="#888" stroke-width="1.8" marker-end="url(#ay)"/>
+
+    <!-- OBD-II → AI unit (amber) -->
+    <path d="M316 330 L466 315" fill="none" stroke="#c08010" stroke-width="1.5" marker-end="url(#aa)"/>
+
+    <!-- IMU → AI unit (purple → blue) -->
+    <path d="M432 330 L466 310" fill="none" stroke="#5a4db0" stroke-width="1.5" marker-end="url(#ab)"/>
+
+    <!-- Driver cam → AI unit (blue) -->
+    <path d="M440 280 L466 295" fill="none" stroke="#1a5f8a" stroke-width="1.8" marker-end="url(#ab)"/>
+
+    <!-- GPS → AI unit (amber dashed) -->
+    <path d="M560 246 L540 276" fill="none" stroke="#c08010" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#aa)"/>
+
+    <!-- Road cam → AI unit (blue) -->
+    <path d="M620 261 L566 290" fill="none" stroke="#1a5f8a" stroke-width="1.8" marker-end="url(#ab)"/>
+
+    <!-- AI unit → BLE (green dashed) -->
+    <path d="M566 300 L596 305" fill="none" stroke="#2d7a3a" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#ag)"/>
+
+    <!-- AI unit → Alert (red) -->
+    <path d="M466 295 L324 283" fill="none" stroke="#c0392b" stroke-width="1.8" marker-end="url(#ar)"/>
+
+    <!-- BLE broadcast waves to nearby vehicle -->
+    <path d="M678 305 Q710 290 705 270" fill="none" stroke="#2d7a3a" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#ag)" opacity="0.8"/>
+    <path d="M678 310 Q720 290 716 262" fill="none" stroke="#2d7a3a" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ag)" opacity="0.55"/>
+    <path d="M678 316 Q730 291 727 255" fill="none" stroke="#2d7a3a" stroke-width="0.8" stroke-dasharray="4 3" opacity="0.3"/>
+
+    <!-- ── NEARBY VEHICLE (simplified) ── -->
+    <g opacity="0.5">
+      <path d="M810 328 L810 316 Q810 308 818 304 L840 294 Q852 290 866 290 L900 290 Q914 290 920 295 L930 305 Q936 310 936 318 L936 328 Z" fill="#e8e8e8" stroke="#ccc" stroke-width="1"/>
+      <path d="M840 294 Q850 282 862 280 L894 279 Q908 279 916 287 L920 295 L866 290 Z" fill="#ddd" stroke="#ccc" stroke-width="0.8"/>
+      <path d="M870 279 L920 287 L920 295 L866 290 Z" fill="#dbeeff" stroke="#c0d0e8" stroke-width="0.5" fill-opacity="0.6"/>
+      <circle cx="840" cy="328" r="18" fill="#333" stroke="#444" stroke-width="1"/>
+      <circle cx="840" cy="328" r="10" fill="#666"/>
+      <circle cx="920" cy="328" r="18" fill="#333" stroke="#444" stroke-width="1"/>
+      <circle cx="920" cy="328" r="10" fill="#666"/>
+      <!-- BLE receive indicator -->
+      <rect x="860" y="295" width="48" height="20" rx="4" fill="#edfaf3" stroke="#2d7a3a" stroke-width="1"/>
+      <text x="884" y="306" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#2d7a3a" dominant-baseline="central">BLE receive</text>
+    </g>
+
+    <!-- ═══════════════════════════════ CALL-OUT LABELS ═══════════════════════════════ -->
+
+    <!-- Top labels -->
+    <!-- Driver cam callout -->
+    <line x1="396" y1="260" x2="330" y2="200" stroke="#ccc" stroke-width="0.8" stroke-dasharray="3 3"/>
+    <circle cx="330" cy="200" r="2" fill="#999"/>
+    <text x="322" y="192" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="11" font-weight="500" fill="#2d7a3a">Driver camera</text>
+    <text x="322" y="180" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#999">dashboard · EAR</text>
+
+    <!-- GPS callout -->
+    <line x1="560" y1="210" x2="560" y2="160" stroke="#ccc" stroke-width="0.8" stroke-dasharray="3 3"/>
+    <circle cx="560" cy="160" r="2" fill="#999"/>
+    <text x="560" y="152" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="11" font-weight="500" fill="#c08010">GPS module</text>
+    <text x="560" y="140" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#999">rooftop antenna</text>
+
+    <!-- Road cam callout -->
+    <line x1="664" y1="240" x2="700" y2="190" stroke="#ccc" stroke-width="0.8" stroke-dasharray="3 3"/>
+    <circle cx="700" cy="190" r="2" fill="#999"/>
+    <text x="700" y="182" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="11" font-weight="500" fill="#2d7a3a">Road camera</text>
+    <text x="700" y="170" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#999">windshield mount</text>
+
+    <!-- BLE callout -->
+    <line x1="637" y1="288" x2="680" y2="258" stroke="#ccc" stroke-width="0.8" stroke-dasharray="3 3"/>
+    <circle cx="680" cy="258" r="2" fill="#999"/>
+    <text x="750" y="254" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="11" font-weight="500" fill="#2d7a3a">BLE broadcast</text>
+    <text x="750" y="242" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#999">V2V offline mesh</text>
+
+    <!-- AI unit callout -->
+    <line x1="516" y1="330" x2="516" y2="395" stroke="#ccc" stroke-width="0.8" stroke-dasharray="3 3"/>
+    <circle cx="516" cy="395" r="2" fill="#999"/>
+    <text x="516" y="410" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="11" font-weight="500" fill="#1a5f8a">AI processing unit</text>
+    <text x="516" y="422" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#999">central console · Pi 4B</text>
+
+    <!-- Alert callout -->
+    <line x1="280" y1="266" x2="230" y2="222" stroke="#ccc" stroke-width="0.8" stroke-dasharray="3 3"/>
+    <circle cx="230" cy="222" r="2" fill="#999"/>
+    <text x="230" y="214" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="11" font-weight="500" fill="#c0392b">Alert system</text>
+    <text x="230" y="202" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#999">speaker · LED · haptic</text>
+
+    <!-- IMU callout -->
+    <line x1="392" y1="356" x2="330" y2="400" stroke="#ccc" stroke-width="0.8" stroke-dasharray="3 3"/>
+    <circle cx="330" cy="400" r="2" fill="#999"/>
+    <text x="280" y="415" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="11" font-weight="500" fill="#5a4db0">IMU sensor</text>
+    <text x="280" y="427" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#999">under-dash floor</text>
+
+    <!-- Power callout -->
+    <line x1="184" y1="322" x2="184" y2="290" stroke="#ccc" stroke-width="0.8" stroke-dasharray="3 3"/>
+    <circle cx="184" cy="290" r="2" fill="#999"/>
+    <text x="184" y="282" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="11" font-weight="500" fill="#555">Power system</text>
+    <text x="184" y="270" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#999">12V → 5V regulated</text>
+
+    <!-- OBD callout -->
+    <line x1="276" y1="352" x2="210" y2="395" stroke="#ccc" stroke-width="0.8" stroke-dasharray="3 3"/>
+    <circle cx="210" cy="395" r="2" fill="#999"/>
+    <text x="168" y="410" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="11" font-weight="500" fill="#c08010">OBD-II</text>
+    <text x="168" y="422" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#999">steering column</text>
+
+    <!-- Nearby vehicle label -->
+    <text x="880" y="365" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="10" fill="#aaa">nearby vehicle</text>
+    <text x="880" y="377" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#bbb">receives BLE alert</text>
+
+    </svg>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-line" style="background:#1a5f8a;color:#1a5f8a;position:relative;">
+        <span class="legend-arrow" style="position:absolute;right:-1px;top:50%;transform:translateY(-50%);width:0;height:0;border-top:3px solid transparent;border-bottom:3px solid transparent;border-left:5px solid #1a5f8a;"></span>
+      </div>
+      <div class="legend-text">
+        <span class="lt" style="color:#1a5f8a">Data flow</span>
+        <span class="ls">Sensor → AI unit</span>
+      </div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-line dashed" style="background:none;color:#c08010;border-top:2px dashed #c08010;height:0;margin-top:1px;position:relative;">
+      </div>
+      <div class="legend-text">
+        <span class="lt" style="color:#c08010">Power / sensor wire</span>
+        <span class="ls">12V battery · GPS · OBD-II</span>
+      </div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-line" style="background:#c0392b;color:#c0392b;position:relative;">
+        <span style="position:absolute;right:-1px;top:50%;transform:translateY(-50%);width:0;height:0;border-top:3px solid transparent;border-bottom:3px solid transparent;border-left:5px solid #c0392b;"></span>
+      </div>
+      <div class="legend-text">
+        <span class="lt" style="color:#c0392b">Alert output</span>
+        <span class="ls">AI → speaker · LED · buzzer</span>
+      </div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-line dashed" style="background:none;color:#2d7a3a;border-top:2px dashed #2d7a3a;height:0;margin-top:1px;position:relative;">
+      </div>
+      <div class="legend-text">
+        <span class="lt" style="color:#2d7a3a">BLE wireless</span>
+        <span class="ls">Offline V2V · no internet</span>
+      </div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-line" style="background:#888;color:#888;position:relative;">
+        <span style="position:absolute;right:-1px;top:50%;transform:translateY(-50%);width:0;height:0;border-top:3px solid transparent;border-bottom:3px solid transparent;border-left:5px solid #888;"></span>
+      </div>
+      <div class="legend-text">
+        <span class="lt" style="color:#555">Power wiring</span>
+        <span class="ls">Battery → buck → components</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPONENT CARDS -->
+  <div class="component-grid">
+    <div class="comp-card" style="background:#e8f2fb;border-color:#a0c4e0;">
+      <span class="cc-label" style="color:#5a90b8;">core AI</span>
+      <span class="cc-name" style="color:#0c447c;">AI processing unit</span>
+      <span class="cc-sub" style="color:#3a80b0;">Raspberry Pi 4B · 4GB · ESP32-S3 co-proc · TFLite inference &lt;80ms</span>
+    </div>
+    <div class="comp-card" style="background:#edfaf3;border-color:#8acca0;">
+      <span class="cc-label" style="color:#3a8a50;">vision</span>
+      <span class="cc-name" style="color:#1a5a28;">Camera system</span>
+      <span class="cc-sub" style="color:#2d7a3a;">Driver cam (EAR) · Road cam (obstacle detect) · 20–30 fps</span>
+    </div>
+    <div class="comp-card" style="background:#fffbee;border-color:#e8cc80;">
+      <span class="cc-label" style="color:#a07020;">sensors</span>
+      <span class="cc-name" style="color:#805010;">GPS + OBD-II</span>
+      <span class="cc-sub" style="color:#c08010;">NEO-6M position · ELM327 speed · RPM · brake pressure</span>
+    </div>
+    <div class="comp-card" style="background:#f3f0ff;border-color:#b0a8e0;">
+      <span class="cc-label" style="color:#7060c0;">motion</span>
+      <span class="cc-name" style="color:#3a308a;">IMU sensor</span>
+      <span class="cc-sub" style="color:#5a4db0;">MPU-6050 · acceleration · gyroscope · jerk · yaw rate</span>
+    </div>
+    <div class="comp-card" style="background:#fff0ee;border-color:#e0a0a0;">
+      <span class="cc-label" style="color:#a03030;">output</span>
+      <span class="cc-name" style="color:#801818;">Alert system</span>
+      <span class="cc-sub" style="color:#c0392b;">Speaker + TTS · buzzer · RGB LED bar · &lt;100ms trigger</span>
+    </div>
+    <div class="comp-card" style="background:#edfaf3;border-color:#8acca0;">
+      <span class="cc-label" style="color:#3a8a50;">comms</span>
+      <span class="cc-name" style="color:#1a5a28;">BLE V2V module</span>
+      <span class="cc-sub" style="color:#2d7a3a;">BLE 5.0 · offline mesh · &lt;200ms broadcast · ~100m range</span>
+    </div>
+    <div class="comp-card" style="background:#f5f5f5;border-color:#ccc;">
+      <span class="cc-label" style="color:#888;">power</span>
+      <span class="cc-name" style="color:#333;">Power system</span>
+      <span class="cc-sub" style="color:#666;">12V car battery → 5V/5A regulated · TVS spike protection</span>
+    </div>
+    <div class="comp-card" style="background:#fffbee;border-color:#e8cc80;">
+      <span class="cc-label" style="color:#a07020;">cloud</span>
+      <span class="cc-name" style="color:#805010;">4G / Wi-Fi sync</span>
+      <span class="cc-sub" style="color:#c08010;">Optional cloud OTA · model updates · emergency SOS broadcast</span>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <span class="fl">Project Garuda · In-Vehicle Installation · Technical Diagram</span>
+    <span class="fr">Edge AI · BLE V2V · Real-time inference · No internet required</span>
+  </div>
+
+</div>
+</body>
+</html>

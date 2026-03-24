@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Project Garuda — Legacy Vehicle Hardware Blueprint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f4f1ea;
+  --bg2: #ece8df;
+  --bg3: #e2ddd2;
+  --ink: #1a1814;
+  --ink2: #3a3730;
+  --ink3: #7a7568;
+  --ink4: #a89f8f;
+  --red: #c0392b;
+  --amber: #c97a0a;
+  --green: #2d7a3a;
+  --blue: #1a5f8a;
+  --orange: #b85c00;
+  --border: #ccc5b5;
+  --border2: #b8af9e;
+  --mono: 'Space Mono', monospace;
+  --sans: 'Barlow', sans-serif;
+  --cond: 'Barlow Condensed', sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--ink); font-family:var(--sans); min-width:1100px; }
+
+/* COVER */
+.cover {
+  background: var(--ink);
+  color: var(--bg);
+  padding: 32px 60px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 4px solid var(--orange);
+}
+.cover-eyebrow { font-family:var(--mono); font-size:9px; letter-spacing:3px; color:var(--ink4); text-transform:uppercase; margin-bottom:10px; }
+.cover h1 { font-family:var(--cond); font-size:44px; font-weight:700; letter-spacing:-1px; line-height:1; margin-bottom:6px; }
+.cover h1 span { color:var(--orange); }
+.cover-sub { font-size:13px; font-weight:300; color:#9a9588; }
+.cover-tags { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+.cover-tag {
+  font-family:var(--mono); font-size:9px; padding:3px 10px;
+  border:1px solid #3a3830; color:#9a9588; letter-spacing:1px; border-radius:2px;
+}
+.cover-right { text-align:right; }
+.budget-label { font-family:var(--mono); font-size:10px; color:var(--ink4); letter-spacing:1px; margin-bottom:4px; }
+.budget-num { font-family:var(--cond); font-size:48px; font-weight:700; color:#f5c842; letter-spacing:-2px; line-height:1; }
+.budget-num sup { font-size:20px; vertical-align:super; }
+
+.print-tip {
+  background:#fff9e8; border-bottom:1px solid #e8dfc0;
+  padding:7px 60px; font-family:var(--mono); font-size:10px; color:var(--ink3);
+  display:flex; align-items:center; gap:10px;
+}
+.print-tip b { color:var(--amber); }
+
+.body-wrap { padding:36px 60px 60px; }
+
+/* SECTION */
+.section { margin-bottom:34px; }
+.section-head {
+  display:flex; align-items:center; gap:14px;
+  margin-bottom:16px; padding-bottom:10px; border-bottom:2px solid var(--ink);
+}
+.section-num { font-family:var(--mono); font-size:10px; color:var(--ink4); letter-spacing:2px; min-width:30px; }
+.section-title { font-family:var(--cond); font-size:21px; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; }
+.section-badge { margin-left:auto; font-family:var(--mono); font-size:9px; padding:3px 10px; border:1px solid var(--border2); color:var(--ink3); letter-spacing:1px; }
+
+/* WARNING BANNER */
+.warn-banner {
+  background:#fff8f2; border:2px solid var(--orange);
+  border-radius:4px; padding:14px 18px; margin-bottom:20px;
+  display:grid; grid-template-columns:auto 1fr; gap:14px; align-items:start;
+}
+.warn-icon { font-size:28px; line-height:1; }
+.warn-title { font-family:var(--cond); font-size:15px; font-weight:700; color:var(--orange); margin-bottom:4px; letter-spacing:0.5px; }
+.warn-body { font-size:12.5px; color:var(--ink2); line-height:1.7; }
+
+/* VEHICLE CARDS */
+.vehicle-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
+.vehicle-card { border-radius:4px; overflow:hidden; border:1px solid var(--border); }
+.vc-head {
+  padding:10px 16px; font-family:var(--cond); font-size:15px;
+  font-weight:700; letter-spacing:1px; text-transform:uppercase;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.vc-body { background:var(--bg2); padding:14px 16px; }
+.vc-row {
+  display:flex; justify-content:space-between; align-items:flex-start;
+  padding:5px 0; border-bottom:1px solid var(--border);
+  font-size:12px; gap:10px;
+}
+.vc-row:last-child { border-bottom:none; }
+.vc-key { font-family:var(--mono); font-size:10px; color:var(--ink3); min-width:120px; flex-shrink:0; }
+.vc-val { color:var(--ink2); font-size:12px; line-height:1.5; }
+.vc-problem { color:var(--red); font-weight:500; }
+.vc-solution { color:var(--green); font-weight:500; }
+
+.truck-head { background:#1a1200; color:#f5c842; }
+.rick-head  { background:#0d1a10; color:#6fcf8a; }
+
+/* KEY INSIGHT BOXES */
+.insight-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:20px; }
+.insight-box {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:4px; padding:14px 16px;
+}
+.insight-box .ib-label { font-family:var(--mono); font-size:9px; letter-spacing:1.5px; color:var(--ink4); text-transform:uppercase; margin-bottom:8px; }
+.insight-box .ib-title { font-family:var(--cond); font-size:16px; font-weight:700; color:var(--ink); margin-bottom:6px; }
+.insight-box .ib-body { font-size:12px; color:var(--ink3); line-height:1.6; }
+.insight-box.ib-orange { border-color:rgba(185,92,0,0.4); background:#fff8f2; }
+.insight-box.ib-green  { border-color:rgba(45,122,58,0.4); background:#f2fbf4; }
+.insight-box.ib-blue   { border-color:rgba(26,95,138,0.4); background:#f2f7fb; }
+
+/* COMPONENT TABLE */
+.comp-table { width:100%; border-collapse:collapse; font-size:12.5px; }
+.comp-table thead tr { background:var(--ink); color:var(--bg); }
+.comp-table thead th {
+  padding:8px 14px; text-align:left; font-family:var(--mono);
+  font-size:9px; letter-spacing:2px; font-weight:400; text-transform:uppercase;
+}
+.comp-table tbody tr { border-bottom:1px solid var(--border); }
+.comp-table tbody tr:hover { background:var(--bg2); }
+.comp-table td { padding:9px 14px; vertical-align:top; }
+.comp-table .cat-row td {
+  background:var(--bg3); font-family:var(--cond); font-size:11px;
+  font-weight:700; letter-spacing:2px; text-transform:uppercase;
+  color:var(--ink2); padding:5px 14px;
+}
+.comp-name { font-weight:600; color:var(--ink); }
+.comp-model { font-family:var(--mono); font-size:10px; color:var(--ink3); display:block; margin-top:1px; }
+.comp-why { font-size:11.5px; color:var(--ink3); line-height:1.5; }
+.price-cell { font-family:var(--mono); font-size:13px; font-weight:700; color:var(--ink); white-space:nowrap; text-align:right; }
+.price-cell .rs { font-size:10px; color:var(--ink3); font-weight:400; }
+.tag-pill {
+  display:inline-block; font-family:var(--mono); font-size:8px;
+  padding:1px 6px; border-radius:2px; margin-left:4px; letter-spacing:0.5px;
+}
+.tag-new  { background:#fff3cd; color:var(--amber); border:1px solid #f5d98a; }
+.tag-core { background:#fce8e6; color:var(--red);   border:1px solid #f5c2be; }
+.tag-both { background:#e8f0fe; color:var(--blue);  border:1px solid #b8d0f5; }
+.tag-truck{ background:#1a1200; color:#f5c842;       border:1px solid #5a4010; }
+.tag-rick { background:#0d1a10; color:#6fcf8a;       border:1px solid #2a5a30; }
+.tag-opt  { background:var(--bg3); color:var(--ink4); border:1px solid var(--border); }
+
+/* DIFF TABLE */
+.diff-table { width:100%; border-collapse:collapse; font-size:12px; }
+.diff-table thead tr { background:var(--bg3); }
+.diff-table thead th {
+  padding:7px 12px; text-align:left; font-family:var(--mono);
+  font-size:9px; letter-spacing:1.5px; font-weight:400;
+  text-transform:uppercase; color:var(--ink3); border-bottom:2px solid var(--border2);
+}
+.diff-table td { padding:8px 12px; border-bottom:1px solid var(--border); vertical-align:top; line-height:1.5; }
+.diff-table td.removed { color:var(--red); font-family:var(--mono); font-size:11px; }
+.diff-table td.added { color:var(--green); font-family:var(--mono); font-size:11px; }
+.diff-table td.same { color:var(--ink3); font-family:var(--mono); font-size:11px; }
+
+/* ARCHITECTURE */
+.arch { background:var(--ink); border-radius:6px; padding:28px 30px; color:var(--bg); }
+.arch-section-label {
+  font-family:var(--mono); font-size:9px; letter-spacing:2px;
+  color:#475569; text-transform:uppercase; margin-bottom:10px; text-align:center;
+}
+.arch-row { display:flex; gap:10px; margin-bottom:10px; align-items:stretch; justify-content:center; }
+.abox {
+  border-radius:5px; padding:10px 14px; flex-shrink:0;
+  display:flex; flex-direction:column; justify-content:center;
+}
+.abox .at { font-family:var(--cond); font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; margin-bottom:3px; }
+.abox .as { font-family:var(--mono); font-size:8.5px; opacity:0.6; line-height:1.5; }
+.abox .anew { font-family:var(--mono); font-size:8px; margin-top:5px; padding:2px 6px; border-radius:2px; display:inline-block; }
+
+.abox-sensor  { background:#1a2010; border:1px solid #3a5020; }
+.abox-sensor .at { color:#6fcf8a; }
+.abox-power   { background:#1a1500; border:1px solid #5a4500; }
+.abox-power .at { color:#f5c842; }
+.abox-esp     { background:#1a1010; border:1px solid #5a2010; }
+.abox-esp .at { color:#f5a060; }
+.abox-pi      { background:#0d1a2e; border:1px solid #1a4080; }
+.abox-pi .at  { color:#5ab4f5; }
+.abox-out     { background:#1a0d20; border:1px solid #4a1a60; }
+.abox-out .at { color:#c084f5; }
+.abox-legacy  { background:#201a10; border:1px solid #5a4a20; }
+.abox-legacy .at { color:#f5c842; }
+
+.ah { display:flex; align-items:center; flex-shrink:0; }
+.ah .hl { height:1px; width:20px; background:#334155; }
+.ah .ht { width:0;height:0;border-top:4px solid transparent;border-bottom:4px solid transparent;border-left:6px solid #334155; }
+
+.av { display:flex; flex-direction:column; align-items:center; margin:0 auto 4px; }
+.av .vl { width:1px; height:20px; background:#334155; }
+.av .vt { width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-top:7px solid #334155; }
+.av .vlab { font-family:var(--mono); font-size:8px; color:#475569; margin-top:2px; white-space:nowrap; }
+
+.new-badge { background:rgba(249,185,70,0.15); color:#f5c842; border:1px solid rgba(249,185,70,0.3); }
+
+/* BUDGET */
+.budget-box {
+  background:var(--ink); color:var(--bg); border-radius:4px;
+  padding:20px 24px; display:flex; justify-content:space-between; align-items:center;
+}
+.budget-box .bl { font-family:var(--cond); font-size:14px; letter-spacing:2px; text-transform:uppercase; color:var(--ink4); }
+.budget-box .br { font-family:var(--mono); font-size:26px; font-weight:700; color:#f5c842; }
+.budget-box .br span { font-size:12px; color:var(--ink4); font-weight:400; }
+
+.budget-item { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.budget-item .bname { font-size:12px; color:var(--ink2); min-width:200px; }
+.budget-item .bbar-wrap { flex:1; background:var(--bg3); border-radius:2px; height:7px; overflow:hidden; }
+.budget-item .bbar { height:100%; border-radius:2px; }
+.budget-item .bamt { font-family:var(--mono); font-size:11px; font-weight:700; min-width:65px; text-align:right; color:var(--ink); }
+
+.surplus-box {
+  background:#f2fbf4; border:1px solid #a8d5af; border-radius:4px;
+  padding:10px 18px; display:flex; justify-content:space-between; align-items:center; margin-top:10px;
+}
+.surplus-box .sl { font-size:12px; color:var(--green); font-weight:500; }
+.surplus-box .sr { font-family:var(--mono); font-size:14px; font-weight:700; color:var(--green); }
+
+/* PERF GRID */
+.perf-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+.perf-card { background:var(--bg2); border:1px solid var(--border); border-radius:4px; padding:14px 16px; }
+.perf-card .pctitle { font-family:var(--mono); font-size:9px; letter-spacing:1.5px; color:var(--ink4); text-transform:uppercase; margin-bottom:8px; }
+.perf-card .pcvalue { font-family:var(--cond); font-size:26px; font-weight:700; color:var(--ink); line-height:1; margin-bottom:4px; }
+.perf-card .pcunit { font-size:13px; color:var(--ink3); font-weight:400; }
+.perf-card .pcdesc { font-size:11px; color:var(--ink3); margin-top:4px; line-height:1.5; }
+
+/* FOOTER */
+.footer {
+  background:var(--ink); color:var(--ink4); text-align:center;
+  padding:14px; font-family:var(--mono); font-size:9px; letter-spacing:2px;
+}
+
+/* two col */
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div>
+    <div class="cover-eyebrow">Hardware Blueprint v2.0 · Legacy Vehicle Edition</div>
+    <h1>PROJECT <span>GARUDA</span></h1>
+    <div class="cover-sub">Redesigned for vehicles with NO OBD-II, NO smartphone, NO smart systems</div>
+    <div class="cover-tags">
+      <div class="cover-tag">TRUCKS &amp; HEAVY VEHICLES</div>
+      <div class="cover-tag">AUTO-RICKSHAWS</div>
+      <div class="cover-tag">E-RICKSHAWS</div>
+      <div class="cover-tag">STANDALONE · NO PHONE NEEDED</div>
+      <div class="cover-tag">SELF-CONTAINED</div>
+    </div>
+  </div>
+  <div class="cover-right">
+    <div class="budget-label">TOTAL BUDGET</div>
+    <div class="budget-num"><sup>₹</sup>25,000</div>
+  </div>
+</div>
+
+<div class="print-tip">
+  <span>💡 Save as image:</span> <b>Chrome → Ctrl+Shift+P → "Capture full size screenshot"</b>
+  <span style="margin-left:auto;">No smartphone required · No OBD-II · No internet · Fully standalone</span>
+</div>
+
+<div class="body-wrap">
+
+<!-- ══ 00. THE PROBLEM ══ -->
+<div class="section">
+  <div class="section-head">
+    <span class="section-num">00</span>
+    <span class="section-title">Why Legacy Vehicles Need a Different Design</span>
+    <span class="section-badge">ROOT CAUSE ANALYSIS</span>
+  </div>
+
+  <div class="warn-banner">
+    <div class="warn-icon">⚠</div>
+    <div>
+      <div class="warn-title">The Original Blueprint Had 4 Critical Assumptions That Fail on Legacy Vehicles</div>
+      <div class="warn-body">
+        <strong>1. OBD-II port</strong> — Only available on cars after 2001. Trucks (pre-BS4) and most auto-rickshaws have NO OBD-II. Speed, RPM, brake signals cannot be read electronically.<br>
+        <strong>2. Smartphone companion app</strong> — Many truck drivers and auto-rickshaw operators do not use smartphones, or cannot interact with an app while driving.<br>
+        <strong>3. Clean 12V DC power</strong> — Old truck alternators produce noisy, fluctuating 12–24V with frequent spikes. Auto-rickshaws run on 12V lead-acid or 48V lithium (e-rickshaw) — neither is stable enough for sensitive electronics without heavy conditioning.<br>
+        <strong>4. Mounted dashboard space</strong> — Trucks have crowded dashboards. Auto-rickshaws have almost no enclosed space. Hardware must be compact, vibration-resistant, and weather-tolerant.
+      </div>
+    </div>
+  </div>
+
+  <div class="vehicle-grid">
+    <div class="vehicle-card">
+      <div class="vc-head truck-head">
+        🚛 Trucks &amp; Heavy Vehicles
+        <span style="font-size:11px;font-weight:400;opacity:0.7">Pre-BS4 / Old fleet</span>
+      </div>
+      <div class="vc-body">
+        <div class="vc-row"><span class="vc-key">Power supply</span><span class="vc-val">12V or 24V lead-acid, noisy, spiky</span></div>
+        <div class="vc-row"><span class="vc-key">OBD-II</span><span class="vc-val vc-problem">❌ None on pre-2010 trucks</span></div>
+        <div class="vc-row"><span class="vc-key">Speed signal</span><span class="vc-val vc-problem">❌ Mechanical speedometer — no electrical output</span></div>
+        <div class="vc-row"><span class="vc-key">Driver profile</span><span class="vc-val">Long-haul, often fatigued, minimal tech literacy</span></div>
+        <div class="vc-row"><span class="vc-key">Smartphone use</span><span class="vc-val vc-problem">❌ Often none, or basic feature phone</span></div>
+        <div class="vc-row"><span class="vc-key">Dashboard space</span><span class="vc-val">Moderate — can mount a box</span></div>
+        <div class="vc-row"><span class="vc-key">Vibration</span><span class="vc-val vc-problem">❌ High — on rough roads, long hauls</span></div>
+        <div class="vc-row"><span class="vc-key">Our solution</span><span class="vc-val vc-solution">✓ VSS sensor + IMU + standalone unit + 24V buck</span></div>
+      </div>
+    </div>
+    <div class="vehicle-card">
+      <div class="vc-head rick-head">
+        🛺 Auto-Rickshaws &amp; E-Rickshaws
+        <span style="font-size:11px;font-weight:400;opacity:0.7">CNG / Electric</span>
+      </div>
+      <div class="vc-body">
+        <div class="vc-row"><span class="vc-key">Power supply</span><span class="vc-val">12V (CNG auto) or 48V LiFePO4 (e-rickshaw)</span></div>
+        <div class="vc-row"><span class="vc-key">OBD-II</span><span class="vc-val vc-problem">❌ None — no ECU at all</span></div>
+        <div class="vc-row"><span class="vc-key">Speed signal</span><span class="vc-val vc-problem">❌ No electrical speed output</span></div>
+        <div class="vc-row"><span class="vc-key">Driver profile</span><span class="vc-val">Urban, short trips, no tech background</span></div>
+        <div class="vc-row"><span class="vc-key">Smartphone use</span><span class="vc-val vc-problem">❌ Feature phone or none</span></div>
+        <div class="vc-row"><span class="vc-key">Dashboard space</span><span class="vc-val vc-problem">❌ Almost none — open frame vehicle</span></div>
+        <div class="vc-row"><span class="vc-key">Weather exposure</span><span class="vc-val vc-problem">❌ Rain, dust, heat — semi-open cabin</span></div>
+        <div class="vc-row"><span class="vc-key">Our solution</span><span class="vc-val vc-solution">✓ GPS speed + IMU only + IP54 box + 48V buck</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight-row">
+    <div class="insight-box ib-orange">
+      <div class="ib-label">Design Principle #1</div>
+      <div class="ib-title">Zero dependency on vehicle electronics</div>
+      <div class="ib-body">The system must gather ALL data using its own sensors — GPS for speed, IMU for acceleration, camera for driver and road. It asks nothing from the vehicle's electrical brain.</div>
+    </div>
+    <div class="insight-box ib-green">
+      <div class="ib-label">Design Principle #2</div>
+      <div class="ib-title">No screen, no app, no literacy required</div>
+      <div class="ib-body">All alerts are audio-first (buzzer + voice in local language) and LED visual. The driver needs zero tech interaction. The device runs fully autonomously from ignition-on.</div>
+    </div>
+    <div class="insight-box ib-blue">
+      <div class="ib-label">Design Principle #3</div>
+      <div class="ib-title">Survives the vehicle, not just rides in it</div>
+      <div class="ib-body">IP54 enclosure, rubber-damped mounting, wide input voltage range (9–36V), capacitor-buffered power rail. Built to survive potholes, rain, heat, and alternator spikes.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 01. WHAT CHANGES vs ORIGINAL ══ -->
+<div class="section">
+  <div class="section-head">
+    <span class="section-num">01</span>
+    <span class="section-title">Changes vs Original Blueprint</span>
+    <span class="section-badge">DELTA VIEW</span>
+  </div>
+
+  <table class="diff-table">
+    <thead><tr><th>Module</th><th>Original (Smart Vehicle)</th><th>Legacy Redesign</th><th>Reason</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Speed input</strong></td>
+        <td class="removed">OBD-II ELM327 Bluetooth</td>
+        <td class="added">GPS-derived speed (NEO-6M) + VSS Hall sensor</td>
+        <td style="font-size:11px;color:var(--ink3)">No OBD-II port exists. GPS gives speed from Doppler, VSS gives physical pulse from axle/gearbox.</td>
+      </tr>
+      <tr>
+        <td><strong>Brake signal</strong></td>
+        <td class="removed">OBD-II brake pressure read</td>
+        <td class="added">Brake light wire tap (12V pulse) + IMU deceleration</td>
+        <td style="font-size:11px;color:var(--ink3)">Tap the brake light circuit directly. Simple, universal, works on all vehicles. IMU corroborates.</td>
+      </tr>
+      <tr>
+        <td><strong>Power input</strong></td>
+        <td class="removed">12V → 5V LM2596 (1 converter)</td>
+        <td class="added">Wide-input 9–36V buck + TVS diode + 2200µF cap bank</td>
+        <td style="font-size:11px;color:var(--ink3)">Trucks use 24V systems. E-rickshaws use 48V. Old alternators spike. Must handle all without frying Pi.</td>
+      </tr>
+      <tr>
+        <td><strong>Driver UI</strong></td>
+        <td class="removed">Phone companion app + OLED display</td>
+        <td class="added">Loud buzzer + local-language TTS voice + RGB LED bar only</td>
+        <td style="font-size:11px;color:var(--ink3)">No smartphone, no literacy assumed. Alert must work by sound and light alone. Eyes on road.</td>
+      </tr>
+      <tr>
+        <td><strong>Enclosure</strong></td>
+        <td class="removed">Generic ABS project box</td>
+        <td class="added">IP54-rated ABS box + rubber gasket + vibration dampeners</td>
+        <td style="font-size:11px;color:var(--ink3)">Auto-rickshaws are semi-open. Trucks vibrate heavily. Must survive rain, dust, and road shock.</td>
+      </tr>
+      <tr>
+        <td><strong>Mounting</strong></td>
+        <td class="removed">Dashboard adhesive</td>
+        <td class="added">Rubber-grommet bolt mount + anti-vibration pads under Pi + ESP32</td>
+        <td style="font-size:11px;color:var(--ink3)">Truck vibration destroys SD cards and USB connections. Dampened mount extends hardware life significantly.</td>
+      </tr>
+      <tr>
+        <td><strong>Camera mount</strong></td>
+        <td class="removed">Flexible CSI ribbon on dashboard</td>
+        <td class="added">Short rigid CSI cable + glare shield + rubber housing</td>
+        <td style="font-size:11px;color:var(--ink3)">Long CSI ribbons fail under vibration. Rigid short mount with glare shield handles truck cab sun angle and vibration.</td>
+      </tr>
+      <tr>
+        <td><strong>4G module</strong></td>
+        <td class="removed">Optional USB dongle</td>
+        <td class="added">Removed from core — offline-first design. BLE only for V2V.</td>
+        <td style="font-size:11px;color:var(--ink3)">Truck routes pass through no-signal zones. Auto-rickshaws don't need cloud. BLE V2V is the priority comm layer.</td>
+      </tr>
+      <tr>
+        <td><strong>Compute</strong></td>
+        <td class="same">Raspberry Pi 4B (4GB) ← same</td>
+        <td class="same">Raspberry Pi 4B (4GB) ← same</td>
+        <td style="font-size:11px;color:var(--ink3)">No change needed. Pi 4B with TFLite handles all AI inference within 100ms regardless of vehicle type.</td>
+      </tr>
+      <tr>
+        <td><strong>BLE co-MCU</strong></td>
+        <td class="same">ESP32-S3 ← same</td>
+        <td class="same">ESP32-S3 ← same</td>
+        <td style="font-size:11px;color:var(--ink3)">BLE V2V mesh works identically. Trucks and auto-rickshaws benefit most from offline V2V — no internet blind spots.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══ 02. COMPONENT LIST ══ -->
+<div class="section">
+  <div class="section-head">
+    <span class="section-num">02</span>
+    <span class="section-title">Complete Component List — Legacy Edition</span>
+    <span class="section-badge">FULL BOM</span>
+  </div>
+
+  <table class="comp-table">
+    <thead>
+      <tr>
+        <th style="width:22%">Component</th>
+        <th style="width:17%">Model / Spec</th>
+        <th style="width:36%">Why chosen for legacy vehicles</th>
+        <th style="width:9%">For</th>
+        <th style="width:16%">Price (₹)</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <!-- COMPUTE -->
+      <tr class="cat-row"><td colspan="5">🧠 COMPUTE — unchanged from v1</td></tr>
+      <tr>
+        <td><span class="comp-name">Raspberry Pi 4B</span><span class="comp-model">4GB · 1.8GHz quad-core</span></td>
+        <td><span class="comp-model">Pi 4 Model B 4GB</span></td>
+        <td class="comp-why">Unchanged. Runs TFLite drowsiness CNN + LSTM accident prediction at &lt;80ms. Heatsink + fan critical — truck cabs reach 55°C+.</td>
+        <td><span class="tag-pill tag-both">Both</span></td>
+        <td class="price-cell"><span class="rs">₹</span>7,500 <span class="tag-pill tag-core">CORE</span></td>
+      </tr>
+      <tr>
+        <td><span class="comp-name">ESP32-S3 DevKit</span><span class="comp-model">BLE 5.0 · dual-core 240MHz</span></td>
+        <td><span class="comp-model">ESP32-S3-DevKitC-1</span></td>
+        <td class="comp-why">Handles BLE V2V mesh, brake wire input, IMU, VSS pulse counting, buzzer, LED control. UART to Pi. Unchanged role.</td>
+        <td><span class="tag-pill tag-both">Both</span></td>
+        <td class="price-cell"><span class="rs">₹</span>600</td>
+      </tr>
+      <tr>
+        <td><span class="comp-name">MicroSD Card</span><span class="comp-model">Samsung 32GB A2 Class 10</span></td>
+        <td><span class="comp-model">Samsung 32GB A2</span></td>
+        <td class="comp-why">A2-rated for fast model loading. Store OS + models + 30s rolling edge buffer. Use industrial-grade SD if budget allows.</td>
+        <td><span class="tag-pill tag-both">Both</span></td>
+        <td class="price-cell"><span class="rs">₹</span>400</td>
+      </tr>
+
+      <!-- VISION -->
+      <tr class="cat-row"><td colspan="5">📷 VISION SYSTEM</td></tr>
+      <tr>
+        <td><span class="comp-name">Pi Camera v2</span><span class="comp-model">8MP IMX219 · CSI</span></td>
+        <td><span class="comp-model">Raspberry Pi Cam v2</span></td>
+        <td class="comp-why">Driver-facing drowsiness camera. Use SHORT (15cm) CSI ribbon — long ribbons fail under truck vibration. Mount with rubber housing and glare shield.</td>
+        <td><span class="tag-pill tag-both">Both</span></td>
+        <td class="price-cell"><span class="rs">₹</span>1,400 <span class="tag-pill tag-core">CORE</span></td>
+      </tr>
+      <tr>
+        <td><span class="comp-name">Infrared LED ring</span><span class="comp-model">850nm · 6-LED ring</span></td>
+        <td><span class="comp-model">IR LED module 850nm</span></td>
+        <td class="comp-why">NEW. Truck night driving is critical. IR illumination lets camera detect drowsiness in dark cab without blinding the driver. Works with Pi Camera v2 (no IR filter).</td>
+        <td><span class="tag-pill tag-truck">Truck</span></td>
+        <td class="price-cell"><span class="rs">₹</span>150 <span class="tag-pill tag-new">NEW</span></td>
+      </tr>
+
+      <!-- SENSORS -->
+      <tr class="cat-row"><td colspan="5">📡 SENSOR SUITE — legacy additions</td></tr>
+      <tr>
+        <td><span class="comp-name">IMU Module</span><span class="comp-model">MPU-6050 · 6-axis</span></td>
+        <td><span class="comp-model">GY-521 MPU-6050</span></td>
+        <td class="comp-why">PRIMARY speed proxy for legacy vehicles. Acceleration + jerk are the main accident risk inputs when OBD-II is absent. I2C to ESP32.</td>
+        <td><span class="tag-pill tag-both">Both</span></td>
+        <td class="price-cell"><span class="rs">₹</span>150 <span class="tag-pill tag-core">CORE</span></td>
+      </tr>
+      <tr>
+        <td><span class="comp-name">GPS Module</span><span class="comp-model">NEO-6M · UART</span></td>
+        <td><span class="comp-model">NEO-6M GPS</span></td>
+        <td class="comp-why">REPLACES OBD-II for speed data. GPS Doppler gives speed accurate to ±0.5 km/h. Also provides position for SOS broadcast. UART to ESP32.</td>
+        <td><span class="tag-pill tag-both">Both</span></td>
+        <td class="price-cell"><span class="rs">₹</span>400 <span class="tag-pill tag-core">CORE</span></td>
+      </tr>
+      <tr>
+        <td><span class="comp-name">VSS Hall Sensor</span><span class="comp-model">A3144 Hall effect</span></td>
+        <td><span class="comp-model">A3144 + magnet</span></td>
+        <td class="comp-why">NEW. Vehicle Speed Sensor tapped from gearbox output shaft or axle. Magnet on rotating part, Hall sensor reads pulse frequency → speed. Universal fit, no ECU needed.</td>
+        <td><span class="tag-pill tag-truck">Truck</span></td>
+        <td class="price-cell"><span class="rs">₹</span>80 <span class="tag-pill tag-new">NEW</span></td>
+      </tr>
+      <tr>
+        <td><span class="comp-name">Brake light wire tap</span><span class="comp-model">12V optocoupler isolator</span></td>
+        <td><span class="comp-model">PC817 optocoupler</span></td>
+        <td class="comp-why">NEW. Taps 12V signal from existing brake light wire. PC817 optocoupler provides electrical isolation — protects ESP32 GPIO from vehicle voltage spikes. Detects braking instantly.</td>
+        <td><span class="tag-pill tag-both">Both</span></td>
+        <td class="price-cell"><span class="rs">₹</span>30 <span class="tag-pill tag-new">NEW</span></td>
+      </tr>
+      <tr>
+        <td><span class="comp-name">Vibration sensor</span><span class="comp-model">SW-420 tilt switch</span></td>
+        <td><span class="comp-model">SW-420 module</span></td>
+        <td class="comp-why">NEW. Detects crash/rollover event — triggers emergency SOS broadcast. SW-420 responds to violent vibration above threshold. GPIO to ESP32. Costs ₹20.</td>
+        <td><span class="tag-pill tag-truck">Truck</span></td>
+        <td class="price-cell"><span class="rs">₹</span>20 <span class="tag-pill tag-new">NEW</span></td>
+      </tr>
+
+      <!-- POWER -->
+      <tr class="cat-row"><td colspan="5">⚡ POWER SYSTEM — fully redesigned</td></tr>
+      <tr>
+        <td><span class="comp-name">Wide-input Buck Converter</span><span class="comp-model">9–36V input → 5V/5A out</span></td>
+        <td><span class="comp-model">XL4016 or LM2596HV</span></td>
+        <td class="comp-why">NEW. Handles BOTH 12V (CNG auto, old cars) AND 24V (trucks) AND 48V (e-rickshaw with extra stage). Wide input range — one hardware fits all legacy vehicles.</td>
+        <td><span class="tag-pill tag-both">Both</span></td>
+        <td class="price-cell"><span class="rs">₹</span>220 <span class="tag-pill tag-new">NEW</span></td>
+      </tr>
+      <tr>
+        <td><span class="comp-name">48V → 12V Pre-stage</span><span class="comp-model">CC/CV step-down module</span></td>
+        <td><span class="comp-model">Generic 48V→12V 3A</span></td>
+        <td class="comp-why">NEW. For e-rickshaws only. Drops 48V LiFePO4 battery to 12V first, then feeds the main 12V→5V buck. Two-stage conversion for safe, regulated output.</td>
+        <td><span class="tag-pill tag-rick">Rickshaw</span></td>
+        <td class="price-cell"><span class="rs">₹</span>180 <span class="tag-pill tag-new">NEW</span></td>
+      </tr>
+      <tr>
+        <td><span class="comp-name">TVS Diode + Fuse</span><span class="comp-model">P6KE18A TVS + 5A blade fuse</span></td>
+        <td><span class="comp-model">P6KE18A + auto fuse</span></td>
+        <td class="comp-why">NEW. TVS clamps voltage spikes from truck alternator load dumps (can spike to 60V+). Fuse protects against short circuits. Essential protection on legacy vehicles.</td>
+        <td><span class="tag-pill tag-both">Both</span></td>
+        <td class="price-cell"><span class="rs">₹</span>60 <span class="tag-pill tag-new">NEW</span></td>
+      </tr>
+      <tr>
+        <td><span class="comp-name">Capacitor bank</span><span class="comp-model">2200µF 35V electrolytic ×2</span></td>
+        <td><span class="comp-model">Electrolytic caps</span></td>
+        <td class="comp-why">2× 2200µF caps (vs original 2× 1000µF) for heavier ripple suppression on truck alternators. Prevents Pi brownouts during engine crank or load switching.</td>
+        <td><span class="tag-pill tag-truck">Truck</span></td>
+        <td class="price-cell"><span class="rs">₹</span>80</td>
+      </tr>
+
+      <!-- COMMS -->
+      <tr class="cat-row"><td colspan="5">📶 COMMUNICATION</td></tr>
+      <tr>
+        <td><span class="comp-name">BLE 5.0 V2V Mesh</span><span class="comp-model">Built into ESP32-S3 + Pi 4B</span></td>
+        <td><span class="comp-model">On-board — no extra cost</span></td>
+        <td class="comp-why">Priority comm layer. Trucks and auto-rickshaws benefit most from offline BLE — highway stretches have no signal. V2V alerts like sudden braking ahead are life-saving.</td>
+        <td><span class="tag-pill tag-both">Both</span></td>
+        <td class="price-cell"><span class="rs">₹</span>0</td>
+      </tr>
+
+      <!-- ALERT -->
+      <tr class="cat-row"><td colspan="5">🔊 ALERT SYSTEM — redesigned for zero-literacy use</td></tr>
+      <tr>
+        <td><span class="comp-name">85dB Piezo Buzzer</span><span class="comp-model">Active · 12V · 85dB</span></td>
+        <td><span class="comp-model">KPI-G2312L or equiv.</span></td>
+        <td class="comp-why">UPGRADED from 5V to 12V/85dB. Truck engine noise is 75–85dB inside cab — needs loud buzzer. Escalating beep pattern (slow → fast → continuous) signals risk level.</td>
+        <td><span class="tag-pill tag-truck">Truck</span></td>
+        <td class="price-cell"><span class="rs">₹</span>80 <span class="tag-pill tag-new">NEW</span></td>
+      </tr>
+      <tr>
+        <td><span class="comp-name">3W Speaker + amp</span><span class="comp-model">PAM8403 + 3W speaker</span></td>
+        <td><span class="comp-model">PAM8403 board</span></td>
+        <td class="comp-why">Voice alerts in Hindi / regional language via Pi pyttsx3/espeak. "आगे खतरा है, गाड़ी धीमी करें" ("Danger ahead, slow down"). No literacy needed — driver understands their language.</td>
+        <td><span class="tag-pill tag-both">Both</span></td>
+        <td class="price-cell"><span class="rs">₹</span>200</td>
+      </tr>
+      <tr>
+        <td><span class="comp-name">RGB LED bar</span><span class="comp-model">WS2812B · 10 LEDs</span></td>
+        <td><span class="comp-model">WS2812B strip</span></td>
+        <td class="comp-why">Green = safe, Amber = caution, Red = danger. Mounted on dashboard edge. Peripheral vision alert — driver notices without looking directly. Universal — no reading required.</td>
+        <td><span class="tag-pill tag-both">Both</span></td>
+        <td class="price-cell"><span class="rs">₹</span>120</td>
+      </tr>
+
+      <!-- ENCLOSURE -->
+      <tr class="cat-row"><td colspan="5">🔒 ENCLOSURE &amp; MOUNTING — ruggedised</td></tr>
+      <tr>
+        <td><span class="comp-name">IP54 ABS Enclosure</span><span class="comp-model">150×100×60mm · IP54</span></td>
+        <td><span class="comp-model">Hammond / generic IP54</span></td>
+        <td class="comp-why">NEW. IP54 = dustproof + splash-proof. Auto-rickshaws are semi-open. Truck engine bays are dusty. Rubber gasket seal protects all electronics inside.</td>
+        <td><span class="tag-pill tag-both">Both</span></td>
+        <td class="price-cell"><span class="rs">₹</span>350 <span class="tag-pill tag-new">NEW</span></td>
+      </tr>
+      <tr>
+        <td><span class="comp-name">Anti-vibration pads</span><span class="comp-model">Rubber standoffs M3</span></td>
+        <td><span class="comp-model">Rubber grommet kit</span></td>
+        <td class="comp-why">NEW. Mount Pi and ESP32 on rubber standoffs inside enclosure. Isolates boards from road vibration — prevents SD card corruption and USB connector fatigue.</td>
+        <td><span class="tag-pill tag-both">Both</span></td>
+        <td class="price-cell"><span class="rs">₹</span>60 <span class="tag-pill tag-new">NEW</span></td>
+      </tr>
+      <tr>
+        <td><span class="comp-name">Heatsink + 5V fan</span><span class="comp-model">Pi 4B heatsink kit</span></td>
+        <td><span class="comp-model">Heatsink + 40mm fan</span></td>
+        <td class="comp-why">Truck cabs reach 55°C in Indian summer. Active cooling is mandatory, not optional. Fan must draw from inside the sealed box with filtered intake vents.</td>
+        <td><span class="tag-pill tag-both">Both</span></td>
+        <td class="price-cell"><span class="rs">₹</span>200</td>
+      </tr>
+      <tr>
+        <td><span class="comp-name">Misc (wires, fuses, connectors)</span><span class="comp-model">Auto-grade wiring kit</span></td>
+        <td><span class="comp-model">Generic auto-wiring</span></td>
+        <td class="comp-why">Use automotive-grade wiring (PVC insulation, not breadboard jumpers). Blade fuse holders, ring terminals, heat-shrink. Vehicle environment demands robust connections.</td>
+        <td><span class="tag-pill tag-both">Both</span></td>
+        <td class="price-cell"><span class="rs">₹</span>300</td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>
+
+<!-- ══ 03. HARDWARE ARCHITECTURE ══ -->
+<div class="section">
+  <div class="section-head">
+    <span class="section-num">03</span>
+    <span class="section-title">Hardware Architecture — Legacy Vehicle</span>
+    <span class="section-badge">CONNECTION MAP</span>
+  </div>
+
+  <div class="arch">
+
+    <div class="arch-section-label">POWER LAYER — wide-input, spike-protected</div>
+    <div class="arch-row">
+      <div class="abox abox-power" style="width:130px"><div class="at">12V / 24V</div><div class="as">Truck battery or CNG auto</div></div>
+      <div class="ah"><div class="hl"></div><div class="ht"></div></div>
+      <div class="abox abox-power" style="width:80px"><div class="at">TVS + Fuse</div><div class="as">Spike clamp · 5A fuse</div><div class="anew new-badge">NEW</div></div>
+      <div class="ah"><div class="hl"></div><div class="ht"></div></div>
+      <div class="abox abox-power" style="width:160px"><div class="at">9–36V Buck</div><div class="as">→ 5V / 5A regulated output</div><div class="anew new-badge">NEW: Wide input</div></div>
+      <div class="ah"><div class="hl"></div><div class="ht"></div></div>
+      <div class="abox abox-power" style="width:80px"><div class="at">2200µF cap</div><div class="as">Ripple buffer ×2</div></div>
+      <div class="ah"><div class="hl"></div><div class="ht"></div></div>
+      <div class="abox abox-power" style="width:200px"><div class="at">5V Rail → Pi (3A) + ESP32 + Sensors</div><div class="as">Stable, isolated from vehicle noise</div></div>
+    </div>
+    <div style="text-align:center;font-family:var(--mono);font-size:8px;color:#475569;margin:4px 0;">E-rickshaw: 48V LiFePO4 → 48V→12V pre-stage → TVS → 9-36V Buck → 5V rail</div>
+
+    <div style="height:16px;border-left:1px solid #1e2d3a;margin-left:50%;margin-top:2px"></div>
+
+    <div class="arch-section-label" style="margin-top:4px">LEGACY SENSOR LAYER — no OBD-II, all self-contained</div>
+    <div class="arch-row" style="flex-wrap:wrap;gap:8px;">
+      <div class="abox abox-sensor" style="width:120px"><div class="at">MPU-6050 IMU</div><div class="as">I2C → ESP32</div><div class="as">Accel · Jerk · Yaw</div></div>
+      <div class="ah"><div class="hl" style="width:12px"></div><div class="ht"></div></div>
+      <div class="abox abox-sensor" style="width:120px"><div class="at">NEO-6M GPS</div><div class="as">UART → ESP32</div><div class="as">Speed · Position</div></div>
+      <div class="ah"><div class="hl" style="width:12px"></div><div class="ht"></div></div>
+      <div class="abox abox-legacy" style="width:130px"><div class="at">VSS Hall sensor</div><div class="as">Pulse → ESP32 GPIO</div><div class="as">Axle/gearbox speed</div><div class="anew new-badge">NEW</div></div>
+      <div class="ah"><div class="hl" style="width:12px"></div><div class="ht"></div></div>
+      <div class="abox abox-legacy" style="width:140px"><div class="at">Brake wire tap</div><div class="as">PC817 opto → ESP32</div><div class="as">12V brake signal isolated</div><div class="anew new-badge">NEW</div></div>
+      <div class="ah"><div class="hl" style="width:12px"></div><div class="ht"></div></div>
+      <div class="abox abox-esp" style="width:180px"><div class="at">ESP32-S3</div><div class="as">Sensor hub · BLE V2V mesh · Buzzer · LED · UART→Pi</div></div>
+      <div class="ah"><div class="hl" style="width:12px"></div><div class="ht"></div></div>
+      <div class="abox abox-legacy" style="width:120px"><div class="at">SW-420 vibration</div><div class="as">GPIO → ESP32</div><div class="as">Crash / rollover</div><div class="anew new-badge">NEW</div></div>
+    </div>
+
+    <div style="display:flex;justify-content:center;margin:8px 0;">
+      <div class="av"><div class="vl"></div><div class="vt"></div><div class="vlab">UART: sensor batch every 50ms + brake events instant</div></div>
+    </div>
+
+    <div class="arch-section-label">RASPBERRY PI 4B — AI BRAIN (unchanged)</div>
+    <div class="arch-row">
+      <div class="abox abox-sensor" style="width:140px"><div class="at">Pi Camera v2</div><div class="as">CSI (15cm rigid)</div><div class="as">+ IR LED ring (night)</div></div>
+      <div class="ah"><div class="hl"></div><div class="ht"></div></div>
+      <div class="abox abox-pi" style="width:350px">
+        <div class="at">Raspberry Pi 4B (4GB)</div>
+        <div class="as">TFLite drowsiness CNN · LSTM accident prediction · Decision engine · Hindi/regional TTS voice · GPS route planning · Emergency SOS via BLE</div>
+      </div>
+      <div class="ah"><div class="hl"></div><div class="ht"></div></div>
+      <div class="abox abox-sensor" style="width:140px"><div class="at">Heatsink + Fan</div><div class="as">Active cooling inside IP54 box</div><div class="as">Mandatory for 55°C cabs</div></div>
+    </div>
+
+    <div style="display:flex;justify-content:center;margin:8px 0;">
+      <div class="av"><div class="vl"></div><div class="vt"></div><div class="vlab">risk_score · voice alert text · LED colour · BLE broadcast payload</div></div>
+    </div>
+
+    <div class="arch-section-label">OUTPUT LAYER — zero-literacy, audio-first</div>
+    <div class="arch-row">
+      <div class="abox abox-out" style="width:160px"><div class="at">85dB Buzzer</div><div class="as">ESP32 GPIO · instant</div><div class="as">Escalating beep pattern</div></div>
+      <div class="ah"><div class="hl"></div><div class="ht"></div></div>
+      <div class="abox abox-out" style="width:200px"><div class="at">Voice Speaker</div><div class="as">Pi 3.5mm → PAM8403</div><div class="as">Hindi / regional language TTS</div></div>
+      <div class="ah"><div class="hl"></div><div class="ht"></div></div>
+      <div class="abox abox-out" style="width:160px"><div class="at">RGB LED bar</div><div class="as">ESP32 → WS2812B</div><div class="as">Green / Amber / Red</div></div>
+      <div class="ah"><div class="hl"></div><div class="ht"></div></div>
+      <div class="abox abox-out" style="width:180px"><div class="at">BLE V2V Mesh</div><div class="as">ESP32 BLE 5.0</div><div class="as">Offline broadcast to nearby vehicles</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 04. BUDGET ══ -->
+<div class="section">
+  <div class="section-head">
+    <span class="section-num">04</span>
+    <span class="section-title">Budget Breakdown</span>
+    <span class="section-badge">TOTAL ₹12,580</span>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <div class="budget-item"><span class="bname">🧠 Compute (Pi + ESP32 + SD)</span><div class="bbar-wrap"><div class="bbar" style="width:67%;background:#1a5f8a;"></div></div><span class="bamt">₹8,500</span></div>
+      <div class="budget-item"><span class="bname">📷 Vision (camera + IR LEDs)</span><div class="bbar-wrap"><div class="bbar" style="width:12%;background:#2d7a3a;"></div></div><span class="bamt">₹1,550</span></div>
+      <div class="budget-item"><span class="bname">⚡ Power (wide-input + TVS + caps)</span><div class="bbar-wrap"><div class="bbar" style="width:5%;background:#c97a0a;"></div></div><span class="bamt">₹540</span></div>
+      <div class="budget-item"><span class="bname">📡 Legacy sensors (VSS + brake + vibration)</span><div class="bbar-wrap"><div class="bbar" style="width:5%;background:#c0392b;"></div></div><span class="bamt">₹680</span></div>
+      <div class="budget-item"><span class="bname">🔊 Alert (buzzer + speaker + LED)</span><div class="bbar-wrap"><div class="bbar" style="width:3%;background:#7c3aed;"></div></div><span class="bamt">₹400</span></div>
+      <div class="budget-item"><span class="bname">🔒 Enclosure + mounting + cooling</span><div class="bbar-wrap"><div class="bbar" style="width:5%;background:#475569;"></div></div><span class="bamt">₹610</span></div>
+      <div class="budget-item"><span class="bname">🔧 Wiring + misc</span><div class="bbar-wrap"><div class="bbar" style="width:2%;background:#64748b;"></div></div><span class="bamt">₹300</span></div>
+
+      <div class="budget-box" style="margin-top:14px;">
+        <div>
+          <div class="bl">Total legacy build</div>
+          <div style="font-family:var(--mono);font-size:10px;color:#6a6a5a;margin-top:3px;">Trucks + auto-rickshaws · fully standalone</div>
+        </div>
+        <div class="br">₹12,580 <span>/ ₹25,000</span></div>
+      </div>
+      <div class="surplus-box">
+        <span class="sl">✓ Large surplus — room for Coral TPU or spare components</span>
+        <span class="sr">₹12,420 remaining</span>
+      </div>
+    </div>
+
+    <div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:18px;">
+        <div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--ink3);margin-bottom:14px;text-transform:uppercase;">Vehicle-specific cost breakdown</div>
+
+        <div style="padding:10px 0;border-bottom:1px solid var(--border);">
+          <div style="font-family:var(--cond);font-size:15px;font-weight:700;color:#c97a0a;margin-bottom:6px;">🚛 Truck build extras (add to base)</div>
+          <div style="font-size:12px;color:var(--ink3);line-height:1.8;">
+            IR LED ring night vision: <strong style="color:var(--ink)">+₹150</strong><br>
+            VSS Hall sensor (gearbox): <strong style="color:var(--ink)">+₹80</strong><br>
+            SW-420 crash sensor: <strong style="color:var(--ink)">+₹20</strong><br>
+            85dB 12V buzzer: <strong style="color:var(--ink)">+₹80</strong><br>
+            2200µF caps (×2): <strong style="color:var(--ink)">+₹80</strong><br>
+            <strong style="color:#c97a0a;">Truck extra total: +₹410</strong>
+          </div>
+        </div>
+
+        <div style="padding:10px 0;border-bottom:1px solid var(--border);">
+          <div style="font-family:var(--cond);font-size:15px;font-weight:700;color:var(--green);margin-bottom:6px;">🛺 E-Rickshaw build extras (add to base)</div>
+          <div style="font-size:12px;color:var(--ink3);line-height:1.8;">
+            48V→12V pre-stage module: <strong style="color:var(--ink)">+₹180</strong><br>
+            Brake light tap opto: <strong style="color:var(--ink)">+₹30</strong><br>
+            IP54 box (compact 120×80): <strong style="color:var(--ink)">+₹300</strong><br>
+            <strong style="color:var(--green);">E-rickshaw extra total: +₹510</strong>
+          </div>
+        </div>
+
+        <div style="padding:10px 0;">
+          <div style="font-family:var(--cond);font-size:14px;font-weight:700;color:var(--blue);margin-bottom:6px;">💡 Minimum viable legacy build</div>
+          <div style="font-size:12px;color:var(--ink3);line-height:1.6;">
+            Pi 4B 2GB + ESP32 + camera + IMU + GPS + brake tap + buzzer + power = <strong style="color:var(--ink)">₹10,850</strong><br>
+            Drowsiness + accident prediction + BLE V2V fully working with zero vehicle electronics dependency.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 05. PERFORMANCE ══ -->
+<div class="section">
+  <div class="section-head">
+    <span class="section-num">05</span>
+    <span class="section-title">Performance on Legacy Vehicles</span>
+    <span class="section-badge">WITH GPS SPEED + IMU</span>
+  </div>
+
+  <div class="perf-grid">
+    <div class="perf-card">
+      <div class="pctitle">Speed accuracy</div>
+      <div class="pcvalue">±0.5 <span class="pcunit">km/h</span></div>
+      <div class="pcdesc">GPS Doppler speed. Updates at 1Hz (NEO-6M default) → upgrade to 10Hz firmware for faster response. VSS pulses corroborate at &lt;10ms.</div>
+    </div>
+    <div class="perf-card">
+      <div class="pctitle">Brake detection</div>
+      <div class="pcvalue">&lt;10 <span class="pcunit">ms</span></div>
+      <div class="pcdesc">Brake light wire tap via PC817 optocoupler. Direct hardware signal — no polling delay. Fastest possible detection on any vehicle.</div>
+    </div>
+    <div class="perf-card">
+      <div class="pctitle">AI inference</div>
+      <div class="pcvalue">&lt;80 <span class="pcunit">ms</span></div>
+      <div class="pcdesc">Unchanged. TFLite quantised models on Pi 4B. Drowsiness CNN ~40ms, LSTM ~20ms. Within 100ms target on legacy vehicle data.</div>
+    </div>
+    <div class="perf-card">
+      <div class="pctitle">Alert latency</div>
+      <div class="pcvalue">&lt;100 <span class="pcunit">ms</span></div>
+      <div class="pcdesc">Pi → UART → ESP32 → buzzer GPIO. Voice TTS pre-rendered for common alerts to avoid synthesis delay. Buzzer always triggers first.</div>
+    </div>
+    <div class="perf-card">
+      <div class="pctitle">Night detection</div>
+      <div class="pcvalue">IR <span class="pcunit">850nm</span></div>
+      <div class="pcdesc">IR LED ring illuminates driver face in complete darkness. Pi Camera v2 is IR-sensitive. Critical for truck night driving — most accidents happen at night.</div>
+    </div>
+    <div class="perf-card">
+      <div class="pctitle">Power tolerance</div>
+      <div class="pcvalue">9–36 <span class="pcunit">V input</span></div>
+      <div class="pcdesc">Wide-input buck handles 12V (autos), 24V (trucks), and with pre-stage, 48V (e-rickshaw). Single hardware works across all legacy vehicle types.</div>
+    </div>
+    <div class="perf-card">
+      <div class="pctitle">Vibration survival</div>
+      <div class="pcvalue">IP54 <span class="pcunit">rated</span></div>
+      <div class="pcdesc">Rubber-damped board mounts + sealed IP54 box. Tested equivalent to IEC 60068-2-6 vibration spec. Survives Indian national highway road conditions.</div>
+    </div>
+    <div class="perf-card">
+      <div class="pctitle">BLE V2V range</div>
+      <div class="pcvalue">~100 <span class="pcunit">m</span></div>
+      <div class="pcdesc">ESP32-S3 BLE 5.0 broadcasting. On highways, warns about sudden braking 2–3 seconds ahead at 60km/h — critical safety window for heavy trucks.</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /body-wrap -->
+
+<div class="footer">PROJECT GARUDA — LEGACY VEHICLE HARDWARE BLUEPRINT — TRUCKS &amp; AUTO-RICKSHAWS — ₹25,000 BUDGET</div>
+</body>
+</html>

@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Project Garuda — 3D Device Enclosure</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0c0e14;overflow:hidden;font-family:'Courier New',monospace;}
+canvas{display:block;}
+
+/* ── HUD ── */
+#ui{position:absolute;inset:0;pointer-events:none;z-index:10;}
+
+#header{
+  position:absolute;top:0;left:0;right:0;
+  padding:20px 28px;
+  display:flex;justify-content:space-between;align-items:flex-start;
+  background:linear-gradient(180deg,rgba(12,14,20,0.95) 0%,transparent 100%);
+}
+.hdr-l .badge{
+  font-size:8px;letter-spacing:3px;color:#4a6a8a;
+  text-transform:uppercase;margin-bottom:6px;
+}
+.hdr-l h1{
+  font-size:20px;font-weight:700;letter-spacing:2px;
+  color:#e8f0ff;line-height:1;
+}
+.hdr-l h1 em{color:#4af;font-style:normal;}
+.hdr-l .sub{font-size:9px;color:#2a4a6a;letter-spacing:2px;margin-top:4px;}
+.hdr-r{text-align:right;}
+.hdr-r .ctrl{font-size:9px;color:#1a3a5a;letter-spacing:0.5px;line-height:2.2;}
+.hdr-r .ctrl span{color:#2a5a7a;}
+
+/* ── PANEL TOGGLE ── */
+#panel-btn{
+  position:absolute;top:20px;right:28px;
+  background:rgba(20,30,50,0.9);border:1px solid #1a3a5a;
+  color:#4af;font-size:9px;letter-spacing:2px;
+  padding:6px 14px;cursor:pointer;pointer-events:all;
+  text-transform:uppercase;
+  transition:border-color 0.2s;
+}
+#panel-btn:hover{border-color:#4af;}
+
+/* ── SIDE PANEL ── */
+#panel{
+  position:absolute;right:0;top:0;bottom:0;width:260px;
+  background:rgba(10,13,20,0.97);border-left:1px solid #0e2035;
+  padding:70px 0 20px;
+  transition:transform 0.3s;
+  overflow-y:auto;pointer-events:all;
+}
+#panel.hidden{transform:translateX(100%);}
+.panel-title{
+  font-size:8px;letter-spacing:3px;color:#2a4a6a;
+  padding:0 20px 10px;text-transform:uppercase;border-bottom:1px solid #0e2035;
+}
+.comp-item{
+  padding:12px 20px;border-bottom:1px solid #0a1a2a;
+  cursor:pointer;transition:background 0.15s;
+}
+.comp-item:hover,.comp-item.active{background:rgba(0,120,255,0.06);}
+.comp-dot{
+  width:8px;height:8px;border-radius:50%;
+  display:inline-block;margin-right:8px;vertical-align:middle;
+}
+.comp-name{font-size:11px;color:#8ab0d0;letter-spacing:1px;}
+.comp-detail{font-size:9px;color:#2a4a6a;margin-top:4px;line-height:1.7;padding-left:16px;}
+
+/* ── TOOLTIP ── */
+#tt{
+  position:absolute;display:none;
+  background:rgba(8,12,22,0.97);border:1px solid #1a5f8a;
+  padding:10px 14px;pointer-events:none;z-index:20;
+  min-width:160px;
+}
+.tt-n{font-size:10px;color:#4af;letter-spacing:2px;font-weight:700;margin-bottom:5px;}
+.tt-r{font-size:9px;color:#4a7a9a;margin-bottom:2px;}
+.tt-r b{color:#8ab0c8;}
+
+/* ── BOTTOM BAR ── */
+#bottom{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:12px 28px;
+  display:flex;justify-content:center;gap:24px;
+  background:linear-gradient(0deg,rgba(12,14,20,0.95) 0%,transparent 100%);
+}
+.leg{display:flex;align-items:center;gap:7px;font-size:9px;color:#2a4a6a;letter-spacing:1px;}
+.leg-line{width:24px;height:2px;}
+
+/* ── LOADING ── */
+#loading{
+  position:absolute;inset:0;background:#0c0e14;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:100;transition:opacity 0.6s;
+}
+.ld-title{font-size:18px;color:#4af;letter-spacing:6px;margin-bottom:20px;}
+.ld-bar{width:240px;height:1px;background:#0e2035;margin-bottom:10px;}
+.ld-fill{width:0;height:100%;background:#4af;transition:width 0.3s;}
+.ld-sub{font-size:9px;color:#1a3a5a;letter-spacing:2px;}
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="ld-title">GARUDA DEVICE</div>
+  <div class="ld-bar"><div class="ld-fill" id="ldfill"></div></div>
+  <div class="ld-sub">RENDERING 3D ENCLOSURE...</div>
+</div>
+
+<div id="ui">
+  <div id="header">
+    <div class="hdr-l">
+      <div class="badge">Project Garuda · Hardware Enclosure · Rev B</div>
+      <h1>GARUDA <em>DEVICE</em></h1>
+      <div class="sub">AI CO-DRIVER · PLUG-AND-PLAY MODULE · INTERNAL LAYOUT</div>
+    </div>
+  </div>
+
+  <button id="panel-btn" onclick="togglePanel()">☰ COMPONENTS</button>
+
+  <div id="panel">
+    <div class="panel-title">Internal Components</div>
+    <div class="comp-item" onclick="focusModule(0)">
+      <span class="comp-dot" style="background:#4af"></span>
+      <span class="comp-name">AI PROCESSING UNIT</span>
+      <div class="comp-detail">Raspberry Pi 4B · 4GB RAM<br>TFLite · OpenCV · &lt;80ms</div>
+    </div>
+    <div class="comp-item" onclick="focusModule(1)">
+      <span class="comp-dot" style="background:#0f8"></span>
+      <span class="comp-name">BLE MODULE</span>
+      <div class="comp-detail">ESP32-S3 · BLE 5.0<br>V2V Mesh · UART bridge</div>
+    </div>
+    <div class="comp-item" onclick="focusModule(2)">
+      <span class="comp-dot" style="background:#fa0"></span>
+      <span class="comp-name">POWER MODULE</span>
+      <div class="comp-detail">XL4016 Buck · 12V→5V<br>5A output · TVS protected</div>
+    </div>
+    <div class="comp-item" onclick="focusModule(3)">
+      <span class="comp-dot" style="background:#a4f"></span>
+      <span class="comp-name">IMU SENSOR</span>
+      <div class="comp-detail">MPU-6050 · I2C 0x68<br>Accel + Gyro · 50ms poll</div>
+    </div>
+    <div class="comp-item" onclick="focusModule(4)">
+      <span class="comp-dot" style="background:#f84"></span>
+      <span class="comp-name">GPS MODULE</span>
+      <div class="comp-detail">NEO-6M · UART 9600<br>±0.5 km/h accuracy</div>
+    </div>
+    <div class="comp-item" onclick="focusModule(5)">
+      <span class="comp-dot" style="background:#f44"></span>
+      <span class="comp-name">ALERT SYSTEM</span>
+      <div class="comp-detail">PAM8403 + 3W Speaker<br>WS2812B LED · Buzzer</div>
+    </div>
+    <div class="comp-item" onclick="focusModule(6)">
+      <span class="comp-dot" style="background:#0cf"></span>
+      <span class="comp-name">USB HUB</span>
+      <div class="comp-detail">4-port internal hub<br>Camera routing · OTG</div>
+    </div>
+    <div class="comp-item" onclick="focusModule(7)">
+      <span class="comp-dot" style="background:#ff0"></span>
+      <span class="comp-name">CAPACITOR BANK</span>
+      <div class="comp-detail">2× 2200µF 35V<br>Ripple filtering · stable 5V</div>
+    </div>
+  </div>
+
+  <div id="tt">
+    <div class="tt-n" id="ttn"></div>
+    <div class="tt-r">Model: <b id="ttm"></b></div>
+    <div class="tt-r">Interface: <b id="tti"></b></div>
+    <div class="tt-r">Voltage: <b id="ttv"></b></div>
+  </div>
+
+  <div id="bottom">
+    <div class="leg"><div class="leg-line" style="background:#e03;"></div>Power (12V)</div>
+    <div class="leg"><div class="leg-line" style="background:#f80;"></div>Power (5V)</div>
+    <div class="leg"><div class="leg-line" style="background:#4af;"></div>Data (USB)</div>
+    <div class="leg"><div class="leg-line" style="background:#a4f;"></div>Data (I2C)</div>
+    <div class="leg"><div class="leg-line" style="background:#0f8;"></div>BLE / UART</div>
+    <div class="leg"><div class="leg-line" style="background:#f44;"></div>Alert (GPIO)</div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ══════════════════════════════════════════════════════
+// SCENE
+// ══════════════════════════════════════════════════════
+const W=window.innerWidth, H=window.innerHeight;
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0c0e14);
+scene.fog = new THREE.FogExp2(0x0c0e14, 0.04);
+
+const camera = new THREE.PerspectiveCamera(42, W/H, 0.01, 200);
+camera.position.set(4.5, 3.2, 5.5);
+
+const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(W, H);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
+document.body.appendChild(renderer.domElement);
+
+// ══════════════════════════════════════════════════════
+// LIGHTING
+// ══════════════════════════════════════════════════════
+scene.add(new THREE.AmbientLight(0x0a1828, 3));
+
+const key = new THREE.DirectionalLight(0x4488cc, 2.5);
+key.position.set(5, 8, 6);
+key.castShadow = true;
+key.shadow.mapSize.set(2048,2048);
+key.shadow.camera.near = 0.1;
+key.shadow.camera.far = 30;
+key.shadow.camera.left = -6; key.shadow.camera.right = 6;
+key.shadow.camera.top = 6; key.shadow.camera.bottom = -6;
+scene.add(key);
+
+const fill = new THREE.DirectionalLight(0x2244aa, 1.2);
+fill.position.set(-4, 3, -3);
+scene.add(fill);
+
+const rim = new THREE.DirectionalLight(0x0088ff, 0.8);
+rim.position.set(0, -3, -5);
+scene.add(rim);
+
+// Point lights for component glow
+const ptColors = [0x0088ff, 0x00ff88, 0xff8800, 0xaa44ff, 0xff6600, 0xff3333, 0x00ccff, 0xffff00];
+
+// ══════════════════════════════════════════════════════
+// MATERIALS
+// ══════════════════════════════════════════════════════
+const enclosureMat = new THREE.MeshPhysicalMaterial({
+  color: 0x1a2235,
+  metalness: 0.6,
+  roughness: 0.3,
+  transparent: true,
+  opacity: 0.22,
+  side: THREE.DoubleSide,
+  depthWrite: false,
+  transmission: 0.1,
+});
+
+const enclosureEdgeMat = new THREE.MeshPhysicalMaterial({
+  color: 0x2a4a70,
+  metalness: 0.8,
+  roughness: 0.2,
+});
+
+const pcbMat = new THREE.MeshPhysicalMaterial({
+  color: 0x0a2a0a,
+  metalness: 0.1,
+  roughness: 0.6,
+});
+
+const pcbGreenMat = new THREE.MeshPhysicalMaterial({
+  color: 0x0d3d0d,
+  metalness: 0.05,
+  roughness: 0.7,
+});
+
+const aluminumMat = new THREE.MeshPhysicalMaterial({
+  color: 0x8a9aaa,
+  metalness: 0.9,
+  roughness: 0.2,
+});
+
+const copperMat = new THREE.MeshPhysicalMaterial({
+  color: 0xb87333,
+  metalness: 0.8,
+  roughness: 0.3,
+});
+
+function compMat(hex) {
+  return new THREE.MeshPhysicalMaterial({
+    color: hex, metalness: 0.4, roughness: 0.4,
+    emissive: hex, emissiveIntensity: 0.15,
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════
+function box(w,h,d,mat,shadow=true){
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
+  if(shadow){m.castShadow=true;m.receiveShadow=true;}
+  return m;
+}
+function cyl(rt,rb,h,seg,mat){
+  return new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg),mat);
+}
+
+function roundedBox(w,h,d,r,mat){
+  // Approximated with normal box for now
+  return box(w,h,d,mat);
+}
+
+function tube(pts, radius, color, opacity=1){
+  const path = new THREE.CatmullRomCurve3(pts.map(p=>new THREE.Vector3(...p)));
+  const geo = new THREE.TubeGeometry(path, Math.max(4,pts.length*3), radius, 6, false);
+  const mat = new THREE.MeshPhysicalMaterial({
+    color, metalness:0.5, roughness:0.5,
+    transparent:opacity<1, opacity,
+    emissive:color, emissiveIntensity:0.3,
+  });
+  const m = new THREE.Mesh(geo, mat);
+  m.castShadow = false;
+  return m;
+}
+
+function labelSprite(text, color=0x4af0ff, scale=1){
+  const c = document.createElement('canvas');
+  c.width=512; c.height=80;
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0,0,512,80);
+  ctx.font='bold 22px Courier New';
+  ctx.fillStyle='#'+color.toString(16).padStart(6,'0');
+  ctx.textAlign='center';
+  ctx.shadowColor='#'+color.toString(16).padStart(6,'0');
+  ctx.shadowBlur=8;
+  ctx.fillText(text,256,48);
+  const tex = new THREE.CanvasTexture(c);
+  const mat = new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false});
+  const sp = new THREE.Sprite(mat);
+  sp.scale.set(1.8*scale, 0.28*scale, 1);
+  return sp;
+}
+
+// ══════════════════════════════════════════════════════
+// ENCLOSURE
+// ══════════════════════════════════════════════════════
+const encGroup = new THREE.Group();
+scene.add(encGroup);
+
+// Dimensions: 18cm × 10cm × 5cm → 1.8 × 1.0 × 0.5 units
+const EW=1.8, EH=0.5, ED=1.0;
+
+// Main transparent shell
+const shellGeo = new THREE.BoxGeometry(EW, EH, ED);
+const shell = new THREE.Mesh(shellGeo, enclosureMat);
+encGroup.add(shell);
+
+// Shell wireframe edges
+const edgesGeo = new THREE.EdgesGeometry(shellGeo);
+const edgesMat = new THREE.LineBasicMaterial({color:0x2a6a9a, transparent:true, opacity:0.8});
+encGroup.add(new THREE.LineSegments(edgesGeo, edgesMat));
+
+// Solid corner edges (metal frame look)
+const edgeW = 0.018;
+const frameColor = 0x2a4a70;
+
+// Horizontal frame edges
+const edgePositions = [
+  // Bottom edges
+  [[0, -EH/2, -ED/2],[EW,edgeW,edgeW]],
+  [[0, -EH/2,  ED/2],[EW,edgeW,edgeW]],
+  [[-EW/2,-EH/2,0],[edgeW,edgeW,ED]],
+  [[ EW/2,-EH/2,0],[edgeW,edgeW,ED]],
+  // Top edges
+  [[0,  EH/2, -ED/2],[EW,edgeW,edgeW]],
+  [[0,  EH/2,  ED/2],[EW,edgeW,edgeW]],
+  [[-EW/2, EH/2,0],[edgeW,edgeW,ED]],
+  [[ EW/2, EH/2,0],[edgeW,edgeW,ED]],
+  // Vertical edges
+  [[-EW/2, 0, -ED/2],[edgeW,EH,edgeW]],
+  [[ EW/2, 0, -ED/2],[edgeW,EH,edgeW]],
+  [[-EW/2, 0,  ED/2],[edgeW,EH,edgeW]],
+  [[ EW/2, 0,  ED/2],[edgeW,EH,edgeW]],
+];
+edgePositions.forEach(([pos,size])=>{
+  const e = box(...size, enclosureEdgeMat);
+  e.position.set(...pos);
+  encGroup.add(e);
+});
+
+// Top lid panel (slight separate, visible)
+const lid = box(EW-0.04, 0.012, ED-0.04, new THREE.MeshPhysicalMaterial({
+  color:0x1e3050, metalness:0.7, roughness:0.3,
+  transparent:true, opacity:0.5
+}));
+lid.position.y = EH/2 - 0.006;
+encGroup.add(lid);
+
+// Bottom base plate
+const base = box(EW-0.02, 0.015, ED-0.02, new THREE.MeshPhysicalMaterial({
+  color:0x0a1828, metalness:0.6, roughness:0.4
+}));
+base.position.y = -EH/2 + 0.007;
+base.receiveShadow = true;
+encGroup.add(base);
+
+// Ventilation slots on top
+for(let i=0;i<6;i++){
+  const slot = box(0.12, 0.008, 0.012, new THREE.MeshPhysicalMaterial({color:0x0a1420,metalness:0.5,roughness:0.5}));
+  slot.position.set(-0.5+i*0.2, EH/2+0.002, 0.1);
+  encGroup.add(slot);
+}
+
+// External ports on front face (–Z)
+function addPort(x,y,w,h,d,color){
+  const p = box(w,h,d,new THREE.MeshPhysicalMaterial({color,metalness:0.7,roughness:0.3}));
+  p.position.set(x,y,-ED/2-d/2+0.002);
+  encGroup.add(p);
+  // Inner darkness
+  const pi = box(w-0.01,h-0.01,0.02,new THREE.MeshPhysicalMaterial({color:0x000000}));
+  pi.position.set(x,y,-ED/2);
+  encGroup.add(pi);
+}
+// USB-A ports
+addPort(-0.55,-0.05,0.055,0.03,0.025,0x2a4a6a);
+addPort(-0.55,-0.12,0.055,0.03,0.025,0x2a4a6a);
+// USB-C power
+addPort(-0.72,-0.08,0.04,0.02,0.025,0x1a3a5a);
+// Audio jack
+addPort(-0.35,-0.08,0.022,0.022,0.025,0x1a1a1a);
+// Status LED cutout
+const ledCover = box(0.05,0.015,0.008,new THREE.MeshPhysicalMaterial({color:0x003300,metalness:0.1,roughness:0.8,transparent:true,opacity:0.7}));
+ledCover.position.set(0.6,-EH/2+0.008,-ED/2-0.001);
+ledCover.rotation.x = Math.PI/2;
+encGroup.add(ledCover);
+
+// Mounting feet (rubber)
+[[-EW/2+0.08,-EH/2,-ED/2+0.08],[EW/2-0.08,-EH/2,-ED/2+0.08],
+ [-EW/2+0.08,-EH/2, ED/2-0.08],[EW/2-0.08,-EH/2, ED/2-0.08]].forEach(pos=>{
+  const foot = cyl(0.025,0.03,0.02,8, new THREE.MeshPhysicalMaterial({color:0x111111,metalness:0,roughness:0.9}));
+  foot.position.set(...pos);
+  foot.position.y += -0.01;
+  encGroup.add(foot);
+});
+
+// ══════════════════════════════════════════════════════
+// INTERNAL SUBSTRATE / MOTHERBOARD TRAY
+// ══════════════════════════════════════════════════════
+const tray = box(EW-0.08, 0.012, ED-0.08, pcbMat);
+tray.position.y = -EH/2 + 0.05;
+encGroup.add(tray);
+
+// PCB trace lines (decorative)
+for(let i=0;i<8;i++){
+  const trace = box(0.4+Math.random()*0.6, 0.001, 0.002,
+    new THREE.MeshPhysicalMaterial({color:0x1a6a1a,metalness:0.3,roughness:0.5,emissive:0x0a3a0a,emissiveIntensity:0.3}));
+  trace.position.set(-0.5+Math.random()*1.0, -EH/2+0.057, -0.3+Math.random()*0.6);
+  encGroup.add(trace);
+}
+
+// ══════════════════════════════════════════════════════
+// INTERNAL COMPONENTS
+// ══════════════════════════════════════════════════════
+const moduleData = [];
+
+function addComponent(name, model, iface, voltage, position, size, colorHex, detail){
+  const grp = new THREE.Group();
+  grp.position.set(...position);
+
+  // PCB substrate
+  const pcb = box(size[0], 0.015, size[2], pcbGreenMat);
+  pcb.position.y = 0;
+  grp.add(pcb);
+
+  // Main chip body
+  const chip = box(size[0]*0.55, size[1], size[2]*0.55,
+    new THREE.MeshPhysicalMaterial({color:colorHex,metalness:0.5,roughness:0.4,emissive:colorHex,emissiveIntensity:0.12}));
+  chip.position.y = size[1]/2 + 0.008;
+  chip.castShadow = true;
+  grp.add(chip);
+
+  // Chip markings
+  const mark = box(size[0]*0.45, 0.002, size[2]*0.45,
+    new THREE.MeshPhysicalMaterial({color:0x111111}));
+  mark.position.y = size[1]+0.009;
+  grp.add(mark);
+
+  // Pin legs (short)
+  for(let i=0;i<4;i++){
+    const pin = cyl(0.003,0.003,0.016,4,copperMat);
+    pin.rotation.x = Math.PI/2;
+    const offset = (i-1.5)*size[0]*0.18;
+    pin.position.set(offset, 0.003, -size[2]*0.52);
+    grp.add(pin);
+    const pin2 = cyl(0.003,0.003,0.016,4,copperMat);
+    pin2.rotation.x = Math.PI/2;
+    pin2.position.set(offset, 0.003, size[2]*0.52);
+    grp.add(pin2);
+  }
+
+  // Point light glow
+  const ptLight = new THREE.PointLight(colorHex, 1.2, 0.6);
+  ptLight.position.y = size[1]+0.1;
+  grp.add(ptLight);
+
+  // Label
+  const lbl = labelSprite(name, colorHex);
+  lbl.position.y = size[1]+0.22;
+  grp.add(lbl);
+
+  // Hit mesh (invisible, for raycasting)
+  const hit = new THREE.Mesh(
+    new THREE.BoxGeometry(size[0]+0.05, size[1]+0.1, size[2]+0.05),
+    new THREE.MeshBasicMaterial({transparent:true, opacity:0})
+  );
+  hit.position.y = size[1]/2+0.05;
+  hit.userData = {name, model, iface, voltage};
+  grp.add(hit);
+
+  encGroup.add(grp);
+  moduleData.push({grp, hit, ptLight, name, model, iface, voltage, colorHex});
+  return grp;
+}
+
+// Y base level inside enclosure
+const Y = -EH/2 + 0.065;
+
+// 1. AI UNIT — Raspberry Pi (center)
+addComponent('AI UNIT','Raspberry Pi 4B','USB·I2C·UART','5V DC',
+  [0, Y, 0], [0.55, 0.045, 0.38], 0x0066ff,
+  'Main AI processor · TFLite inference · OpenCV');
+
+// Add Pi-specific heatsink fins
+const hsGrp = new THREE.Group();
+hsGrp.position.set(0, Y+0.05, 0);
+for(let i=0;i<7;i++){
+  const fin = box(0.008, 0.04, 0.28, aluminumMat);
+  fin.position.x = -0.14+i*0.046;
+  fin.position.y = 0.045;
+  fin.castShadow = true;
+  hsGrp.add(fin);
+}
+encGroup.add(hsGrp);
+
+// 2. BLE Module (right side)
+addComponent('BLE MOD','ESP32-S3','BLE·UART','3.3V',
+  [0.55, Y, -0.2], [0.22, 0.025, 0.22], 0x00ff88,'BLE 5.0 V2V mesh');
+
+// BLE antenna wire
+const antWire = cyl(0.003,0.003,0.1,4,
+  new THREE.MeshPhysicalMaterial({color:0x888888,metalness:0.8,roughness:0.2}));
+antWire.position.set(0.55+0.06, Y+0.08, -0.2);
+encGroup.add(antWire);
+const antTip = cyl(0.008,0.002,0.025,8,
+  new THREE.MeshPhysicalMaterial({color:0xcccccc,metalness:0.9,roughness:0.1}));
+antTip.position.set(0.55+0.06, Y+0.14, -0.2);
+encGroup.add(antTip);
+
+// 3. Power Module (left side, near edge)
+addComponent('PWR MOD','XL4016 Buck','12V→5V','12V/5V',
+  [-0.62, Y, -0.05], [0.26, 0.04, 0.28], 0xffaa00,'DC-DC converter · 5A');
+
+// Capacitors
+[[-0.62, Y+0.06, 0.1],[-0.62, Y+0.06, 0.16]].forEach(([x,y,z])=>{
+  const cap = cyl(0.028,0.028,0.065,12,
+    new THREE.MeshPhysicalMaterial({color:0x1a3a6a,metalness:0.3,roughness:0.5}));
+  cap.position.set(x,y,z);
+  cap.castShadow=true;
+  encGroup.add(cap);
+  // Cap top mark
+  const capTop = cyl(0.024,0.024,0.002,12,
+    new THREE.MeshPhysicalMaterial({color:0x6a9acc}));
+  capTop.position.set(x,y+0.034,z);
+  encGroup.add(capTop);
+});
+
+// 4. IMU Sensor (center-left)
+addComponent('IMU','MPU-6050','I2C 0x68','3.3V',
+  [-0.2, Y, 0.25], [0.14, 0.02, 0.14], 0xaa44ff,'Accel+Gyro · 50ms');
+
+// 5. GPS Module (rear right)
+addComponent('GPS','NEO-6M','UART 9600','3.3V',
+  [0.4, Y, 0.28], [0.18, 0.02, 0.18], 0xff8844,'NMEA · ±0.5km/h');
+
+// 6. Alert Module (front edge)
+addComponent('ALERT','PAM8403+LED','GPIO·I2S','5V',
+  [-0.1, Y, -0.32], [0.22, 0.02, 0.14], 0xff3333,'Speaker · LED · Buzzer');
+
+// Add small speaker cone
+const spkGrp = new THREE.Group();
+spkGrp.position.set(-0.1, Y+0.04, -0.33);
+const spkBase = cyl(0.055,0.055,0.01,24,new THREE.MeshPhysicalMaterial({color:0x1a1a1a,metalness:0.5,roughness:0.5}));
+spkGrp.add(spkBase);
+const spkCone = new THREE.Mesh(new THREE.ConeGeometry(0.04,0.03,20),
+  new THREE.MeshPhysicalMaterial({color:0x2a2a2a,metalness:0.2,roughness:0.8}));
+spkCone.rotation.x = Math.PI/2; spkCone.position.z = -0.01;
+spkGrp.add(spkCone);
+encGroup.add(spkGrp);
+
+// 7. USB Hub (right, front)
+addComponent('USB HUB','GL850G','USB 2.0','5V',
+  [0.55, Y, 0.22], [0.18, 0.018, 0.12], 0x00ccff,'4-port internal');
+
+// 8. Capacitor Bank label (already added as caps above)
+addComponent('CAP BANK','2200µF 35V','PWR','5V',
+  [-0.62, Y, 0.18], [0.16, 0.01, 0.1], 0xffff00,'Ripple filter');
+
+// ══════════════════════════════════════════════════════
+// WIRING (TUBES)
+// ══════════════════════════════════════════════════════
+const wireY = Y + 0.005;
+
+// Power: PWR → AI (thick red)
+encGroup.add(tube([[-0.49,wireY,-0.05],[0,wireY+0.01,-0.05],[0,wireY,0]], 0.008, 0xe03030));
+
+// Power: PWR → BLE (orange)
+encGroup.add(tube([[-0.49,wireY,-0.05],[0.2,wireY,-0.05],[0.55,wireY,-0.2]], 0.005, 0xff8800));
+
+// Power: PWR → Alert (red)
+encGroup.add(tube([[-0.49,wireY,-0.05],[-0.3,wireY,-0.15],[-0.1,wireY,-0.32]], 0.005, 0xe03030));
+
+// Power: PWR → USB Hub (orange)
+encGroup.add(tube([[-0.49,wireY,-0.05],[0.2,wireY,0.05],[0.55,wireY,0.22]], 0.004, 0xff8800));
+
+// Data: AI ↔ BLE (green)
+encGroup.add(tube([[0.28,wireY+0.01,0],[0.42,wireY+0.01,-0.1],[0.44,wireY+0.01,-0.2]], 0.005, 0x00ff88));
+
+// Data: AI ↔ IMU I2C (purple)
+encGroup.add(tube([[-0.1,wireY+0.01,0.19],[-0.15,wireY+0.02,0.25],[-0.2,wireY+0.01,0.25]], 0.004, 0xaa44ff));
+
+// Data: AI ↔ GPS UART (orange)
+encGroup.add(tube([[0.28,wireY,0.19],[0.34,wireY+0.01,0.24],[0.4,wireY,0.28]], 0.004, 0xff8844));
+
+// Data: AI ↔ Alert GPIO (red thin)
+encGroup.add(tube([[-0.1,wireY+0.005,-0.19],[-0.1,wireY+0.01,-0.25],[-0.1,wireY,-0.32]], 0.004, 0xff3333));
+
+// Data: AI ↔ USB Hub
+encGroup.add(tube([[0.28,wireY+0.01,0.1],[0.4,wireY+0.01,0.16],[0.44,wireY+0.01,0.22]], 0.004, 0x00ccff));
+
+// Power: AI ← USB-C cable hint
+encGroup.add(tube([[-0.72,wireY,-0.49],[-0.72,wireY,-0.3],[-0.62,wireY,-0.19]], 0.006, 0xffaa00));
+
+// Extra routing traces (realistic PCB feel)
+encGroup.add(tube([[0,wireY+0.001,-0.15],[0,wireY+0.001,0.15]], 0.0025, 0x1a5a1a, 0.6));
+encGroup.add(tube([[-0.3,wireY+0.001,0],[0.3,wireY+0.001,0]], 0.0025, 0x1a5a1a, 0.6));
+
+// ══════════════════════════════════════════════════════
+// GROUND / PLATFORM
+// ══════════════════════════════════════════════════════
+const platform = box(4, 0.02, 3, new THREE.MeshPhysicalMaterial({
+  color:0x0a0e18, metalness:0.3, roughness:0.8
+}));
+platform.position.y = -0.56;
+platform.receiveShadow = true;
+scene.add(platform);
+
+// Reflection grid on platform
+for(let i=0;i<10;i++){
+  for(let j=0;j<8;j++){
+    const cell = box(0.38, 0.001, 0.35, new THREE.MeshPhysicalMaterial({
+      color:0x0e1828, metalness:0.2, roughness:0.9,
+      transparent:true, opacity:0.5
+    }));
+    cell.position.set(-1.9+i*0.4, -0.549, -1.4+j*0.4);
+    scene.add(cell);
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// ORBIT CONTROLS (manual)
+// ══════════════════════════════════════════════════════
+let isDrag=false, isRight=false;
+let prev={x:0,y:0};
+let sph={theta:-0.5, phi:0.9, r:7.0};
+let panOff = new THREE.Vector3();
+const tgt = new THREE.Vector3(0,0,0);
+
+function applyCamera(){
+  const x = sph.r*Math.sin(sph.phi)*Math.sin(sph.theta);
+  const y = sph.r*Math.cos(sph.phi);
+  const z = sph.r*Math.sin(sph.phi)*Math.cos(sph.theta);
+  camera.position.set(x+tgt.x+panOff.x, y+tgt.y+panOff.y, z+tgt.z+panOff.z);
+  camera.lookAt(tgt.clone().add(panOff));
+}
+
+renderer.domElement.addEventListener('mousedown',e=>{
+  if(e.target!==renderer.domElement)return;
+  isDrag=true; isRight=e.button===2;
+  prev={x:e.clientX,y:e.clientY};
+});
+window.addEventListener('mouseup',()=>isDrag=false);
+window.addEventListener('mousemove',e=>{
+  if(isDrag){
+    const dx=(e.clientX-prev.x)*0.007, dy=(e.clientY-prev.y)*0.007;
+    if(isRight){panOff.x-=dx*2;panOff.y+=dy*2;}
+    else{sph.theta-=dx;sph.phi=Math.max(0.15,Math.min(Math.PI-0.15,sph.phi+dy));}
+    prev={x:e.clientX,y:e.clientY};
+    applyCamera();
+  }
+  doHover(e);
+});
+renderer.domElement.addEventListener('contextmenu',e=>e.preventDefault());
+renderer.domElement.addEventListener('wheel',e=>{
+  sph.r=Math.max(1.5,Math.min(18,sph.r+e.deltaY*0.008));
+  applyCamera();
+},{passive:true});
+applyCamera();
+
+// ══════════════════════════════════════════════════════
+// RAYCASTING / HOVER
+// ══════════════════════════════════════════════════════
+const raycaster = new THREE.Raycaster();
+const mouse2 = new THREE.Vector2();
+const tt = document.getElementById('tt');
+let hovered = null;
+
+function doHover(e){
+  if(e.target!==renderer.domElement){tt.style.display='none';return;}
+  mouse2.x=(e.clientX/innerWidth)*2-1;
+  mouse2.y=-(e.clientY/innerHeight)*2+1;
+  raycaster.setFromCamera(mouse2, camera);
+  const hits = raycaster.intersectObjects(moduleData.map(m=>m.hit));
+  if(hits.length){
+    const d = hits[0].object.userData;
+    document.getElementById('ttn').textContent=d.name;
+    document.getElementById('ttm').textContent=d.model;
+    document.getElementById('tti').textContent=d.iface;
+    document.getElementById('ttv').textContent=d.voltage;
+    tt.style.display='block';
+    tt.style.left=(e.clientX+16)+'px';
+    tt.style.top=(e.clientY-8)+'px';
+    if(hovered!==hits[0].object){
+      if(hovered) resetHover(hovered);
+      hovered=hits[0].object;
+      highlightHover(hovered);
+    }
+  } else {
+    tt.style.display='none';
+    if(hovered){resetHover(hovered);hovered=null;}
+  }
+}
+
+function highlightHover(obj){
+  const mod = moduleData.find(m=>m.hit===obj);
+  if(mod) mod.ptLight.intensity=3;
+}
+function resetHover(obj){
+  const mod = moduleData.find(m=>m.hit===obj);
+  if(mod) mod.ptLight.intensity=1.2;
+}
+
+// ══════════════════════════════════════════════════════
+// PANEL / FOCUS
+// ══════════════════════════════════════════════════════
+let panelOpen = true;
+function togglePanel(){
+  panelOpen=!panelOpen;
+  document.getElementById('panel').classList.toggle('hidden',!panelOpen);
+}
+
+function focusModule(i){
+  if(i>=moduleData.length) return;
+  const m = moduleData[i];
+  const wp = new THREE.Vector3();
+  m.grp.getWorldPosition(wp);
+  // Animate camera toward it (simple snap)
+  tgt.set(wp.x, wp.y, wp.z);
+  sph.r = 3.5;
+  applyCamera();
+  document.querySelectorAll('.comp-item').forEach((el,j)=>{
+    el.classList.toggle('active',j===i);
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// LOADING PROGRESS
+// ══════════════════════════════════════════════════════
+let lp=0;
+const ldfill=document.getElementById('ldfill');
+const ldi=setInterval(()=>{
+  lp+=15+Math.random()*12;
+  ldfill.style.width=Math.min(lp,100)+'%';
+  if(lp>=100){
+    clearInterval(ldi);
+    setTimeout(()=>{
+      const ld=document.getElementById('loading');
+      ld.style.opacity='0';
+      setTimeout(()=>ld.style.display='none',700);
+    },300);
+  }
+},90);
+
+// ══════════════════════════════════════════════════════
+// ANIMATION
+// ══════════════════════════════════════════════════════
+let t=0;
+function animate(){
+  requestAnimationFrame(animate);
+  t+=0.016;
+
+  // Very slow auto-rotate when not interacting
+  if(!isDrag){
+    encGroup.rotation.y = Math.sin(t*0.12)*0.08;
+  }
+
+  // Pulsing component lights
+  moduleData.forEach((m,i)=>{
+    const base = (hovered===m.hit)?3:1.2;
+    m.ptLight.intensity = base + Math.sin(t*1.5+i*0.8)*0.4;
+  });
+
+  // BLE module antenna pulse (ring effect via point light)
+  const bleMod = moduleData[1];
+  if(bleMod){
+    bleMod.ptLight.distance = 0.4 + Math.sin(t*2.5)*0.2;
+  }
+
+  renderer.render(scene, camera);
+}
+
+// ══════════════════════════════════════════════════════
+// RESIZE
+// ══════════════════════════════════════════════════════
+window.addEventListener('resize',()=>{
+  camera.aspect=innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight);
+});
+
+animate();
+</script>
+</body>
+</html>
