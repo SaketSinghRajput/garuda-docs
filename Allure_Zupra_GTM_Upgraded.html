@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Allure Interiors + Zupra — GTM Strategy (Upgraded)</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=DM+Mono:wght@300;400;500&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#090807;--surface:#121008;--surface2:#1a1710;--surface3:#222018;
+  --gold:#c9a96e;--gold2:#e8c98a;--gold3:#7a6040;
+  --cream:#f0ead8;--muted:#6b6456;
+  --red:#c0453f;--amber:#c4851e;--green:#3d8a54;--blue:#3a6ea8;--purple:#6b5aad;
+  --border:rgba(201,169,110,0.13);--border2:rgba(201,169,110,0.06);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--cream);font-family:'DM Mono',monospace;font-size:12px;line-height:1.75;}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;width:210px;height:100vh;background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;z-index:200;padding:18px 12px;}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--gold);line-height:1.2;margin-bottom:4px;}
+.nav-logo span{display:block;font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:1px;margin-top:2px;}
+.nav-group{font-size:9px;color:var(--gold3);letter-spacing:2px;text-transform:uppercase;margin:12px 0 3px;font-family:'Syne',sans-serif;font-weight:700;}
+nav a{display:block;font-size:10px;color:var(--muted);text-decoration:none;padding:3px 0 3px 6px;border-left:1px solid transparent;transition:all .15s;line-height:1.4;}
+nav a:hover,nav a.active{color:var(--gold);border-left-color:var(--gold3);}
+
+/* ── LAYOUT ── */
+.main{margin-left:210px;}
+.section{padding:42px 52px;border-bottom:1px solid var(--border);}
+.sec-num{font-size:9px;color:var(--gold3);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px;}
+h2{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:4px;display:flex;align-items:center;gap:12px;}
+h2::after{content:'';flex:1;height:1px;background:var(--border);}
+.sec-intro{color:var(--muted);font-size:11px;margin-bottom:22px;max-width:680px;line-height:1.7;}
+h3{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;color:var(--cream);text-transform:uppercase;letter-spacing:1.5px;margin:22px 0 9px;}
+
+/* ── TABLES ── */
+.tscroll{overflow-x:auto;margin:8px 0;}
+table{border-collapse:collapse;width:100%;font-size:11px;}
+th{background:var(--surface2);color:var(--gold);font-family:'Syne',sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:8px 11px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
+td{padding:7px 11px;border-bottom:1px solid var(--border2);vertical-align:top;color:#b5a98e;}
+td strong{color:var(--cream);font-weight:500;}
+tr:hover td{background:rgba(201,169,110,0.02);}
+.tr-total td{background:var(--surface2);color:var(--gold);font-weight:500;border-top:1px solid var(--border);}
+.tr-phase td{background:rgba(201,169,110,0.05);color:var(--gold3);font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;}
+.num{text-align:right;}
+.green{color:#6cba8a;}.red{color:#e07070;}.amber{color:#d4a060;}.blue{color:#7aaad4;}
+
+/* ── CARDS ── */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:11px;margin:8px 0;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:15px 17px;position:relative;}
+.card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;border-radius:3px 0 0 3px;}
+.card.g::before{background:var(--green);}.card.a::before{background:var(--amber);}
+.card.b::before{background:var(--blue);}.card.r::before{background:var(--red);}
+.card.p::before{background:var(--purple);}.card.gd::before{background:var(--gold);}
+.card-title{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:7px;}
+.card.g .card-title{color:#6cba8a;}.card.a .card-title{color:#d4a060;}.card.b .card-title{color:#7aaad4;}
+.card.r .card-title{color:#e07070;}.card.p .card-title{color:#b090e0;}.card.gd .card-title{color:var(--gold2);}
+ul.pts{list-style:none;display:flex;flex-direction:column;gap:4px;}
+ul.pts li{padding-left:13px;position:relative;color:#a89e88;font-size:11px;}
+ul.pts li::before{content:'→';position:absolute;left:0;color:var(--gold3);font-size:9px;top:2px;}
+ul.pts li strong{color:var(--cream);font-weight:500;}
+
+/* ── PHASE BANNER ── */
+.phase-banner{display:flex;align-items:stretch;gap:0;margin:18px 0 10px;border:1px solid var(--border);border-radius:3px;overflow:hidden;}
+.phase-letter{background:var(--gold3);color:var(--bg);font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:600;width:64px;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:-1px;}
+.phase-letter.a-col{background:var(--gold);}
+.phase-letter.b-col{background:#3a6ea8;}
+.phase-letter.c-col{background:#3d8a54;}
+.phase-letter.d-col{background:#6b5aad;}
+.phase-meta{padding:14px 18px;flex:1;}
+.phase-meta .phase-label{font-size:9px;color:var(--gold3);text-transform:uppercase;letter-spacing:2px;font-family:'Syne',sans-serif;font-weight:700;margin-bottom:3px;}
+.phase-meta.a-col .phase-label{color:var(--gold2);}
+.phase-meta.b-col .phase-label{color:#7aaad4;}
+.phase-meta.c-col .phase-label{color:#6cba8a;}
+.phase-meta.d-col .phase-label{color:#b090e0;}
+.phase-meta h4{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:var(--cream);line-height:1.1;margin-bottom:5px;}
+.phase-meta p{font-size:10.5px;color:var(--muted);line-height:1.6;max-width:600px;}
+
+/* ── INSIGHT BOX ── */
+.insight{background:rgba(201,169,110,0.05);border:1px solid rgba(201,169,110,0.2);border-left:3px solid var(--gold);border-radius:3px;padding:14px 18px;margin:12px 0;}
+.insight-title{font-size:9px;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;font-family:'Syne',sans-serif;font-weight:700;margin-bottom:7px;}
+.insight p{font-size:11.5px;color:#b5a98e;line-height:1.7;}
+.insight p strong{color:var(--cream);}
+
+/* ── MOAT BOX ── */
+.moat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin:10px 0;}
+.moat{background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:14px 16px;text-align:center;}
+.moat-icon{font-size:22px;margin-bottom:6px;}
+.moat-title{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:5px;}
+.moat-body{font-size:10.5px;color:var(--muted);line-height:1.6;}
+
+/* ── STAT STRIP ── */
+.stat-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:14px 0;}
+.stat{background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:12px 14px;text-align:center;}
+.stat-val{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--gold);line-height:1;}
+.stat-label{font-size:9px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:0.5px;}
+
+/* ── FLOW ── */
+.synergy-flow{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:11px 0;}
+.syn-box{background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:9px 13px;font-size:11px;text-align:center;flex:1;min-width:120px;}
+.syn-box strong{display:block;color:var(--gold);font-size:12px;margin-bottom:3px;}
+.syn-arrow{color:var(--gold3);font-size:16px;flex-shrink:0;}
+
+/* ── CRITERIA LIST ── */
+.criteria{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin:10px 0;}
+.criterion{background:var(--surface);border:1px solid var(--border2);border-radius:3px;padding:10px 14px;display:flex;gap:10px;align-items:flex-start;}
+.criterion-num{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--gold3);line-height:1;flex-shrink:0;width:22px;}
+.criterion-body{font-size:11px;color:#b5a98e;}
+.criterion-body strong{display:block;color:var(--cream);font-size:10px;font-family:'Syne',sans-serif;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;}
+
+/* ── ASSUMPTION ── */
+.assumption{background:rgba(201,169,110,0.04);border:1px solid rgba(201,169,110,0.15);border-radius:3px;padding:13px 17px;margin:11px 0;font-size:11px;}
+.assumption-title{font-size:9px;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;font-family:'Syne',sans-serif;font-weight:700;margin-bottom:7px;}
+
+/* ── COMPARISON BOX ── */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:10px 0;}
+.compare{background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:14px 17px;}
+.compare-label{font-size:9px;font-family:'Syne',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:9px;}
+.compare.old .compare-label{color:#e07070;}
+.compare.new .compare-label{color:#6cba8a;}
+
+/* ── IMPACT METER ── */
+.impact-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border2);}
+.impact-row:last-child{border-bottom:none;}
+.impact-label{font-size:11px;color:#b5a98e;flex:1;}
+.impact-label strong{color:var(--cream);}
+.impact-bar-wrap{width:180px;height:6px;background:rgba(201,169,110,0.1);border-radius:3px;overflow:hidden;}
+.impact-bar{height:100%;border-radius:3px;background:var(--gold3);}
+.impact-bar.high{background:var(--gold);}
+.impact-val{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold);font-weight:300;width:80px;text-align:right;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  nav{display:none;}.main{margin-left:0;}
+  .section{padding:28px 16px;}
+  .stat-strip{grid-template-columns:repeat(2,1fr);}
+  .moat-grid{grid-template-columns:1fr;}
+  .compare-grid{grid-template-columns:1fr;}
+  .criteria{grid-template-columns:1fr;}
+}
+
+/* ── HERO ── */
+.gtm-hero{padding:48px 52px 36px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,#0d0b09 0%,#141108 60%,#0d0b09 100%);}
+.gtm-tag{font-size:9px;color:var(--gold);letter-spacing:3px;text-transform:uppercase;display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.gtm-tag::before{content:'';width:20px;height:1px;background:var(--gold);}
+.gtm-hero h1{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:300;line-height:1.05;color:var(--cream);}
+.gtm-hero h1 em{color:var(--gold);font-style:italic;}
+.gtm-sub{font-size:11px;color:var(--muted);margin-top:8px;max-width:640px;line-height:1.7;}
+.strategy-spine{display:flex;align-items:stretch;gap:0;margin:22px 0 0;border:1px solid var(--border);border-radius:3px;overflow:hidden;}
+.spine-item{flex:1;padding:12px 16px;border-right:1px solid var(--border);text-align:center;}
+.spine-item:last-child{border-right:none;}
+.spine-phase{font-size:8px;font-family:'Syne',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px;}
+.spine-item:nth-child(1) .spine-phase{color:var(--gold);}
+.spine-item:nth-child(2) .spine-phase{color:#7aaad4;}
+.spine-item:nth-child(3) .spine-phase{color:#6cba8a;}
+.spine-item:nth-child(4) .spine-phase{color:#b090e0;}
+.spine-title{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:300;color:var(--cream);line-height:1.2;}
+.spine-dur{font-size:9px;color:var(--muted);margin-top:3px;}
+.spine-arrow{display:flex;align-items:center;color:var(--gold3);font-size:14px;padding:0 2px;flex-shrink:0;background:var(--surface);}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo">Allure + Zupra<span>GTM Strategy · Upgraded</span></div>
+  <div class="nav-group">GTM Overview</div>
+  <a href="#gtm-top">Strategy overview</a>
+  <div class="nav-group">Phase A</div>
+  <a href="#phase-a">Supply authority layer</a>
+  <a href="#phase-a-criteria">Selection criteria</a>
+  <a href="#phase-a-incentives">Incentives &amp; outcomes</a>
+  <div class="nav-group">Phase B</div>
+  <a href="#phase-b">Market signaling &amp; launch</a>
+  <a href="#phase-b-zupra">Zupra integration</a>
+  <div class="nav-group">Phase C</div>
+  <a href="#phase-c">Demand activation</a>
+  <a href="#phase-c-numbers">Impact numbers</a>
+  <div class="nav-group">Phase D</div>
+  <a href="#phase-d">Scale layer</a>
+  <a href="#phase-d-expansion">City expansion</a>
+  <div class="nav-group">Strategic Layer</div>
+  <a href="#moat">Why this creates a moat</a>
+  <a href="#channels">Channel integration</a>
+</nav>
+
+<div class="main">
+
+<!-- ── HERO ── -->
+<div class="gtm-hero" id="gtm-top">
+  <div class="gtm-tag">Go-to-Market Strategy · Founding Designer Framework</div>
+  <h1>Supply-Authority First.<br><em>Demand Follows Reputation.</em></h1>
+  <div class="gtm-sub">Traditional marketplaces launch supply and demand simultaneously and spend capital buying trust. Allure builds trust before spending a rupee on demand — by anchoring the platform to the city's most respected designer names first. This is the Founding Designer Strategy.</div>
+  <div class="strategy-spine">
+    <div class="spine-item">
+      <div class="spine-phase">Phase A · M1–M2</div>
+      <div class="spine-title">Supply Authority Layer</div>
+      <div class="spine-dur">5–10 Founding Designers locked in</div>
+    </div>
+    <div class="spine-arrow">→</div>
+    <div class="spine-item">
+      <div class="spine-phase">Phase B · M2–M3</div>
+      <div class="spine-title">Market Signaling &amp; Launch</div>
+      <div class="spine-dur">PR + Zupra + invite-only perception</div>
+    </div>
+    <div class="spine-arrow">→</div>
+    <div class="spine-item">
+      <div class="spine-phase">Phase C · M3–M8</div>
+      <div class="spine-title">Demand Activation</div>
+      <div class="spine-dur">Builder + homeowner conversion acceleration</div>
+    </div>
+    <div class="spine-arrow">→</div>
+    <div class="spine-item">
+      <div class="spine-phase">Phase D · M9+</div>
+      <div class="spine-title">Scale Layer</div>
+      <div class="spine-dur">Open onboarding + city 2 replication</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── STRATEGY RATIONALE ── -->
+<div class="section">
+  <div class="sec-num">Strategic Premise</div>
+  <h2>Why This Beats a Traditional Marketplace Launch</h2>
+  <p class="sec-intro">Every marketplace that launched supply and demand together — Houzz India, myGubbi, HipCouch — burned capital on CAC before the platform had enough credibility to convert. Allure flips the sequence: credibility is manufactured before a single homeowner lands on the platform.</p>
+
+  <div class="compare-grid">
+    <div class="compare old">
+      <div class="compare-label">❌ Traditional Launch — What Competitors Did</div>
+      <ul class="pts">
+        <li>Onboard anyone who applies → diluted quality signal</li>
+        <li>Spend on digital ads before trust is established → high CAC</li>
+        <li>Cold outreach to builders → slow MOU conversion</li>
+        <li>Homeowners have no reason to choose over Google → 5–12% conversion</li>
+        <li>First 6 months: expensive, slow, and demoralizing for supply side</li>
+        <li><strong>Result: capital exhausted before flywheel starts</strong></li>
+      </ul>
+    </div>
+    <div class="compare new">
+      <div class="compare-label">✓ Founding Designer Strategy — Allure's Approach</div>
+      <ul class="pts">
+        <li>Lock in 5–10 recognized Hyderabad designers first → instant credibility signal</li>
+        <li>Announce publicly via Zupra + PR → brand awareness before platform opens</li>
+        <li>Builders onboard because they recognize designer names — not cold pitch</li>
+        <li>Homeowners arrive at a platform that looks established, not empty</li>
+        <li>Smaller designers self-apply because the Founding tier is aspirational</li>
+        <li><strong>Result: demand and supply both accelerate from a standing start</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="insight">
+    <div class="insight-title">Why Competitors Don't Do This</div>
+    <p>Houzz and Sulekha are volume platforms — they need thousands of designers to function, so curating an elite tier contradicts their model. Livspace is a managed service — they hire designers, not onboard them. <strong>No competitor has attempted a supply-authority-first launch because none have designed their model around curation as the core product.</strong> Allure's invite-only positioning makes this structurally possible — and once executed, the perception gap between "Allure Verified" and any competitor's badge is impossible to close overnight.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- PHASE A -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section" id="phase-a">
+  <div class="phase-banner">
+    <div class="phase-letter a-col">A</div>
+    <div class="phase-meta a-col">
+      <div class="phase-label">Phase A · Months 1–2 · Pre-Launch</div>
+      <h4>Supply Authority Layer — The Founding Designer Strategy</h4>
+      <p>Before the platform is public, before digital ads run, and before a single homeowner is approached — Allure secures 5–10 of Hyderabad's most respected independent designers under a "Founding Designer" designation. This is not supply acquisition. This is brand acquisition.</p>
+    </div>
+  </div>
+
+  <h3 id="phase-a-criteria">Founding Designer Identification &amp; Selection Criteria</h3>
+  <p style="font-size:11px;color:var(--muted);margin-bottom:12px;max-width:640px;">Target universe: Hyderabad's independent design community, excluding studio employees and large interior firms. Identify through Instagram, Houzz profiles, Archindia listings, and referrals from architecture colleges. Hard cap: 10 Founding Designers for the first cohort.</p>
+
+  <div class="criteria">
+    <div class="criterion">
+      <div class="criterion-num">1</div>
+      <div class="criterion-body"><strong>Portfolio Quality &amp; Recognizability</strong>Minimum 5 completed residential projects with documented photography. Project value ≥ ₹15L average. At least 1 project featured in a publication or design award shortlist.</div>
+    </div>
+    <div class="criterion">
+      <div class="criterion-num">2</div>
+      <div class="criterion-body"><strong>Instagram Presence &amp; Audience Trust</strong>Minimum 5,000 followers; engagement rate ≥ 3%. Audience must be genuinely local (Hyderabad/Telangana) — not inflated. Micro-influencer with 8K engaged beats macro with 50K passive.</div>
+    </div>
+    <div class="criterion">
+      <div class="criterion-num">3</div>
+      <div class="criterion-body"><strong>Experience Threshold</strong>Minimum 4 years in independent practice. Must have worked directly with end-homeowner clients — not just contractor-subcontractor relationships. B2B-only designers excluded from Founding tier.</div>
+    </div>
+    <div class="criterion">
+      <div class="criterion-num">4</div>
+      <div class="criterion-body"><strong>Reputation in Local Design Community</strong>Referenced by ≥ 2 other designers when asked "who are the best designers in Hyderabad?" — snowball interview method. Peer reputation is more durable than follower count.</div>
+    </div>
+    <div class="criterion">
+      <div class="criterion-num">5</div>
+      <div class="criterion-body"><strong>Appetite for Growth &amp; Platform Fit</strong>Currently under-monetized relative to their talent — typically getting clients via word-of-mouth alone, no formal digital pipeline. This signals maximum incentive alignment with Allure's value prop.</div>
+    </div>
+    <div class="criterion">
+      <div class="criterion-num">6</div>
+      <div class="criterion-body"><strong>Diversity of Style Vocabulary</strong>Collectively, the 10 Founding Designers must span Contemporary, Transitional, Minimalist, Maximalist, and Vastu-integrated styles. Each should serve a distinct homeowner persona — maximizing platform's match surface area from day one.</div>
+    </div>
+  </div>
+
+  <div class="assumption">
+    <div class="assumption-title">Sourcing Methodology</div>
+    <ul class="pts">
+      <li>Instagram hashtag search: #hyderbadinteriordesigner #hydinteriors #interiordesignhyd — identify top 50 candidates</li>
+      <li>Architecture college alumni networks: JNAFAU, CSIIT — faculty referrals for graduated practitioners</li>
+      <li>Snowball interview method: ask first 3 designers "who would you say is best in class in Hyderabad?" — repeat 3 rounds</li>
+      <li>Direct DM approach with a named, personalized invite — not a mass outreach template</li>
+      <li>In-person meeting at designer's studio — signals seriousness and respect for their brand</li>
+    </ul>
+  </div>
+
+  <h3 id="phase-a-incentives">Founding Designer Incentives &amp; Designation</h3>
+  <div class="card-grid">
+    <div class="card gd">
+      <div class="card-title">Platform Positioning Incentives</div>
+      <ul class="pts">
+        <li><strong>Permanent "Founding Designer" badge</strong> — non-purchasable; given only to first cohort</li>
+        <li>Top placement in all AI match results for 12 months — guaranteed visibility</li>
+        <li>Featured profile on homepage with full 3D portfolio showcase</li>
+        <li>Dedicated landing page: allureinteriors.in/[designer-name]</li>
+      </ul>
+    </div>
+    <div class="card g">
+      <div class="card-title">Commercial Incentives</div>
+      <ul class="pts">
+        <li><strong>0% commission for first 3 projects</strong> — reduces risk perception to zero</li>
+        <li>Reduced 3% commission for Months 4–12 (vs. standard 6.5%)</li>
+        <li>Free professional 3D profile photography + portfolio rebuild (estimated ₹15K–₹25K value per designer)</li>
+        <li>Priority access to institutional project leads from Month 12 onward</li>
+      </ul>
+    </div>
+    <div class="card b">
+      <div class="card-title">Positioning &amp; Exposure Incentives</div>
+      <ul class="pts">
+        <li><strong>Included in all press releases</strong> at platform launch</li>
+        <li>Featured in Zupra bottle QR landing page — direct homeowner exposure</li>
+        <li>"International exposure positioning" — language in profile frames their work in context of global trends</li>
+        <li>Co-branded content on Allure's social channels (5,000+ combined audience from Day 1)</li>
+      </ul>
+    </div>
+    <div class="card a">
+      <div class="card-title">Community &amp; Status Incentives</div>
+      <ul class="pts">
+        <li>Founding Designer private WhatsApp cohort — peer network with city's best designers</li>
+        <li>Quarterly roundtable access with invited builders + developers</li>
+        <li>First dibs on new platform features before general release</li>
+        <li><strong>Status signal:</strong> being known as "one of the 10 who built Allure" is a permanent career asset</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Expected Phase A Outcomes</h3>
+  <div class="stat-strip">
+    <div class="stat">
+      <div class="stat-val">10</div>
+      <div class="stat-label">Founding Designers locked</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">6wk</div>
+      <div class="stat-label">Onboarding timeline</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">40%</div>
+      <div class="stat-label">Faster mid-tier onboarding (Phase C)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">3×</div>
+      <div class="stat-label">Builder conversion rate lift vs. cold launch</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">0</div>
+      <div class="stat-label">Paid ad spend required for supply acquisition</div>
+    </div>
+  </div>
+
+  <div class="insight">
+    <div class="insight-title">Why This Works Before the Platform Exists</div>
+    <p>Founding Designers are not being asked to bet on an unproven product. They are being offered a permanent status designation — something no amount of later spending can buy. <strong>The offer is structured so that the risk is near-zero (0% commission, free profile build) and the upside is significant (permanent featured placement, peer network, press coverage).</strong> A 4–6 week sign-up window creates urgency without pressure. Expected conversion: 70–80% of those approached will accept.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- PHASE B -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section" id="phase-b">
+  <div class="phase-banner">
+    <div class="phase-letter b-col">B</div>
+    <div class="phase-meta b-col">
+      <div class="phase-label">Phase B · Month 2–3 · Pre &amp; Soft Launch</div>
+      <h4>Market Signaling &amp; Launch — Making the World Notice Before You Open</h4>
+      <p>With 10 Founding Designers confirmed, Allure executes a coordinated market-signaling campaign. The goal is not reach — it is perception. By the time the platform opens, builders, homeowners, and the design community should already feel like they've "heard about Allure" and are waiting to be let in.</p>
+    </div>
+  </div>
+
+  <h3>Public Announcement Strategy</h3>
+  <div class="card-grid">
+    <div class="card gd">
+      <div class="card-title">Announcement Sequence (Weeks 6–10)</div>
+      <ul class="pts">
+        <li><strong>Week 6:</strong> Teaser post on Allure Instagram — "Hyderabad's finest designers. One platform. Launching soon." No further detail.</li>
+        <li><strong>Week 7:</strong> Each Founding Designer posts individually — "I've joined something I genuinely believe in." Personal voice, no brand language.</li>
+        <li><strong>Week 8:</strong> Collaborative reel — 10 designers, 10 seconds each, showcasing one signature project. Announced: "Hyderabad's Founding 10."</li>
+        <li><strong>Week 9:</strong> Platform opens in invite-only mode — waitlist form only, no open access.</li>
+        <li><strong>Week 10:</strong> First press release issued to architectural media + local business press.</li>
+      </ul>
+    </div>
+    <div class="card b">
+      <div class="card-title">PR &amp; Media Seeding</div>
+      <ul class="pts">
+        <li>Target outlets: The Better India (design vertical), ArchiDesignHub, Decor India, Times of India Hyderabad supplement</li>
+        <li>Story angle: "Hyderabad designers are building India's first AI-curated design marketplace — and they're doing it on their own terms"</li>
+        <li>Press kit: designer bios, project photography, platform explainer — pre-built in Week 6</li>
+        <li><strong>Budget: ₹0 in paid PR — earned media only via story strength</strong></li>
+        <li>Secondary seeding: architecture college notice boards, alumni newsletters, IIID Hyderabad chapter</li>
+      </ul>
+    </div>
+    <div class="card a">
+      <div class="card-title">Invite-Only Perception Architecture</div>
+      <ul class="pts">
+        <li>Platform opens to homeowners via waitlist — max 100 in first 2 weeks</li>
+        <li>Each Founding Designer gets 10 personal referral codes to distribute — exclusivity transfer via trusted source</li>
+        <li>Builders receive early access letters: "As a development partner, your buyers have priority placement on Allure's launch list"</li>
+        <li><strong>Perception goal:</strong> "Allure is selective — you want to be on it" — same psychology as Clubhouse 2021 or early Gmail</li>
+        <li>Waitlist counter visible on site: "412 homeowners waiting" — social proof from Day 1</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 id="phase-b-zupra">Zupra Integration — Market Signaling Through Physical Presence</h3>
+  <p style="font-size:11px;color:var(--muted);margin-bottom:12px;max-width:640px;">Zupra is not a separate GTM channel. It is the physical arm of the Founding Designer launch. Its bottle placements are timed and targeted to reinforce the announcement campaign with offline presence.</p>
+
+  <div class="synergy-flow">
+    <div class="syn-box"><strong>Founding Designer announcement</strong>goes live on social</div>
+    <div class="syn-arrow">+</div>
+    <div class="syn-box"><strong>Zupra bottles appear</strong>in 5 builder offices same week</div>
+    <div class="syn-arrow">+</div>
+    <div class="syn-box"><strong>QR on bottle</strong>links to waitlist with designer faces</div>
+    <div class="syn-arrow">→</div>
+    <div class="syn-box"><strong>Homebuyer sees Allure</strong>in person + online = trust compounded</div>
+  </div>
+
+  <div class="card-grid" style="margin-top:12px;">
+    <div class="card p">
+      <div class="card-title">Zupra Bottle Copy — Phase B Messaging</div>
+      <ul class="pts">
+        <li>Front: "Your home deserves the city's best designer. Meet them at allureinteriors.in"</li>
+        <li>Side QR: links to Founding Designer showcase page — not generic homepage</li>
+        <li>Bottle label includes designer faces/names (rotating across 3 bottle variants)</li>
+        <li><strong>Effect:</strong> homebuyer sees a named, trusted designer face at possession — not a generic brand</li>
+      </ul>
+    </div>
+    <div class="card p">
+      <div class="card-title">Phase B Placement Strategy</div>
+      <ul class="pts">
+        <li>Priority venues: 5 builder offices with highest possession handover volumes in Gachibowli, Kokapet, Financial District</li>
+        <li>500 launch-batch bottles — all Allure-branded for Phase B</li>
+        <li>Co-working spaces in Hitec City — targets the premium homebuyer demographic directly</li>
+        <li><strong>Impression goal: 90,000 impressions in 30 days of Phase B launch window</strong></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- PHASE C -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section" id="phase-c">
+  <div class="phase-banner">
+    <div class="phase-letter c-col">C</div>
+    <div class="phase-meta c-col">
+      <div class="phase-label">Phase C · Months 3–8 · Active Launch</div>
+      <h4>Demand Activation — How Founding Designer Credibility Converts the Market</h4>
+      <p>Founding Designers don't just fill the supply side. They are the conversion mechanism for every other demand driver: builder partnerships close faster, homeowners trust the platform on first visit, and smaller designers onboard without incentive pressure because they want to be associated with the founding tier.</p>
+    </div>
+  </div>
+
+  <h3>Builder Onboarding — Accelerated via Designer Credibility</h3>
+  <div class="card-grid">
+    <div class="card g">
+      <div class="card-title">How Founding Designers Change the Builder Pitch</div>
+      <ul class="pts">
+        <li><strong>Before FDS:</strong> "We're a new platform with 60 designers — trust us with your buyer relationships"</li>
+        <li><strong>After FDS:</strong> "We represent [Designer Name], [Designer Name], and [Designer Name] — names your buyers already respect"</li>
+        <li>Builder pitch deck leads with Founding Designer profiles — not platform features</li>
+        <li>3× faster MOU signing when recognized designer names are in the pitch</li>
+        <li><strong>Target: 5 builder MOUs signed within 3 weeks of Founding Designer announcement going public</strong></li>
+      </ul>
+    </div>
+    <div class="card b">
+      <div class="card-title">Builder Acquisition Strategy (Phase C)</div>
+      <ul class="pts">
+        <li>Warm intro path: Founding Designers personally know 2–4 local developers each — leverage these relationships first</li>
+        <li>Developer association events: Credai Hyderabad chapter meetings — attend with Founding Designer present</li>
+        <li>Builder incentive: ₹3K–₹5K referral commission per converted project + Zupra bottle placement in their office (tangible, immediate value)</li>
+        <li>Target: 5 partnerships by M3 (Phase 0); 10 by M8 — now achievable 30–40% faster due to FDS credibility</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Homeowner Conversion — Trust Architecture</h3>
+  <div class="card-grid">
+    <div class="card a">
+      <div class="card-title">Why Homeowner Conversion Increases</div>
+      <ul class="pts">
+        <li>Homeowner lands on platform and sees a recognized designer they've followed on Instagram — immediate social proof transfer</li>
+        <li>Invite-only waitlist creates perceived scarcity — homeowners who get in feel privileged, not skeptical</li>
+        <li>Founding Designers' testimonials on platform are authentic — they chose to join, not recruited by ad</li>
+        <li><strong>Expected conversion lift: 8–12% baseline → 18–25% with Founding Designer social proof</strong></li>
+      </ul>
+    </div>
+    <div class="card g">
+      <div class="card-title">Mid-Tier Designer Supply (Network Effect)</div>
+      <ul class="pts">
+        <li>Aspiring designers see Founding cohort — platform instantly has aspirational pull</li>
+        <li>Inbound applications increase 2–3× vs. cold outreach-only approach</li>
+        <li>Smaller designers self-qualify faster because Allure's bar is visible (not mysterious)</li>
+        <li>Word-of-mouth in design community: "Did you apply to Allure yet?" replaces "Have you heard of Allure?"</li>
+        <li><strong>Expected onboarding speed: 40% faster than cold outreach-only model</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 id="phase-c-numbers">Phase C Impact Numbers — Quantified</h3>
+  <div class="tscroll">
+  <table>
+    <thead><tr><th>Metric</th><th>Without Founding Designer Strategy</th><th>With Founding Designer Strategy</th><th>Delta</th><th>Rationale</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Homeowner lead-to-project conversion</strong></td><td>10–15%</td><td class="green"><strong>20–28%</strong></td><td class="green">+8–13 percentage points</td><td>Social proof from recognized designers eliminates platform trust barrier</td></tr>
+      <tr><td><strong>CAC (digital acquisition)</strong></td><td>₹4,000–₹6,000/lead</td><td class="green"><strong>₹1,800–₹2,800/lead</strong></td><td class="green">−40–55% reduction</td><td>Organic reach via Founding Designers' audiences + stronger landing page conversion</td></tr>
+      <tr><td><strong>CAC with Zupra channel</strong></td><td>₹900</td><td class="green"><strong>₹450–₹600</strong></td><td class="green">−33–50% further reduction</td><td>Bottle QR links to Founding Designer showcase → higher click-to-lead conversion</td></tr>
+      <tr><td><strong>Mid-tier designer onboarding speed</strong></td><td>3–5 months to 100 designers</td><td class="green"><strong>2–3 months to 100 designers</strong></td><td class="green">40% faster</td><td>Inbound applications driven by aspiration vs. outbound-only cold outreach</td></tr>
+      <tr><td><strong>Builder MOU conversion timeline</strong></td><td>6–8 weeks per builder</td><td class="green"><strong>2–3 weeks per builder</strong></td><td class="green">3× faster close rate</td><td>Named designer credibility removes trust barrier in builder pitch meeting</td></tr>
+      <tr><td><strong>Word-of-mouth referral rate</strong></td><td>10–15% of clients refer</td><td class="green"><strong>25–35%</strong></td><td class="green">+15–20 percentage points</td><td>Clients who matched with a recognized Founding Designer are more likely to share experience publicly</td></tr>
+      <tr><td><strong>Platform active projects at M6</strong></td><td>5–6 projects/month</td><td class="green"><strong>7–9 projects/month</strong></td><td class="green">+30–50% volume</td><td>Compounded effect of faster designer onboarding + improved homeowner conversion</td></tr>
+      <tr class="tr-total"><td><strong>Combined CAC reduction at scale (M18, 33 proj/month)</strong></td><td>₹1.32L–₹1.65L/month in CAC</td><td class="green"><strong>₹45K–₹75K/month</strong></td><td class="green"><strong>₹9L–₹14L saved per year</strong></td><td>Organic reputation loop compounds over time — cost of Founding Designer program is recovered in Month 2</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="insight">
+    <div class="insight-title">The Compounding Logic</div>
+    <p>The Founding Designer program costs approximately ₹1.5L–₹2.5L total (profile builds, reduced commission forgone value, founder time). It reduces CAC by ₹9L–₹14L annually at M18 scale. <strong>The ROI is 5–9× in Year 1 alone — before accounting for the compounding effects of designer referrals, builder trust, and earned media value.</strong> This is not a marketing expense. It is a structural investment in the platform's credibility architecture.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- PHASE D -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section" id="phase-d">
+  <div class="phase-banner">
+    <div class="phase-letter d-col">D</div>
+    <div class="phase-meta d-col">
+      <div class="phase-label">Phase D · Month 9+ · Post-Seed Scale</div>
+      <h4>Scale Layer — Open Without Losing the Exclusivity Engine</h4>
+      <p>Post-seed, Allure opens onboarding to mid-tier and emerging designers — but the Founding Designer tier remains locked. This maintains aspirational pull while scaling supply. The same playbook is replicated in city 2 (Bangalore) with a new local Founding cohort, creating a city-specific authority layer that national competitors cannot fake.</p>
+    </div>
+  </div>
+
+  <h3>Open Onboarding — Maintaining Tier Integrity</h3>
+  <div class="card-grid">
+    <div class="card gd">
+      <div class="card-title">Designer Tier Architecture (Post Phase D)</div>
+      <ul class="pts">
+        <li><strong>Founding Designer (Tier 1):</strong> Locked. 10 maximum. Permanent badge. No new additions ever.</li>
+        <li><strong>Allure Verified (Tier 2):</strong> Curated. Application-based. 30–40% rejection rate maintained. Badge earned, not bought.</li>
+        <li><strong>Allure Emerging (Tier 3):</strong> New category for designers 1–3 years experience — mentored by Founding tier; aspirational ladder up.</li>
+        <li>Tier visibility is explicit on platform — homeowners understand the difference. Quality signal is preserved.</li>
+      </ul>
+    </div>
+    <div class="card g">
+      <div class="card-title">Scaling Supply Without Diluting Trust</div>
+      <ul class="pts">
+        <li>Target: 150 designers by M8 → 350+ by M18 — growth is structured, not open</li>
+        <li>Quarterly cohort model for Tier 2 onboarding — creates urgency and community, not anytime sign-up</li>
+        <li>Rejection is publicized: "Allure reviewed 140 applications and admitted 42 this quarter" — transparency reinforces bar</li>
+        <li><strong>Exclusivity perception survives scale when the rejection signal remains loud</strong></li>
+      </ul>
+    </div>
+    <div class="card b">
+      <div class="card-title">Founding Designer Retention Strategy</div>
+      <ul class="pts">
+        <li>Annual "Founding Designer Summit" — exclusive, press-invited, builder-attended event</li>
+        <li>Featured quarterly in all Allure marketing — their brand grows as Allure grows</li>
+        <li>Commission structure reviewed annually — first to benefit from any platform-wide reductions</li>
+        <li><strong>Goal: zero Founding Designer churn — their continued presence is the brand's most valuable asset</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 id="phase-d-expansion">City 2 Expansion — Replicating the Playbook (Bangalore, Month 10–11)</h3>
+  <div class="tscroll">
+  <table>
+    <thead><tr><th>Step</th><th>Action</th><th>Timeline</th><th>Owner</th><th>Success Metric</th></tr></thead>
+    <tbody>
+      <tr><td><strong>1</strong></td><td>Identify Bangalore's top 8–12 independent residential designers via Instagram + peer network (start in Month 8 — 8 weeks before city launch)</td><td>Month 8–9</td><td>Founder + Growth Lead</td><td>50+ candidates identified; 15 approached</td></tr>
+      <tr><td><strong>2</strong></td><td>Secure 8 Bangalore Founding Designers with same incentive package as Hyderabad cohort; emphasize "city chapter" language — regional pride, not national erasure</td><td>Month 9–10</td><td>Founder</td><td>8 confirmations before city announcement</td></tr>
+      <tr><td><strong>3</strong></td><td>Announce Bangalore chapter simultaneously with Hyderabad Month 10 update — national momentum signal</td><td>Month 10</td><td>Marketing Lead</td><td>Combined 500+ social engagements on announcement</td></tr>
+      <tr><td><strong>4</strong></td><td>Zupra enters Bangalore: 5 builder offices + 3 co-working spaces with Allure + Bangalore FD messaging on bottles</td><td>Month 10–11</td><td>Zupra Lead</td><td>2,500 bottles in circulation Month 11</td></tr>
+      <tr><td><strong>5</strong></td><td>Open Bangalore homeowner waitlist — leverage Hyderabad case studies and completed projects as proof</td><td>Month 11</td><td>Ops Lead</td><td>300 Bangalore waitlist signups before launch</td></tr>
+      <tr><td><strong>6</strong></td><td>Target 5 Bangalore builder MOUs using Founding Designer pitch model — replicated from Hyderabad playbook</td><td>Month 10–12</td><td>Growth Lead</td><td>5 MOUs by end of Month 12</td></tr>
+      <tr class="tr-total"><td colspan="5"><strong>City 2 target at Month 6 post-launch:</strong> 8 projects/month · 80 verified designers · 5 builder partnerships · 8 Founding Designers active</td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- MOAT SECTION -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section" id="moat">
+  <div class="sec-num">Strategic Layer</div>
+  <h2>Why This Creates a Durable Moat</h2>
+  <p class="sec-intro">The Founding Designer Strategy is not a launch tactic. Executed correctly, it creates three compounding advantages that are structurally impossible for a well-funded competitor to replicate retroactively.</p>
+
+  <div class="moat-grid">
+    <div class="moat">
+      <div class="moat-icon">◆</div>
+      <div class="moat-title">Reputation Moat — Cannot Be Bought</div>
+      <div class="moat-body">Sulekha or NoBroker can outspend Allure 100:1 on marketing. They cannot make a designer un-choose Allure as their founding platform. <strong>The "Founding Designer" badge is a permanent, non-replicable historical fact.</strong> Five years from now, when Allure is city-dominant, those 10 Founding Designers will have been first. That narrative is the brand.</div>
+    </div>
+    <div class="moat">
+      <div class="moat-icon">◈</div>
+      <div class="moat-title">Curation Moat — Takes Years to Fake</div>
+      <div class="moat-body">Livspace cannot pivot to a curated marketplace overnight — their entire unit economics depends on volume. Houzz abandoned curation for reach. <strong>Allure's curated positioning is operationally baked-in from day one</strong> — the rejection rate is the product. A competitor who tries to copy this has to visibly fire half their supply to match it, destroying their own network in the process.</div>
+    </div>
+    <div class="moat">
+      <div class="moat-icon">◇</div>
+      <div class="moat-title">Trust Compounding — Gets Stronger With Time</div>
+      <div class="moat-body">Each Founding Designer who completes a successful project adds to a reinforcing loop: more homeowner reviews → more social proof → more designer applications → higher rejection bar → more homeowner trust. <strong>The moat is not static — it widens with every project.</strong> By Year 2, Allure has the city's richest dataset of completed premium projects with verified outcomes. No newcomer can start that accumulation from zero.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- CHANNEL INTEGRATION -->
+<!-- ══════════════════════════════════════════ -->
+<div class="section" id="channels">
+  <div class="sec-num">Channel Integration</div>
+  <h2>Existing Channels — Repositioned Under the Founding Designer Framework</h2>
+  <p class="sec-intro">Builder partnerships, Zupra distribution, and digital marketing are not removed from the GTM — they are repositioned as downstream amplifiers of the supply-authority layer, not independent demand drivers. Each channel becomes more effective because the Founding Designer credibility feeds into it.</p>
+
+  <div class="tscroll">
+  <table>
+    <thead><tr><th>Channel</th><th>Original Role</th><th>Repositioned Role (Post-FDS)</th><th>Impact Multiplier</th><th>Budget</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Builder Partnerships</strong></td><td>Cold-pitched MOUs for homeowner referrals</td><td>Warm intros via Founding Designer relationships; pitch leads with designer names, not platform features; Zupra bottle placement included in MOU package</td><td class="green">3× faster MOU close rate</td><td>₹70K (unchanged)</td></tr>
+      <tr><td><strong>Zupra Bottle Distribution</strong></td><td>CAC reduction via QR code in builder offices</td><td>Phase B launch signal (bottle copy features Founding Designer faces + names); Phase C ongoing demand activation with waitlist QR; designer-specific bottle variants per venue type</td><td class="green">33–50% higher QR-to-lead conversion (vs. generic landing page)</td><td>₹1.5L Phase B deployment (within pre-seed allocation)</td></tr>
+      <tr><td><strong>Digital Marketing (Meta/Instagram)</strong></td><td>Lead generation from Month 3 onward</td><td>Activated only after Founding Designer content is live — first 3 weeks of ads retarget people who engaged with Founding Designer announcement posts. Lower CPL because warm audiences convert 2–3× better.</td><td class="green">40–60% lower CPL vs. cold audience targeting</td><td>₹50K (unchanged, higher efficiency)</td></tr>
+      <tr><td><strong>Community &amp; WhatsApp Outreach</strong></td><td>Gated community cold message campaigns</td><td>Founding Designers personally share referral codes in their own networks — warm outreach via trusted voice; gated communities approached by designers who likely already have a relationship there</td><td class="green">5–8× higher open/response rate vs. brand cold message</td><td>₹25K (unchanged)</td></tr>
+      <tr><td><strong>Broker Referral Program</strong></td><td>₹3–5K per converted project referral</td><td>Brokers pitched post-FDS announcement — Founding Designer names are the conversation opener; broker is more likely to recommend Allure if they can name the designers on platform</td><td class="green">25–30% higher broker program enrollment</td><td>Performance-based (unchanged)</td></tr>
+      <tr class="tr-total"><td colspan="3"><strong>Total channel integration insight:</strong> Every existing channel becomes more effective when fed by FDS credibility.</td><td class="green"><strong>Combined: 50–70% improvement in blended marketing efficiency</strong></td><td><strong>Zero incremental budget</strong></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="insight" style="margin-top:20px;">
+    <div class="insight-title">The Investor-Facing GTM Summary</div>
+    <p>Allure does not buy trust. It earns it — by building the supply side's credibility before the demand side arrives. <strong>The Founding Designer Strategy is the reason Allure's CAC is ₹900 instead of ₹4,000, the reason builder MOUs close in 2 weeks instead of 8, and the reason homeowners convert at 25% instead of 12%.</strong> It is also the reason that any well-funded competitor who tries to replicate Allure's model will spend 18 months and ₹5Cr to reach the same starting position Allure built with ₹2L and 6 weeks of deliberate relationship work. The moat is not the technology. The moat is the trust architecture — and it was built first.</p>
+  </div>
+
+  <div class="stat-strip" style="margin-top:20px;">
+    <div class="stat">
+      <div class="stat-val">₹2L</div>
+      <div class="stat-label">Total FDS program cost</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">₹11L+</div>
+      <div class="stat-label">Annual CAC savings at M18</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">5–9×</div>
+      <div class="stat-label">Year 1 ROI on FDS investment</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">0</div>
+      <div class="stat-label">Competitors executing this today</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">∞</div>
+      <div class="stat-label">Moat value of being first</div>
+    </div>
+  </div>
+</div>
+
+<footer style="padding:22px 52px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:9px;color:var(--muted);letter-spacing:0.5px;">
+  <span>Allure Interiors + Zupra · Go-to-Market Strategy · Founding Designer Framework · Confidential · 2025</span>
+  <span>Upgraded GTM Section — Replaces Section 08 of Investor Execution Plan</span>
+</footer>
+
+</div><!-- .main -->
+
+<script>
+// Active nav on scroll
+const sections = document.querySelectorAll('[id]');
+const navLinks = document.querySelectorAll('nav a');
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const active = document.querySelector(`nav a[href="#${e.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { rootMargin: '-30% 0px -60% 0px' });
+sections.forEach(s => obs.observe(s));
+</script>
+</body>
+</html>
