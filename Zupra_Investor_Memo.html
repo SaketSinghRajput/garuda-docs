@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zupra — Investor Memorandum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0a1628;
+    --navy-mid: #132240;
+    --navy-light: #1e3a5f;
+    --blue: #1a6fbd;
+    --blue-light: #3b8fd4;
+    --blue-ghost: #e8f2fb;
+    --gold: #c8913a;
+    --gold-light: #f0d49a;
+    --gold-ghost: #fdf6e8;
+    --text: #0f1c2e;
+    --text-muted: #5a6e85;
+    --text-subtle: #8fa3b8;
+    --border: #d0dce8;
+    --border-light: #e8f0f7;
+    --surface: #ffffff;
+    --surface-alt: #f4f8fc;
+    --surface-dark: #edf3f9;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text);
+    background: #f0f4f8;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 900px;
+    margin: 0 auto;
+    background: var(--surface);
+    box-shadow: 0 2px 40px rgba(10,22,40,0.10);
+  }
+
+  /* ── COVER ────────────────────────────────── */
+  .cover {
+    background: var(--navy);
+    padding: 64px 60px 52px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -120px; right: -120px;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(26,111,189,0.18) 0%, transparent 70%);
+  }
+
+  .cover::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: 40px;
+    width: 250px; height: 250px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(200,145,58,0.10) 0%, transparent 70%);
+  }
+
+  .cover-tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 2.5px;
+    color: var(--blue-light);
+    text-transform: uppercase;
+    border: 1px solid rgba(59,143,212,0.35);
+    padding: 5px 12px;
+    border-radius: 2px;
+    margin-bottom: 28px;
+  }
+
+  .cover h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 72px;
+    font-weight: 400;
+    color: #ffffff;
+    letter-spacing: -2px;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+
+  .cover-subtitle {
+    font-size: 15px;
+    color: rgba(255,255,255,0.55);
+    font-weight: 300;
+    max-width: 480px;
+    line-height: 1.6;
+    margin-bottom: 52px;
+  }
+
+  .cover-rule {
+    width: 48px;
+    height: 2px;
+    background: var(--gold);
+    margin-bottom: 40px;
+  }
+
+  .cover-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cover-stat {
+    padding: 20px 22px;
+    border-right: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .cover-stat:last-child { border-right: none; }
+
+  .cover-stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 8px;
+  }
+
+  .cover-stat-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+  }
+
+  .cover-stat-value.gold { color: var(--gold-light); }
+
+  .cover-disclaimer {
+    margin-top: 28px;
+    font-size: 10.5px;
+    color: rgba(255,255,255,0.25);
+    line-height: 1.6;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── LAYOUT ────────────────────────────────── */
+  .content {
+    padding: 0 60px;
+  }
+
+  /* ── SECTION HEADERS ───────────────────────── */
+  .section {
+    padding: 52px 0 0;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: var(--blue);
+    background: var(--blue-ghost);
+    padding: 4px 10px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--navy);
+    letter-spacing: -0.5px;
+  }
+
+  /* ── BODY TEXT ─────────────────────────────── */
+  .body-text {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.75;
+    margin-bottom: 16px;
+  }
+
+  .body-text strong { font-weight: 600; color: var(--navy); }
+
+  .text-note {
+    font-size: 12px;
+    color: var(--text-subtle);
+    line-height: 1.6;
+    font-style: italic;
+    padding: 10px 14px;
+    background: var(--surface-alt);
+    border-left: 2px solid var(--border);
+    border-radius: 0 3px 3px 0;
+    margin-top: 10px;
+  }
+
+  /* ── TWO-COL PROBLEM/OPPORTUNITY ───────────── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+
+  .col-card {
+    padding: 20px 22px;
+    border-radius: 4px;
+    border: 1px solid var(--border-light);
+  }
+
+  .col-card.problem { background: #fdf5f3; border-color: #f0d8d0; }
+  .col-card.opportunity { background: var(--blue-ghost); border-color: #c8dff2; }
+
+  .col-card-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .col-card.problem .col-card-label { color: #b05a3a; }
+  .col-card.opportunity .col-card-label { color: var(--blue); }
+
+  .col-card p { font-size: 13.5px; line-height: 1.7; color: var(--text); }
+
+  /* ── TABLES ────────────────────────────────── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .data-table thead tr {
+    background: var(--navy);
+  }
+
+  .data-table thead th {
+    font-family: 'DM Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+    font-weight: 500;
+    padding: 11px 14px;
+    text-align: left;
+  }
+
+  .data-table tbody tr:nth-child(even) { background: var(--surface-alt); }
+  .data-table tbody tr:nth-child(odd) { background: var(--surface); }
+
+  .data-table tbody tr.highlight-row { background: var(--blue-ghost); }
+  .data-table tbody tr.total-row { background: var(--gold-ghost); font-weight: 600; }
+
+  .data-table tbody td {
+    padding: 10px 14px;
+    color: var(--text);
+    border-bottom: 1px solid var(--border-light);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+
+  .data-table tbody td.bold { font-weight: 600; color: var(--navy); }
+  .data-table tbody td.money { font-family: 'DM Mono', monospace; font-size: 12.5px; }
+  .data-table tbody td.status-pill { vertical-align: middle; }
+
+  .pill {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 3px 9px;
+    border-radius: 2px;
+    white-space: nowrap;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.5px;
+  }
+
+  .pill-grey { background: #eef1f5; color: #6a7d92; }
+
+  /* ── BULLET LIST ───────────────────────────── */
+  .bullet-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 12px;
+  }
+
+  .bullet-list li {
+    font-size: 13.5px;
+    color: var(--text);
+    line-height: 1.65;
+    padding: 5px 0 5px 20px;
+    position: relative;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .bullet-list li:last-child { border-bottom: none; }
+
+  .bullet-list li::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 14px;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--blue-light);
+    flex-shrink: 0;
+  }
+
+  /* ── PHASE BLOCKS ──────────────────────────── */
+  .phase-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .phase-block {
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .phase-header {
+    padding: 12px 14px;
+  }
+
+  .phase-header.ph1 { background: var(--navy); }
+  .phase-header.ph2 { background: var(--navy-light); }
+  .phase-header.ph3 { background: var(--blue); }
+
+  .phase-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.45);
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+
+  .phase-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #ffffff;
+  }
+
+  .phase-time {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 2px;
+  }
+
+  .phase-body {
+    background: var(--surface-alt);
+    border: 1px solid var(--border-light);
+    border-top: none;
+    padding: 14px;
+  }
+
+  .phase-body ul { list-style: none; padding: 0; margin: 0; }
+
+  .phase-body ul li {
+    font-size: 12.5px;
+    color: var(--text);
+    line-height: 1.6;
+    padding: 4px 0 4px 14px;
+    position: relative;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .phase-body ul li:last-child { border-bottom: none; }
+
+  .phase-body ul li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--text-subtle);
+    font-size: 11px;
+  }
+
+  /* ── METRIC CARDS ──────────────────────────── */
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .metric-card {
+    background: var(--surface-alt);
+    border: 1px solid var(--border-light);
+    border-radius: 4px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .metric-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    color: var(--navy);
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+
+  .metric-label {
+    font-size: 11px;
+    color: var(--text-subtle);
+    line-height: 1.4;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  /* ── CALLOUT BOX ───────────────────────────── */
+  .callout {
+    background: var(--blue-ghost);
+    border: 1px solid #c0d8ef;
+    border-left: 3px solid var(--blue);
+    border-radius: 0 4px 4px 0;
+    padding: 18px 20px;
+    margin: 16px 0;
+  }
+
+  .callout p { font-size: 13.5px; line-height: 1.7; color: var(--text); }
+  .callout strong { font-weight: 600; color: var(--navy); }
+
+  .callout-closing {
+    background: var(--gold-ghost);
+    border: 1px solid #e8d0a0;
+    border-left: 3px solid var(--gold);
+    border-radius: 0 4px 4px 0;
+    padding: 20px 22px;
+    margin: 16px 0;
+  }
+
+  .callout-closing p { font-size: 14px; line-height: 1.75; color: var(--text); }
+  .callout-closing strong { font-weight: 600; color: #8a5a1e; }
+
+  /* ── FUNDING PATH ──────────────────────────── */
+  .funding-path {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin: 20px 0 12px;
+  }
+
+  .funding-step {
+    flex: 1;
+    padding: 16px 14px;
+    background: var(--surface-alt);
+    border: 1px solid var(--border-light);
+    position: relative;
+  }
+
+  .funding-step:first-child { border-radius: 4px 0 0 4px; }
+  .funding-step:last-child { border-radius: 0 4px 4px 0; }
+  .funding-step:not(:last-child) { border-right: none; }
+
+  .funding-step.active {
+    background: var(--navy);
+    border-color: var(--navy);
+  }
+
+  .funding-step-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+
+  .funding-step.active .funding-step-label { color: rgba(255,255,255,0.45); }
+  .funding-step:not(.active) .funding-step-label { color: var(--text-subtle); }
+
+  .funding-step-title {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .funding-step.active .funding-step-title { color: #ffffff; }
+  .funding-step:not(.active) .funding-step-title { color: var(--navy); }
+
+  .funding-step-detail {
+    font-size: 11.5px;
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+
+  .funding-step.active .funding-step-detail { color: rgba(255,255,255,0.55); }
+  .funding-step:not(.active) .funding-step-detail { color: var(--text-muted); }
+
+  .funding-arrow {
+    display: flex;
+    align-items: center;
+    padding: 0 2px;
+    color: var(--text-subtle);
+    font-size: 16px;
+  }
+
+  /* ── FOOTER ────────────────────────────────── */
+  .doc-footer {
+    margin-top: 60px;
+    padding: 22px 60px;
+    background: var(--navy);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .doc-footer-brand {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: -0.5px;
+  }
+
+  .doc-footer-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+  }
+
+  /* ── PRINT ─────────────────────────────────── */
+  @media print {
+    body { background: white; }
+    .page { box-shadow: none; max-width: 100%; }
+    .section { page-break-inside: avoid; }
+    .cover { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .data-table thead tr, .phase-header, .doc-footer { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── COVER ──────────────────────────────── -->
+  <div class="cover">
+    <div class="cover-tag">Investor Memorandum · Pre-Seed · Confidential</div>
+    <h1>Zupra</h1>
+    <p class="cover-subtitle">Offline Engagement Infrastructure Layer for Physical Commerce</p>
+    <div class="cover-rule"></div>
+    <div class="cover-stats">
+      <div class="cover-stat">
+        <div class="cover-stat-label">Round Type</div>
+        <div class="cover-stat-value" style="font-size:16px; padding-top:4px;">Pre-Seed /<br>Angel</div>
+      </div>
+      <div class="cover-stat">
+        <div class="cover-stat-label">Capital Raise</div>
+        <div class="cover-stat-value gold">₹30L</div>
+      </div>
+      <div class="cover-stat">
+        <div class="cover-stat-label">Pre-Money Val.</div>
+        <div class="cover-stat-value gold">₹4 Cr</div>
+      </div>
+      <div class="cover-stat">
+        <div class="cover-stat-label">Equity Offered</div>
+        <div class="cover-stat-value">~7%</div>
+      </div>
+    </div>
+    <p class="cover-disclaimer">This document is prepared for discussion purposes only and is intended for qualified investors. All financial projections are illustrative. Past performance is not indicative of future results.</p>
+  </div>
+
+  <div class="content">
+
+    <!-- ── 1. COMPANY OVERVIEW ───────────────── -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <h2 class="section-title">Company Overview</h2>
+      </div>
+      <p class="body-text">Zupra is building an <strong>Offline Engagement Infrastructure Layer for Physical Commerce</strong>. The company transforms existing consumer packaging and distribution networks into measurable, attributable engagement channels for brands, institutions, and businesses.</p>
+      <p class="body-text">Market entry begins through bottled water and packaging-based campaigns. The long-term vision is to establish a measurable offline media and interaction network spanning FMCG products, food packaging, retail distribution, educational institutions, corporate ecosystems, and consumer touchpoints across India.</p>
+      <div class="two-col">
+        <div class="col-card problem">
+          <div class="col-card-label">The Problem</div>
+          <p>Digital advertising costs are rising steeply. Offline brand interactions remain largely unmeasured, unattributed, and disconnected from digital analytics. Physical consumer touchpoints — particularly packaging — are wasted impressions.</p>
+        </div>
+        <div class="col-card opportunity">
+          <div class="col-card-label">The Opportunity</div>
+          <p>Billions of FMCG units pass through consumer hands each year. QR adoption has been normalised through UPI across Tier-1, 2, and 3 India. Zupra converts this physical surface area into a trackable, data-rich engagement medium.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 2. FUNDRAISING OVERVIEW ───────────── -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <h2 class="section-title">Fundraising Overview</h2>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Parameter</th><th>Detail</th></tr></thead>
+        <tbody>
+          <tr><td class="bold">Round Type</td><td>Pre-Seed / Angel Round</td></tr>
+          <tr><td class="bold">Capital Raise</td><td class="money">₹30 Lakhs</td></tr>
+          <tr><td class="bold">Pre-Money Valuation</td><td class="money">₹4.0 Crore</td></tr>
+          <tr><td class="bold">Post-Money Valuation</td><td class="money">₹4.3 Crore</td></tr>
+          <tr><td class="bold">Equity Offered</td><td class="money">~7%</td></tr>
+          <tr class="highlight-row"><td class="bold">Round Purpose</td><td>Validation-focused: de-risk core business model assumptions before scaling</td></tr>
+        </tbody>
+      </table>
+      <p class="body-text" style="margin-top:16px;"><strong>Validation objectives for this round:</strong></p>
+      <ul class="bullet-list">
+        <li>Consumer engagement rates and scan behaviour in real-world conditions</li>
+        <li>Advertiser ROI and demonstrated willingness to pay</li>
+        <li>Unit economics at pilot distribution scale</li>
+        <li>Distribution channel scalability and institutional partnership viability</li>
+        <li>Dynamic Visibility Bottle technical and manufacturing feasibility</li>
+        <li>Repeat advertiser retention and campaign renewal behaviour</li>
+      </ul>
+    </div>
+
+    <!-- ── 3. USE OF FUNDS ───────────────────── -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <h2 class="section-title">Use of Funds</h2>
+      </div>
+      <table class="data-table">
+        <thead><tr><th style="width:26%">Category</th><th style="width:12%">Amount</th><th>Strategic Purpose & Expected Outcomes</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="bold">Pilot Operations & Distribution</td>
+            <td class="money">₹12L</td>
+            <td>Fund 50,000+ bottle distribution across Bhubaneswar. Validate logistics, establish 100+ distribution points, and collect real-world engagement data.</td>
+          </tr>
+          <tr>
+            <td class="bold">Technology & Analytics Platform</td>
+            <td class="money">₹6L</td>
+            <td>Build MVP campaign management system, QR infrastructure, advertiser dashboard, and attribution engine. The technology layer is the long-term competitive moat.</td>
+          </tr>
+          <tr>
+            <td class="bold">Dynamic Visibility Bottle R&D</td>
+            <td class="money">₹4.5L</td>
+            <td>Prototype and validate the consumption-triggered QR reveal mechanism. Assess manufacturing feasibility and consumer response in the field.</td>
+          </tr>
+          <tr>
+            <td class="bold">Sales & Partnerships</td>
+            <td class="money">₹4.5L</td>
+            <td>Onboard 3–10 paying advertisers across 3 target segments. Establish distribution and institutional partnerships required for pilot execution.</td>
+          </tr>
+          <tr>
+            <td class="bold">Legal, Patent & Compliance</td>
+            <td class="money">₹3L</td>
+            <td>Initiate IP protection for the Dynamic Visibility Bottle concept. Ensure regulatory compliance across packaging and data collection practices.</td>
+          </tr>
+          <tr class="total-row">
+            <td class="bold">Total</td>
+            <td class="money bold">₹30L</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── 4. DYNAMIC VISIBILITY BOTTLE ─────── -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <h2 class="section-title">Dynamic Visibility Bottle Initiative</h2>
+      </div>
+      <p class="body-text">The Dynamic Visibility Bottle is a <strong>consumption-triggered interactive packaging system</strong>. The QR code is hidden or visually distorted while the bottle is full. As the water level decreases, optical distortion reduces and the QR code gradually becomes visible and scannable.</p>
+      <p class="body-text">This mechanism creates a natural, curiosity-driven engagement loop tied to the act of consumption — increasing attention, recall, and scan intent without relying on external prompts.</p>
+      <table class="data-table">
+        <thead><tr><th>Potential Benefit</th><th>Mechanism</th><th>Validation Status</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="bold">Curiosity-Driven Engagement</td>
+            <td>QR reveal as water is consumed creates novelty and anticipation</td>
+            <td class="status-pill"><span class="pill pill-grey">Hypothesis</span></td>
+          </tr>
+          <tr>
+            <td class="bold">Higher Attention Retention</td>
+            <td>Gradual reveal sustains consumer attention across the consumption period</td>
+            <td class="status-pill"><span class="pill pill-grey">Hypothesis</span></td>
+          </tr>
+          <tr>
+            <td class="bold">Improved Brand Recall</td>
+            <td>Interactive packaging creates stronger memory imprint vs. static media</td>
+            <td class="status-pill"><span class="pill pill-grey">Hypothesis</span></td>
+          </tr>
+          <tr>
+            <td class="bold">Superior Advertiser ROI</td>
+            <td>Higher effective scan rates vs. static QR on conventional packaging</td>
+            <td class="status-pill"><span class="pill pill-grey">Hypothesis</span></td>
+          </tr>
+          <tr>
+            <td class="bold">Premium Campaign Positioning</td>
+            <td>Novel format enables differentiated pricing and exclusive advertiser positioning</td>
+            <td class="status-pill"><span class="pill pill-grey">Hypothesis</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="text-note">Important: The Dynamic Visibility Bottle concept remains in pilot-stage validation. No claims of commercial viability are made at this stage. All stated benefits are hypotheses to be tested during the funded pilot. Conventional static QR packaging serves as a validated fallback.</p>
+    </div>
+
+    <!-- ── 5. PILOT PLAN ─────────────────────── -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">05</span>
+        <h2 class="section-title">Pilot Plan</h2>
+      </div>
+      <p class="body-text"><strong>Pilot Location:</strong> Bhubaneswar, Odisha</p>
+      <table class="data-table" style="margin-top:12px;">
+        <thead><tr><th>Target Segment</th><th>Rationale</th><th>Advertiser Profile</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="bold">Coaching Institutes</td>
+            <td>High-footfall captive audience; students consume packaged water regularly</td>
+            <td>Ed-tech, test-prep, local institutes</td>
+          </tr>
+          <tr>
+            <td class="bold">Colleges & Universities</td>
+            <td>Large, concentrated consumer base with strong digital adoption (UPI-native)</td>
+            <td>Financial services, consumer brands, ed-tech</td>
+          </tr>
+          <tr>
+            <td class="bold">Corporate Campuses</td>
+            <td>Defined audience; measurable impressions; premium CPM potential</td>
+            <td>B2B services, consumer brands, recruitment</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="body-text" style="margin-top:20px;"><strong>Illustrative Pilot Assumptions</strong> (not guarantees):</p>
+      <ul class="bullet-list">
+        <li>50,000+ bottles distributed across Bhubaneswar in Phase 1</li>
+        <li>100+ distribution points established across the three target segments</li>
+        <li>3–10 paying advertisers onboarded across 3 customer segments</li>
+        <li>Real-world scan rate, engagement, and attribution data collected and analysed</li>
+        <li>Dynamic Visibility Bottle prototype field-tested under real conditions</li>
+      </ul>
+      <p class="text-note">All pilot figures are illustrative planning assumptions. Actual outcomes will depend on distribution execution, advertiser response, and consumer behaviour in market.</p>
+    </div>
+
+    <!-- ── 6. TECHNOLOGY ─────────────────────── -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">06</span>
+        <h2 class="section-title">Technology Development</h2>
+      </div>
+      <p class="body-text">Zupra's technology layer is the primary source of long-term defensibility. While the initial product appears as a packaging medium, the underlying platform is a <strong>campaign management, attribution, and analytics infrastructure</strong> that becomes more valuable as distribution scale increases.</p>
+      <table class="data-table">
+        <thead><tr><th style="width:22%">Component</th><th style="width:44%">Description</th><th>Strategic Value</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="bold">QR Infrastructure</td>
+            <td>Dynamic QR codes linked to campaign-specific landing pages; unique identifiers per distribution point and bottle batch</td>
+            <td>Granular attribution and fraud prevention</td>
+          </tr>
+          <tr>
+            <td class="bold">Campaign Management</td>
+            <td>Advertiser-facing tool to create, schedule, and manage campaigns across distribution points and geographies</td>
+            <td>Reduces CAC; enables self-serve at scale</td>
+          </tr>
+          <tr>
+            <td class="bold">Advertiser Dashboard</td>
+            <td>Real-time reporting on impressions, scans, engagement rate, and audience demographics by location and segment</td>
+            <td>Core retention driver; justifies repeat spend</td>
+          </tr>
+          <tr>
+            <td class="bold">Analytics Engine</td>
+            <td>Processes engagement data to produce CPM, CPC, scan-through rate, and audience behaviour insights</td>
+            <td>Enables performance-based pricing models</td>
+          </tr>
+          <tr>
+            <td class="bold">Attribution Reporting</td>
+            <td>Links physical scan events to downstream digital actions (website visits, app downloads, form fills)</td>
+            <td>Bridges offline-to-online gap; key differentiator</td>
+          </tr>
+          <tr>
+            <td class="bold">Engagement Tracking</td>
+            <td>Time-stamped scan logs with geolocation, device type, and repeat visitor identification</td>
+            <td>Proprietary data asset; improves targeting over time</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── 7. MILESTONES ─────────────────────── -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">07</span>
+        <h2 class="section-title">Milestones & Execution Roadmap</h2>
+      </div>
+      <div class="phase-grid">
+        <div class="phase-block">
+          <div class="phase-header ph1">
+            <div class="phase-num">Phase 1</div>
+            <div class="phase-name">Validate</div>
+            <div class="phase-time">0 – 6 Months</div>
+          </div>
+          <div class="phase-body">
+            <ul>
+              <li>Launch pilot in Bhubaneswar across 3 target segments</li>
+              <li>Complete Technology MVP: QR, dashboard, analytics</li>
+              <li>Onboard 3–10 paying advertisers</li>
+              <li>Establish 100+ distribution points; 50,000+ bottles</li>
+              <li>Field-test Dynamic Visibility Bottle prototype</li>
+            </ul>
+          </div>
+        </div>
+        <div class="phase-block">
+          <div class="phase-header ph2">
+            <div class="phase-num">Phase 2</div>
+            <div class="phase-name">Optimise</div>
+            <div class="phase-time">6 – 12 Months</div>
+          </div>
+          <div class="phase-body">
+            <ul>
+              <li>Analyse engagement data; optimise scan rates</li>
+              <li>Validate repeat advertiser behaviour (5+ renewals)</li>
+              <li>File provisional patent for DVB concept</li>
+              <li>Develop additional distribution partnerships</li>
+              <li>Achieve revenue validation; refine unit economics</li>
+            </ul>
+          </div>
+        </div>
+        <div class="phase-block">
+          <div class="phase-header ph3">
+            <div class="phase-num">Phase 3</div>
+            <div class="phase-name">Scale</div>
+            <div class="phase-time">12 – 18 Months</div>
+          </div>
+          <div class="phase-body">
+            <ul>
+              <li>Prepare for multi-city expansion readiness</li>
+              <li>Expand packaging categories beyond bottled water</li>
+              <li>Scale distribution infrastructure</li>
+              <li>Demonstrate revenue growth trajectory</li>
+              <li>Build institutional fundraising narrative</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 8. EXPECTED OUTCOMES ──────────────── -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">08</span>
+        <h2 class="section-title">Expected Outcomes by Round End</h2>
+      </div>
+      <div class="metric-grid">
+        <div class="metric-card">
+          <div class="metric-value">150K+</div>
+          <div class="metric-label">Bottles Distributed</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">20–30</div>
+          <div class="metric-label">Paying Advertisers</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">5+</div>
+          <div class="metric-label">Repeat Renewals</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">1</div>
+          <div class="metric-label">Patent Filing Initiated</div>
+        </div>
+      </div>
+      <ul class="bullet-list">
+        <li>Working advertiser dashboard with live campaign reporting operational</li>
+        <li>Dynamic Visibility Bottle prototype validated under real field conditions</li>
+        <li>Measurable consumer engagement and scan rate dataset collected</li>
+        <li>Proven pilot economics demonstrating positive contribution margin</li>
+        <li>Foundation established for expansion beyond bottled water into broader FMCG packaging</li>
+      </ul>
+    </div>
+
+    <!-- ── 9. UNIT ECONOMICS ──────────────────── -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">09</span>
+        <h2 class="section-title">Revenue Model & Unit Economics</h2>
+      </div>
+      <p class="body-text">Revenue is generated by charging brands and advertisers for campaign placements on Zupra-distributed packaging. The following unit economics are <strong>illustrative at pilot scale</strong>. Margins are expected to improve materially with scale, manufacturing optimisation, campaign density, and repeat advertiser demand.</p>
+      <table class="data-table">
+        <thead><tr><th>Unit Economics Item</th><th>Pilot Stage (Illustrative)</th><th>Scale Improvement Driver</th></tr></thead>
+        <tbody>
+          <tr><td class="bold">Revenue Per Bottle</td><td class="money">₹9</td><td>Higher CPM with demonstrated engagement data and verified audience profiles</td></tr>
+          <tr><td class="bold">Bottle Cost</td><td class="money">₹5</td><td>Volume discounts from manufacturing partners at scale</td></tr>
+          <tr><td class="bold">Printing / QR Cost</td><td class="money">₹2</td><td>In-house print infrastructure investment at sufficient volume</td></tr>
+          <tr class="total-row"><td class="bold">Contribution Per Bottle</td><td class="money bold">₹2</td><td>Campaign density: multiple advertisers per distribution area improves yield</td></tr>
+        </tbody>
+      </table>
+      <p class="text-note">All unit economics are illustrative and unvalidated at this stage. Actual figures will be determined through the funded pilot.</p>
+    </div>
+
+    <!-- ── 10. INVESTMENT THESIS ─────────────── -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">10</span>
+        <h2 class="section-title">Investment Thesis</h2>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Macro Driver</th><th>Implication for Zupra</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Rising digital advertising costs across Meta, Google, and programmatic platforms</td>
+            <td>Brands are actively seeking cost-effective offline and alternative channels</td>
+          </tr>
+          <tr>
+            <td>UPI-driven QR code adoption normalised across Tier-1, 2, and 3 India</td>
+            <td>Removes consumer behaviour barrier to scanning; no app install required</td>
+          </tr>
+          <tr>
+            <td>Rapid growth of Tier-2 and Tier-3 city consumption markets</td>
+            <td>Under-served by premium digital advertising; FMCG distribution already present</td>
+          </tr>
+          <tr>
+            <td>Increasing demand for measurable offline brand engagement</td>
+            <td>Packaging media fills attribution gap between physical and digital touchpoints</td>
+          </tr>
+          <tr>
+            <td>Billions of FMCG units distributed annually — an untapped impression surface</td>
+            <td>Zero incremental infrastructure cost to reach consumers at scale</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── 11. RISK FACTORS ───────────────────── -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">11</span>
+        <h2 class="section-title">Risk Factors</h2>
+      </div>
+      <table class="data-table">
+        <thead><tr><th style="width:20%">Risk</th><th style="width:34%">Potential Impact</th><th>Mitigation</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="bold">Consumer Engagement</td>
+            <td>Low scan rates make the medium unattractive to advertisers</td>
+            <td>Design for curiosity (DVB); A/B test QR placement, creative, and CTA copy</td>
+          </tr>
+          <tr>
+            <td class="bold">Advertiser Retention</td>
+            <td>Advertisers do not renew if ROI cannot be demonstrated</td>
+            <td>Build attribution dashboard from Day 1; establish measurable KPIs pre-campaign</td>
+          </tr>
+          <tr>
+            <td class="bold">Manufacturing</td>
+            <td>DVB cannot be produced at viable cost or quality</td>
+            <td>R&D budget allocated; conventional static QR packaging serves as a validated fallback</td>
+          </tr>
+          <tr>
+            <td class="bold">Distribution</td>
+            <td>Inability to achieve scale or access target segments reliably</td>
+            <td>Pre-pilot partnership agreements; incentive-aligned distribution model</td>
+          </tr>
+          <tr>
+            <td class="bold">Execution</td>
+            <td>Team bandwidth constraints delay milestones or quality</td>
+            <td>Phased milestone plan with clearly defined owners and external support engaged early</td>
+          </tr>
+          <tr>
+            <td class="bold">Regulatory</td>
+            <td>Data privacy or packaging labelling regulations impact operations</td>
+            <td>Legal budget allocated; compliance counsel engaged from the outset of operations</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── 12. FUTURE FUNDING ─────────────────── -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">12</span>
+        <h2 class="section-title">Future Funding Path</h2>
+      </div>
+      <p class="body-text">The following represents an illustrative fundraising trajectory. <strong>Future rounds, valuations, and timelines will depend entirely on execution, market validation, advertiser retention, and demonstrated scalability.</strong> No commitments or forecasts are implied.</p>
+      <div class="funding-path">
+        <div class="funding-step active">
+          <div class="funding-step-label">Current</div>
+          <div class="funding-step-title">Pre-Seed · ₹30L</div>
+          <div class="funding-step-detail">Validate core assumptions; pilot launch; MVP technology</div>
+        </div>
+        <div class="funding-arrow">›</div>
+        <div class="funding-step">
+          <div class="funding-step-label">Next</div>
+          <div class="funding-step-title">Seed Round · TBD</div>
+          <div class="funding-step-detail">5+ repeat advertisers; proven unit economics; patent filed</div>
+        </div>
+        <div class="funding-arrow">›</div>
+        <div class="funding-step">
+          <div class="funding-step-label">Target</div>
+          <div class="funding-step-title">Series A · TBD</div>
+          <div class="funding-step-detail">Multi-city revenue; platform scale; category expansion</div>
+        </div>
+        <div class="funding-arrow">›</div>
+        <div class="funding-step">
+          <div class="funding-step-label">Vision</div>
+          <div class="funding-step-title">Offline Infrastructure Platform</div>
+          <div class="funding-step-detail">National engagement layer across physical commerce</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 13. CLOSING ────────────────────────── -->
+    <div class="section" style="margin-bottom:0; padding-bottom:52px;">
+      <div class="section-header">
+        <span class="section-num">13</span>
+        <h2 class="section-title">Closing Statement</h2>
+      </div>
+      <p class="body-text">Zupra is not building a bottle advertising business. The long-term vision is to create a <strong>measurable offline engagement infrastructure</strong> that connects physical consumer interactions with digital attribution, analytics, and customer acquisition — at scale across India's vast physical commerce network.</p>
+      <p class="body-text">The current round is designed to validate the core assumptions required to build that infrastructure responsibly. Capital will be deployed against specific, measurable validation objectives with clear success criteria.</p>
+      <div class="callout-closing">
+        <p>This is a validation-stage investment. The objective is not to demonstrate scale, but to demonstrate that the model <strong>deserves to be scaled</strong>. The founders are committed to disciplined capital allocation, transparent reporting, and honest communication of outcomes — positive or negative.</p>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+  <!-- ── FOOTER ─────────────────────────────── -->
+  <div class="doc-footer">
+    <span class="doc-footer-brand">Zupra</span>
+    <span class="doc-footer-tag">Confidential · Pre-Seed Investor Memorandum · For Discussion Only</span>
+  </div>
+
+</div><!-- /page -->
+</body>
+</html>
