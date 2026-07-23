@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>One Summer, One Sky</title>
+<style>
+  /* ============ THEME ============ */
+  :root{
+    --bg-1:#05060a;
+    --bg-2:#0a1026;
+    --star:#eef2ff;
+    --ink:#e9ecf7;
+    --muted:#aab2cf;
+    --faint:#7c85a8;
+    --gold:#f6b93b;
+    --gold-soft:#ffd873;
+    --cold:#8fb2ff;
+    --serif:"Palatino Linotype","Book Antiqua",Palatino,"Iowan Old Style",Georgia,serif;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg-1);
+    color:var(--ink);
+    font-family:var(--serif);
+    line-height:1.65;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  /* ============ BACKGROUND LAYERS ============ */
+  #sky{position:fixed;inset:0;z-index:0;display:block;}
+  .mood{
+    position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(120% 90% at 50% 30%, rgba(20,30,70,.25), rgba(5,6,10,.9) 80%);
+    transition:background 2.2s ease, opacity 2.2s ease, filter 2.2s ease;
+  }
+  .dawn{
+    position:fixed;left:0;right:0;bottom:0;height:70vh;z-index:1;pointer-events:none;opacity:0;
+    background:radial-gradient(120% 120% at 50% 130%, rgba(255,180,90,.55), rgba(255,150,70,.15) 45%, rgba(5,6,10,0) 70%);
+    transition:opacity 3s ease;
+  }
+  body[data-scene="summer"] .mood{background:radial-gradient(90% 70% at 50% 45%, rgba(120,80,30,.22), rgba(5,6,10,.92) 80%);}
+  body[data-scene="silence"] .mood{background:radial-gradient(120% 100% at 50% 40%, rgba(20,26,48,.35), rgba(3,4,8,.98) 75%);}
+  body[data-scene="absence"] .mood{background:radial-gradient(120% 120% at 50% 120%, rgba(60,55,80,.28), rgba(4,5,10,.96) 70%);}
+  body[data-scene="letter"] .mood{background:radial-gradient(90% 80% at 50% 45%, rgba(120,95,45,.20), rgba(6,7,14,.94) 82%);}
+  body[data-scene="promises"] .mood{background:radial-gradient(120% 120% at 50% 115%, rgba(246,185,59,.30), rgba(6,7,14,.92) 68%);}
+  body[data-scene="choice"] .mood{background:radial-gradient(120% 120% at 50% 130%, rgba(255,190,100,.30), rgba(10,10,18,.85) 72%);}
+  body[data-scene="choice"] .dawn{opacity:1;}
+
+  /* ============ LAYOUT ============ */
+  .scene{
+    position:relative;z-index:2;
+    min-height:100vh;min-height:100svh;
+    display:flex;flex-direction:column;justify-content:center;align-items:center;
+    text-align:center;
+    padding:14vh 8vw;
+  }
+  .wrap{max-width:640px;width:100%;}
+
+  h1,h2{font-weight:400;margin:0;}
+  .kicker{
+    font-family:var(--sans);
+    font-size:.72rem;letter-spacing:.34em;text-transform:uppercase;
+    color:var(--faint);margin-bottom:1.6rem;
+  }
+  .line{font-size:clamp(1.15rem,3.4vw,1.6rem);color:var(--ink);margin:.55em 0;}
+  .line.soft{color:var(--muted);font-size:clamp(1rem,2.9vw,1.3rem);font-style:italic;}
+  .line.small{color:var(--faint);font-size:clamp(.9rem,2.6vw,1.05rem);}
+  .big{font-size:clamp(1.7rem,6vw,3rem);line-height:1.25;letter-spacing:.01em;}
+  .gold{color:var(--gold-soft);}
+  .starmark{color:var(--gold-soft);}
+
+  /* ============ REVEAL ============ */
+  .reveal{
+    opacity:0;transform:translateY(18px);filter:blur(7px);
+    transition:opacity 1.15s ease, transform 1.15s ease, filter 1.15s ease;
+    transition-delay:var(--d,0s);
+  }
+  .scene.in .reveal{opacity:1;transform:none;filter:none;}
+
+  /* ============ ENTRY ============ */
+  #entry .btn{margin-top:2.6rem;}
+  .btn{
+    display:inline-block;font-family:var(--sans);
+    font-size:.95rem;letter-spacing:.08em;
+    color:var(--ink);background:rgba(255,255,255,.04);
+    border:1px solid rgba(246,185,59,.4);
+    padding:.9em 1.9em;border-radius:999px;
+    cursor:pointer;text-decoration:none;
+    transition:background .4s ease, border-color .4s ease, transform .3s ease, box-shadow .4s ease;
+  }
+  .btn:hover,.btn:focus-visible{
+    background:rgba(246,185,59,.12);
+    border-color:var(--gold-soft);
+    box-shadow:0 0 34px rgba(246,185,59,.22);
+    outline:none;transform:translateY(-2px);
+  }
+  .hint{
+    position:absolute;bottom:5vh;left:50%;transform:translateX(-50%);
+    font-family:var(--sans);font-size:.7rem;letter-spacing:.28em;text-transform:uppercase;
+    color:var(--faint);
+  }
+  .hint span{display:block;margin:.5em auto 0;width:1px;height:34px;
+    background:linear-gradient(var(--faint),transparent);
+    animation:drop 2.4s ease-in-out infinite;}
+  @keyframes drop{0%,100%{opacity:.2;transform:translateY(-6px);}50%{opacity:.9;transform:translateY(4px);}}
+
+  /* ============ CONNECTING STARS (Beginning) ============ */
+  .connect{width:min(78vw,340px);height:70px;margin:2.4rem auto 0;overflow:visible;}
+  .connect .dot{fill:var(--star);}
+  .connect .link{stroke:var(--gold-soft);stroke-width:1.4;fill:none;
+    stroke-dasharray:300;stroke-dashoffset:300;opacity:.8;
+    transition:stroke-dashoffset 2.4s ease;transition-delay:.9s;}
+  .scene.in .connect .link{stroke-dashoffset:0;}
+
+  /* ============ BROKEN LINE (Silence) ============ */
+  .snap{width:min(70vw,300px);height:40px;margin:2rem auto 0;overflow:visible;}
+  .snap line{stroke:var(--cold);stroke-width:1.4;opacity:.5;
+    transition:transform 1.2s ease, opacity 1.2s ease;transition-delay:.6s;}
+  .scene.in .snap .lft{transform:translateX(-18px);opacity:.15;}
+  .scene.in .snap .rgt{transform:translateX(18px);opacity:.15;}
+
+  /* black beat */
+  #beat{position:fixed;inset:0;z-index:40;background:#000;opacity:0;pointer-events:none;}
+  #beat.flash{animation:beat 3s ease forwards;}
+  @keyframes beat{0%{opacity:0;}8%{opacity:1;}55%{opacity:1;}100%{opacity:0;}}
+
+  /* ============ LETTER ============ */
+  #letter .wrap{max-width:660px;}
+  .shayari{
+    margin:2.4rem 0;padding:1.8rem 1.2rem;
+    border-top:1px solid rgba(246,185,59,.25);
+    border-bottom:1px solid rgba(246,185,59,.25);
+    color:var(--gold-soft);font-style:italic;
+    font-size:clamp(1.05rem,3vw,1.35rem);line-height:2;
+  }
+  .sign{margin-top:2.2rem;color:var(--muted);font-style:italic;}
+
+  /* ============ SUNFLOWER / PROMISES ============ */
+  .flower{position:relative;width:min(80vw,340px);aspect-ratio:1;margin:1.4rem auto 1.8rem;}
+  .ring{position:absolute;inset:0;}
+  .petal-wrap{position:absolute;inset:0;transform:rotate(var(--a));pointer-events:none;}
+  .petal{
+    position:absolute;left:50%;top:4%;width:20%;height:34%;
+    transform:translateX(-50%) scaleY(0);transform-origin:50% 100%;
+    border-radius:50% 50% 46% 46% / 62% 62% 38% 38%;
+    background:linear-gradient(180deg, rgba(246,185,59,.30), rgba(180,120,30,.16));
+    border:1px solid rgba(246,185,59,.28);
+    cursor:pointer;padding:0;pointer-events:auto;
+    transition:transform 1s cubic-bezier(.2,.8,.2,1), background .6s ease, box-shadow .6s ease, border-color .6s ease;
+    transition-delay:var(--pd,0s);
+  }
+  .ring.back .petal{width:15%;height:27%;opacity:.5;cursor:default;filter:blur(.4px);}
+  #flower.bloom .petal{transform:translateX(-50%) scaleY(1);}
+  .petal.lit{
+    background:linear-gradient(180deg, var(--gold-soft), var(--gold));
+    border-color:var(--gold-soft);
+    box-shadow:0 0 22px rgba(246,185,59,.5);
+  }
+  .petal:focus-visible{outline:2px solid var(--gold-soft);outline-offset:2px;}
+  .core{
+    position:absolute;left:50%;top:50%;width:34%;height:34%;
+    transform:translate(-50%,-50%);border-radius:50%;
+    background:radial-gradient(circle at 40% 35%, #6b4a1a, #2c1c07 70%);
+    box-shadow:inset 0 0 18px rgba(0,0,0,.6),0 0 30px rgba(246,185,59,.25);
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--sans);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:#d8b25a;
+    transition:box-shadow 1s ease;
+  }
+  .core.full{box-shadow:inset 0 0 18px rgba(0,0,0,.5),0 0 60px rgba(246,185,59,.6);}
+  .readout{
+    min-height:5.2em;max-width:520px;margin:0 auto;
+    font-size:clamp(1.02rem,3vw,1.28rem);color:var(--ink);
+    transition:opacity .6s ease;
+  }
+  .readout .tag{display:block;font-family:var(--sans);font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);margin-bottom:.7em;}
+  .instruct{font-family:var(--sans);font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);margin-top:1.4rem;}
+  .flower-done{margin-top:1.4rem;color:var(--gold-soft);font-style:italic;font-size:clamp(1.05rem,3vw,1.3rem);opacity:0;transition:opacity 1.2s ease;}
+  .flower-done.show{opacity:1;}
+
+  /* ============ CHOICE ============ */
+  #choice .btn{margin-top:2.8rem;font-size:1.02rem;padding:1em 2.2em;}
+  .footnote{margin-top:2.4rem;font-family:var(--sans);font-size:.72rem;letter-spacing:.2em;color:var(--faint);}
+
+  /* ============ SOUND TOGGLE ============ */
+  #sound{
+    position:fixed;top:16px;right:16px;z-index:50;
+    width:42px;height:42px;border-radius:50%;
+    background:rgba(10,14,30,.55);border:1px solid rgba(255,255,255,.14);
+    color:var(--muted);font-size:1rem;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    backdrop-filter:blur(6px);transition:color .3s,border-color .3s,background .3s;
+  }
+  #sound:hover,#sound:focus-visible{color:var(--gold-soft);border-color:rgba(246,185,59,.5);outline:none;}
+  #sound[aria-pressed="true"]{color:var(--gold-soft);border-color:rgba(246,185,59,.5);}
+
+  /* ============ REDUCED MOTION ============ */
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    .reveal{transition-duration:.001ms;transform:none;filter:none;opacity:1;}
+    .hint span{animation:none;}
+    .connect .link{transition:none;stroke-dashoffset:0;}
+    .snap line{transition:none;}
+    #beat.flash{animation:none;opacity:0;}
+    .petal{transition:background .4s,box-shadow .4s;transform:translateX(-50%) scaleY(1);}
+  }
+</style>
+</head>
+<body data-scene="entry">
+
+<canvas id="sky"></canvas>
+<div class="mood"></div>
+<div class="dawn"></div>
+<div id="beat"></div>
+
+<button id="sound" aria-pressed="false" aria-label="Toggle ambient sound" title="Sound (off)">♪</button>
+
+<!-- 1 · ENTRY -->
+<section class="scene" id="entry" data-scene="entry">
+  <div class="wrap">
+    <p class="line reveal">Mishra Ji… bas kuch quiet minute.</p>
+    <p class="line reveal">Itna hi maang raha hoon.</p>
+    <p class="line small reveal">(Haan — tumhare Chomu ne poori website bana daali. Ridiculous. I know.)</p>
+    <a href="#beginning" class="btn reveal">Stay anyway →</a>
+  </div>
+  <div class="hint">scroll<span></span></div>
+</section>
+
+<!-- 2 · BEGINNING -->
+<section class="scene" id="beginning" data-scene="beginning">
+  <div class="wrap">
+    <p class="kicker reveal">June 2025</p>
+    <p class="line reveal">Humne kuch plan nahi kiya tha.</p>
+    <p class="line soft reveal">Bas do awaazein, jab saari duniya so rahi thi —<br>galaxies ki baatein, aur sab kuch.</p>
+    <svg class="connect reveal" viewBox="0 0 340 70" aria-hidden="true">
+      <path class="link" d="M20,50 Q170,-10 320,50" />
+      <circle class="dot" cx="20" cy="50" r="3.4"/>
+      <circle class="dot" cx="320" cy="50" r="3.4"/>
+    </svg>
+    <p class="line reveal">Tumhari aankhein. <span class="starmark">✦</span></p>
+    <p class="line reveal">Tumhara, bina kahe, khayal rakhna. <span class="starmark">✦</span></p>
+    <p class="line reveal">Aur tumhari khushi — jo 3 baje raat ko bhi subah bana deti thi. <span class="starmark">✦</span></p>
+    <p class="line soft reveal">Baatein karte karte aasman roshan hone lagta tha.<br>Aur hum, ek doosre ko sambhaalte, kho jaate the.</p>
+  </div>
+</section>
+
+<!-- 3 · SUMMER -->
+<section class="scene" id="summer" data-scene="summer">
+  <div class="wrap">
+    <p class="kicker reveal">The summer that barely stayed</p>
+    <p class="line reveal">Phir ek summer aaya — jo mushkil se ruka.</p>
+    <p class="line soft reveal">Ek andhera cinema hall. Ek film jo humne dekhi hi nahi.</p>
+    <p class="line reveal">Beech film mein main tumhari taraf muda —<br>aur bhool gaya ki duniya wahan bhi thi.</p>
+    <p class="line small reveal">Kuch cheezein kehni nahi padti. Tumhein yaad hai.</p>
+  </div>
+</section>
+
+<!-- 4 · SILENCE -->
+<section class="scene" id="silence" data-scene="silence">
+  <div class="wrap">
+    <p class="kicker reveal">26 August 2025</p>
+    <p class="line reveal">Main dheere dheere door nahi hua.</p>
+    <p class="line reveal">Main gayab ho gaya. Har darwaaza band karke<br>tumhein khaamoshi mein chhod diya.</p>
+    <svg class="snap reveal" viewBox="0 0 300 40" aria-hidden="true">
+      <line class="lft" x1="20" y1="20" x2="150" y2="20"/>
+      <line class="rgt" x1="150" y1="20" x2="280" y2="20"/>
+    </svg>
+    <p class="line soft reveal">Sach jo tumhein tab bata dena chahiye tha:<br>tumse kuch mahine pehle ek rishta toota tha, aur main abhi bhi apne shak mein khoya hua tha. Jab main tumhare liye girne laga, main dar gaya — aur khud ko yakeen dilaya ki chhod dena tumhein bacha lega.</p>
+    <p class="line reveal">Aisa nahi hua. Darr bata sakta hai ki main <em>kyun</em> bhaaga.<br>Par ye kabhi jayaz nahi karta ki maine <em>kaise</em> kiya.</p>
+    <p class="line reveal">Tum ek wajah aur ek alvida ke haqdaar the.<br>Maine dono nahi diye.</p>
+    <p class="line soft reveal">Tum ek subah utthi — aur kuch nahi tha.<br>Wahi khaamoshi hai jisne tumhein toda.</p>
+    <p class="line gold reveal">Wo tumhari galti nahi thi. Wo meri thi.</p>
+  </div>
+</section>
+
+<!-- 5 · ABSENCE -->
+<section class="scene" id="absence" data-scene="absence">
+  <div class="wrap">
+    <p class="kicker reveal">Nine months</p>
+    <p class="line reveal">Phir aaye nau mahine — tumhare bina.</p>
+    <p class="line soft reveal">Aur us khaamoshi mein, jis cheez pe main unsure tha,<br>wahi sabse saaf ho gayi.</p>
+    <p class="line reveal">Tumhari kami ne mujhe "miss" karna nahi sikhaya.<br>Usne sikhaya ki maine kya galat kiya —</p>
+    <p class="line reveal">ki jab mushkil aayi, main chala gaya,<br>tumhein rukne dene ke bajaye.</p>
+    <p class="line gold reveal">Wahi asli galti thi. Shak nahi. Bhaagna.</p>
+  </div>
+</section>
+
+<!-- 6 · LETTER -->
+<section class="scene" id="letter" data-scene="letter">
+  <div class="wrap">
+    <p class="kicker reveal">The letter</p>
+    <p class="line reveal" style="text-align:left;">Mishra Ji,</p>
+    <p class="line soft reveal" style="text-align:left;">Main jaanta hoon ek website tumhare zakham nahi bhar sakti. Main ye isliye nahi bana raha ki tum haan bolo. Main isliye bana raha hoon kyunki jo maine kabhi kaha nahi, wo tumhare saamne rakhna chahta hoon.</p>
+    <p class="line reveal" style="text-align:left;">Maine tumhe khoya nahi — maine tumhe chhoda.<br>Aur us farq ko main roz jeeta hoon.</p>
+    <div class="shayari reveal">
+      Tujhe khoya nahi, main khud se haar gaya,<br>
+      jo darr tha, use tere naam pe waar gaya.<br>
+      Ab samajhta hoon — jise chhoda, wahi meri duniya thi,<br>
+      har raat teri kami mujhe tera pata de gaya.
+    </div>
+    <p class="line soft reveal" style="text-align:left;">Jab bhi zindagi mushkil hui, maine tumhein door kiya. Ab main ulta karunga — mushkil mein tumhein <em>paas</em> rakhunga. Tumhein apne bure waqt ka partner banaunga. Tumhein bachane ke naam par phir kabhi gayab nahi hounga.</p>
+    <p class="line reveal" style="text-align:left;">Aur agar tum mujhe maaf na bhi kar pao —<br>tab bhi mujhe sukoon hai ki maine tumhe sach bataya.</p>
+    <p class="sign reveal">— tumhara Chomu</p>
+  </div>
+</section>
+
+<!-- 7 · PROMISES -->
+<section class="scene" id="promises" data-scene="promises">
+  <div class="wrap">
+    <p class="kicker reveal">My promises</p>
+    <p class="line soft reveal">Har petal ek vaada hai. Chhoo ke dekho.</p>
+    <div class="flower reveal" id="flower" aria-hidden="false">
+      <div class="ring back" id="ringBack" aria-hidden="true"></div>
+      <div class="ring" id="ringFront"></div>
+      <div class="core" id="core">0 / 6</div>
+    </div>
+    <div class="readout" id="readout" aria-live="polite">
+      <span class="tag">a promise</span>
+      Kisi bhi petal ko chuno, aur main tumse kya vaada karta hoon wo yahan aayega.
+    </div>
+    <p class="flower-done" id="flowerDone">Sab kuch — tumhare liye. 🌻</p>
+  </div>
+</section>
+
+<!-- 8 · CHOICE -->
+<section class="scene" id="choice" data-scene="choice">
+  <div class="wrap">
+    <p class="kicker reveal">Dawn</p>
+    <p class="line reveal">Main tumse aaj koi faisla nahi maang raha.</p>
+    <p class="line soft reveal">Sabse pehle, mujhse pehle — bas khush ho jao.<br>Dil ki sabse gehri jagah se. Tum iske haqdaar ho,<br>chahe main is kahani mein hoon ya nahi.</p>
+    <p class="line gold reveal">Aur ye meri aakhri promise hai:<br>agar tum kabhi mujhe haan na bhi bolo —<br>main phir bhi zindagi bhar tumhein tumhare sapno ki taraf dhakelta rahunga.</p>
+    <p class="line soft reveal">Isi se pata chalta hai ki ye tumhein wapas "chahiye" nahi hai.<br>Ye tumse pyaar hai — darwaaza poora khula rakh ke.</p>
+    <p class="line reveal">Jab bhi tum ready ho. Agar kabhi ho.<br>Tumhara Chomu yahin hai.</p>
+    <a class="btn reveal" id="reach" href="#" target="_blank" rel="noopener">say something to your Chomu →</a>
+    <p class="footnote reveal">no pressure. koi jaldi nahi.</p>
+  </div>
+</section>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---- WhatsApp reach-out (soft, pre-filled) ---- */
+  var reach = document.getElementById("reach");
+  reach.href = "https://wa.me/919934492605?text=" + encodeURIComponent("Chomu…");
+
+  /* ---- Stagger reveal delays per scene ---- */
+  document.querySelectorAll(".scene").forEach(function(sc){
+    var kids = sc.querySelectorAll(".reveal");
+    kids.forEach(function(el,i){ el.style.setProperty("--d",(i*0.22).toFixed(2)+"s"); });
+  });
+
+  /* ---- Scene activation + reveals ---- */
+  var beat = document.getElementById("beat");
+  var beatDone = false, bloomDone = false;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(!e.isIntersecting) return;
+      e.target.classList.add("in");
+      var scene = e.target.getAttribute("data-scene");
+      document.body.setAttribute("data-scene", scene);
+      if(scene==="silence" && !beatDone){ beatDone=true; if(!reduce){ beat.classList.add("flash"); } }
+      if(scene==="promises" && !bloomDone){ bloomDone=true; buildFlower(); }
+    });
+  }, { rootMargin:"-45% 0px -45% 0px", threshold:0 });
+  document.querySelectorAll(".scene").forEach(function(s){ io.observe(s); });
+  // ensure entry shows immediately
+  document.getElementById("entry").classList.add("in");
+
+  /* ---- Sunflower petals ---- */
+  var promises = [
+    "Main patience rakhunga. Tum apni raftaar se heal karogi — main kabhi jaldi nahi machaunga.",
+    "Main tumhein kabhi block ya gayab nahi karunga. Wo darwaaza hamesha khula rahega.",
+    "Jab mushkil hoga, main tumhare liye ladunga — tumse bhaagunga nahi.",
+    "Main tumhari khushi ko aise sambhaalunga jaise wahi meri wajah ho.",
+    "Main 50x mehnat karunga — ek aisi zindagi banaunga jo tumhare kaabil ho, apne aur tumhare parivaar ke saamne khade hone ke laayak.",
+    "Main har doori mita dunga, aur tumhari maa ko us ladke pe garv dilaunga jo unki beti ke saath khada hai."
+  ];
+  var lit = {}, litCount = 0;
+  var core = document.getElementById("core");
+  var readout = document.getElementById("readout");
+  var done = document.getElementById("flowerDone");
+
+  function buildFlower(){
+    var front = document.getElementById("ringFront");
+    var back  = document.getElementById("ringBack");
+    // decorative back petals (offset)
+    for(var b=0;b<6;b++){
+      var wb=document.createElement("div");
+      wb.className="petal-wrap";
+      wb.style.setProperty("--a",(b*60+30)+"deg");
+      var pb=document.createElement("div"); pb.className="petal";
+      pb.style.setProperty("--pd",(0.9+b*0.05)+"s");
+      wb.appendChild(pb); back.appendChild(wb);
+    }
+    // interactive front petals
+    for(var i=0;i<6;i++){
+      (function(idx){
+        var w=document.createElement("div");
+        w.className="petal-wrap";
+        w.style.setProperty("--a",(idx*60)+"deg");
+        var p=document.createElement("button");
+        p.className="petal";
+        p.type="button";
+        p.setAttribute("aria-label","Promise "+(idx+1));
+        p.style.setProperty("--pd",(idx*0.13)+"s");
+        p.addEventListener("click",function(){ pick(idx,p); });
+        w.appendChild(p); front.appendChild(w);
+      })(i);
+    }
+    // trigger bloom on next frame so petals animate from scaleY(0)
+    var fl = document.getElementById("flower");
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ fl.classList.add("bloom"); }); });
+  }
+
+  function pick(idx,el){
+    readout.innerHTML = '<span class="tag">promise '+(idx+1)+' of 6</span>'+promises[idx];
+    if(!lit[idx]){
+      lit[idx]=true; litCount++;
+      el.classList.add("lit");
+      core.textContent = litCount+" / 6";
+      if(litCount===6){
+        core.classList.add("full");
+        core.textContent = "🌻";
+        done.classList.add("show");
+      }
+    }
+  }
+
+  /* ---- Canvas starfield (ambient) ---- */
+  var cv = document.getElementById("sky");
+  var ctx = cv.getContext("2d");
+  var stars = [], W, H, DPR;
+  function resize(){
+    DPR = Math.min(window.devicePixelRatio||1, 2);
+    W = cv.width  = Math.floor(window.innerWidth*DPR);
+    H = cv.height = Math.floor(window.innerHeight*DPR);
+    cv.style.width=window.innerWidth+"px"; cv.style.height=window.innerHeight+"px";
+    var count = Math.round((window.innerWidth*window.innerHeight)/9000);
+    count = Math.max(60, Math.min(count, 150));
+    stars = [];
+    for(var i=0;i<count;i++){
+      stars.push({
+        x:Math.random()*W, y:Math.random()*H,
+        r:(Math.random()*1.3+0.3)*DPR,
+        p:Math.random()*Math.PI*2,
+        s:Math.random()*0.9+0.25,
+        gold:i===0 // one hidden gold star (her)
+      });
+    }
+  }
+  function draw(t){
+    ctx.clearRect(0,0,W,H);
+    for(var i=0;i<stars.length;i++){
+      var st=stars[i];
+      var tw = reduce ? 0.7 : (0.55 + 0.45*Math.sin(t*0.001*st.s + st.p));
+      ctx.beginPath();
+      ctx.arc(st.x,st.y,st.r,0,Math.PI*2);
+      if(st.gold){
+        ctx.fillStyle="rgba(255,205,90,"+(0.5+0.5*tw)+")";
+        ctx.shadowColor="rgba(255,205,90,0.9)"; ctx.shadowBlur=10*DPR;
+      }else{
+        ctx.fillStyle="rgba(238,242,255,"+(0.25+0.6*tw)+")";
+        ctx.shadowBlur=0;
+      }
+      ctx.fill();
+    }
+    ctx.shadowBlur=0;
+    if(!reduce) requestAnimationFrame(draw);
+  }
+  resize();
+  window.addEventListener("resize", function(){ resize(); if(reduce) draw(0); });
+  if(reduce){ draw(0); } else { requestAnimationFrame(draw); }
+
+  /* ---- Ambient sound (optional, off by default) ---- */
+  var sBtn = document.getElementById("sound");
+  var actx=null, master=null, on=false, nodes=[];
+  function startAudio(){
+    actx = new (window.AudioContext||window.webkitAudioContext)();
+    master = actx.createGain(); master.gain.value=0;
+    var lp = actx.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=420;
+    master.connect(lp); lp.connect(actx.destination);
+    var freqs=[110, 164.8, 220];
+    freqs.forEach(function(f,i){
+      var o=actx.createOscillator(); o.type="sine";
+      o.frequency.value=f+(i-1)*0.6; // slight detune
+      var g=actx.createGain(); g.gain.value=(i===2?0.12:0.34);
+      o.connect(g); g.connect(master); o.start();
+      nodes.push(o);
+    });
+    // slow breathing LFO on master
+    var lfo=actx.createOscillator(); lfo.frequency.value=0.06;
+    var lg=actx.createGain(); lg.gain.value=0.012;
+    lfo.connect(lg); lg.connect(master.gain); lfo.start();
+    nodes.push(lfo);
+  }
+  sBtn.addEventListener("click", function(){
+    try{
+      if(!actx) startAudio();
+      if(actx.state==="suspended") actx.resume();
+      on=!on;
+      master.gain.cancelScheduledValues(actx.currentTime);
+      master.gain.linearRampToValueAtTime(on?0.05:0.0, actx.currentTime+1.2);
+      sBtn.setAttribute("aria-pressed", on?"true":"false");
+      sBtn.textContent = on?"♫":"♪";
+      sBtn.title = on?"Sound (on)":"Sound (off)";
+    }catch(err){ /* audio unsupported — silent */ }
+  });
+})();
+</script>
+</body>
+</html>
